@@ -73,7 +73,7 @@ html {
 /* Pulsing subtle glow for interactive highlights */
 @keyframes coralGlow {
   0%, 100% {
-    box-shadow: 0 0 12px rgab(235, 96, 68, 0.4);
+    box-shadow: 0 0 12px rgba(235, 96, 68, 0.4);
   }
   50% {
     box-shadow: 0 0 22px rgba(235, 96, 68, 0.8);

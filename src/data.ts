@@ -5,6 +5,12 @@
 
 import { Room, Testimonial, AmenityItem } from './types';
 
+// Static assets imported so Vite bundles and resolves them correctly in production
+import heroImg from './assets/images/hero_orchid_1780650357754.png';
+import roomDeluxeImg from './assets/images/room_deluxe_1780650380249.png';
+import roomSuiteImg from './assets/images/room_suite_1780650397324.png';
+import restaurantImg from './assets/images/restaurant_orchid_1780650414208.png';
+
 export const HOTEL_INFO = {
   name: "Hotel Orchid",
   subName: "Sauraha, Chitwan",
@@ -15,10 +21,10 @@ export const HOTEL_INFO = {
   email: "stay@hotelorchidsauraha.com",
   about: "Discover the charm of Chitwan at Hotel Orchid Sauraha, where elegant comfort meets natural beauty. Enjoy spacious rooms, attentive hospitality, and a prime location close to the region's most popular attractions, creating the perfect base for your unforgettable Nepal adventure.",
   images: {
-    hero: "/src/assets/images/hero_orchid_1780650357754.png",
-    roomDeluxe: "/src/assets/images/room_deluxe_1780650380249.png",
-    roomSuite: "/src/assets/images/room_suite_1780650397324.png",
-    restaurant: "/src/assets/images/restaurant_orchid_1780650414208.png"
+    hero: heroImg,
+    roomDeluxe: roomDeluxeImg,
+    roomSuite: roomSuiteImg,
+    restaurant: restaurantImg
   }
 };
 

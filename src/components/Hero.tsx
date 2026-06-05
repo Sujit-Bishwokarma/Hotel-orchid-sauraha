@@ -37,7 +37,7 @@ export default function Hero({ onOpenBooking }: HeroProps) {
           src={HOTEL_INFO.images.hero}
           alt="Hotel Orchid Sauraha Sunset Exterior View"
           referrerPolicy="no-referrer"
-          className="w-full h-full object-cover scale-105 animate-[pulse_10s_infinite_alternate]"
+          className="w-full h-full object-cover"
         />
         {/* Soft elegant color-graded vignettes for readability */}
         <div className="absolute inset-0 bg-gradient-to-r from-ocean-950/95 via-ocean-950/70 to-ocean-950/40" />
