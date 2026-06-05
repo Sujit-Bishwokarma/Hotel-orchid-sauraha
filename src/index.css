@@ -1,0 +1,85 @@
+@import "tailwindcss";
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+
+@theme {
+  --color-ocean-950: #061a29;
+  --color-ocean-900: #0d283c;
+  --color-ocean-800: #0e3b5a;
+  --color-ocean-700: #104c75;
+  --color-ocean-600: #145e8e;
+  --color-ocean-500: #1971a8;
+  --color-ocean-400: #2b8bca;
+  --color-ocean-300: #4fafdf;
+  --color-ocean-200: #88cbee;
+  --color-ocean-100: #c1ebfc;
+  --color-ocean-50: #f0faff;
+
+  /* Sandy Beige Tones */
+  --color-sand-900: #2b2721;
+  --color-sand-800: #4a4338;
+  --color-sand-700: #6d6252;
+  --color-sand-600: #938571;
+  --color-sand-500: #b8a992;
+  --color-sand-400: #d6cab5;
+  --color-sand-300: #e7dfd0;
+  --color-sand-200: #f1ebd8;
+  --color-sand-100: #f7f4ea;
+  --color-sand-50: #fcfbfa;
+
+  /* Coral Accents */
+  --color-coral-900: #5c1f10;
+  --color-coral-800: #802f1c;
+  --color-coral-700: #ab412b;
+  --color-coral-600: #ca4e35;
+  --color-coral-500: #eb6044;
+  --color-coral-400: #f2826d;
+  --color-coral-300: #f7a494;
+  --color-coral-200: #fac7be;
+  --color-coral-100: #fce8e4;
+  --color-coral-50: #fef5f3;
+
+  /* Semantic Map */
+  --color-primary: var(--color-ocean-800);
+  --color-secondary: var(--color-sand-100);
+  --color-accent: var(--color-coral-500);
+
+  /* Fonts */
+  --font-serif: "Playfair Display", Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
+
+/* Base custom interactive layers and smooth scroll rules */
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Elegant scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-sand-50);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-ocean-900);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-coral-500);
+}
+
+/* Pulsing subtle glow for interactive highlights */
+@keyframes coralGlow {
+  0%, 100% {
+    box-shadow: 0 0 12px rgab(235, 96, 68, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 22px rgba(235, 96, 68, 0.8);
+  }
+}
+
+.coral-glow-btn {
+  animation: coralGlow 3s infinite;
+}
