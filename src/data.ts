@@ -6,7 +6,7 @@
 import { Room, Testimonial, AmenityItem } from './types';
 
 // Static assets imported so Vite bundles and resolves them correctly in production
-import heroImg from './assets/images/hero_orchid_1780650357754.png';
+import heroImg from './assets/images/IMG_20260606_231903.png';
 import roomDeluxeImg from './assets/images/room_deluxe_1780650380249.png';
 import roomSuiteImg from './assets/images/room_suite_1780650397324.png';
 import restaurantImg from './assets/images/restaurant_orchid_1780650414208.png';
