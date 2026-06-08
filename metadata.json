@@ -1,6 +1,6 @@
 {
-  "name": "Hotel Orchid Sauraha",
-  "description": "Your peaceful retreat in the heart of Sauraha, Chitwan. Experience elegant comfort, natural beauty, and attentive hospitality.",
+  "name": "Hotel Mirage Sauraha",
+  "description": "Nestled near the natural beauty of Chitwan, Hotel Mirage Sauraha welcomes guests with comfortable rooms, warm service, and a peaceful atmosphere. Where Every Stay Becomes a Memory.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

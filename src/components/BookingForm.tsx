@@ -62,7 +62,7 @@ export default function BookingForm({ isOpen, onClose, preSelectedRoomId }: Book
       setIsSubmitting(false);
       setSuccessReceipt({
         ...formData,
-        bookingId: `ORC-${Math.floor(100000 + Math.random() * 900000)}`,
+        bookingId: `MIR-${Math.floor(100000 + Math.random() * 900000)}`,
         nights: nightsCount,
         roomDetails: activeRoom,
         totalPrice: totalPriceNPR,
@@ -103,7 +103,7 @@ export default function BookingForm({ isOpen, onClose, preSelectedRoomId }: Book
             <div className="bg-ocean-950 px-6 py-4 flex items-center justify-between border-b border-ocean-800">
               <div className="text-left">
                 <h3 className="font-serif text-lg text-sand-50 font-semibold tracking-wide">
-                  {successReceipt ? 'RESERVATION CONFIRMED' : 'SECURE ORCHID RESERVATION'}
+                  {successReceipt ? 'RESERVATION CONFIRMED' : 'SECURE MIRAGE RESERVATION'}
                 </h3>
                 <p className="text-[10px] font-mono uppercase tracking-widest text-sand-400">
                   {successReceipt ? `Receipt ID: ${successReceipt.bookingId}` : 'Best Rate Guaranteed'}
@@ -129,7 +129,7 @@ export default function BookingForm({ isOpen, onClose, preSelectedRoomId }: Book
                   <div className="bg-coral-50 border border-coral-200/50 p-4 rounded-sm flex items-start gap-3">
                     <Sparkles className="w-5 h-5 text-coral-500 mt-0.5 flex-shrink-0 animate-pulse" />
                     <p className="font-sans text-xs text-coral-900 leading-relaxed">
-                      Namaste! You are direct-booking with <strong>Hotel Orchid Sauraha</strong>. No prepayment is required today. Pay during check-in.
+                      Namaste! You are direct-booking with <strong>Hotel Mirage Sauraha</strong>. No prepayment is required today. Pay during check-in.
                     </p>
                   </div>
 

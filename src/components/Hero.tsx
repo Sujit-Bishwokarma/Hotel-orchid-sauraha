@@ -35,7 +35,7 @@ export default function Hero({ onOpenBooking }: HeroProps) {
       <div className="absolute inset-0">
         <img
           src={HOTEL_INFO.images.hero}
-          alt="Hotel Orchid Sauraha Sunset Exterior View"
+          alt="Hotel Mirage Sauraha Sunset Exterior View"
           referrerPolicy="no-referrer"
           className="w-full h-full object-cover"
         />
@@ -62,7 +62,7 @@ export default function Hero({ onOpenBooking }: HeroProps) {
 
           {/* Main Display Headline */}
           <h1 id="hero-title" className="font-serif text-4xl sm:text-6xl md:text-7xl font-bold text-sand-50 tracking-tight leading-none drop-shadow-md">
-            Hotel Orchid <br />
+            Hotel Mirage <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-sand-100 via-coral-400 to-sand-200 font-serif italic font-normal block mt-2 text-3xl sm:text-5xl md:text-6xl">
               Sauraha, Chitwan
             </span>

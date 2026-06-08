@@ -99,7 +99,7 @@ export default function Footer() {
         {/* Bottom copyright row */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="text-center sm:text-left text-xs text-sand-400 font-mono">
-            <span>&copy; {new Date().getFullYear()} Hotel Orchid Sauraha, Chitwan. All rights strictly reserved.</span>
+            <span>&copy; {new Date().getFullYear()} {HOTEL_INFO.name}, Chitwan. All rights strictly reserved.</span>
           </div>
 
           <div className="flex items-center space-x-4">

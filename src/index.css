@@ -50,21 +50,35 @@
 }
 
 /* Base custom interactive layers and smooth scroll rules */
+html,
+body {
+  overflow-x: hidden;
+  max-width: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
 }
 
-/* Elegant scrollbar styling */
+/* Elegant scrollbar styling with a transparent track to remove the side white line path */
 ::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--color-sand-50);
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-ocean-900);
-  border-radius: 4px;
+  background: rgba(14, 59, 90, 0.3); /* semi-transparent ocean-900 */
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-coral-500);

@@ -130,7 +130,7 @@ export default function Contact() {
             {/* Google Map Box */}
             <div className="border border-sand-300 rounded-sm overflow-hidden h-64 shadow-md bg-sand-200">
               <iframe
-                title="Hotel Orchid Location Map"
+                title="Hotel Mirage Location Map"
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14144.597793135084!2d84.484251101934!3d27.57342674381716!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3994ef7fcbba9435%3A0xe6bfbfa529e3fc14!2sSauraha%2C%20Ratnanagar%2044200%2C%20Nepal!5e0!3m2!1sen!2snp!4v1780650000000!5m2!1sen!2snp"
                 width="100%"
                 height="100%"
@@ -260,7 +260,7 @@ export default function Contact() {
                     {/* Quick copy paper receipt mimic style */}
                     <div className="bg-sand-100 border border-sand-300 rounded-sm p-4 w-full text-left font-mono text-[11px] text-sand-700 space-y-1">
                       <div>DATE: {new Date().toLocaleDateString()}</div>
-                      <div>RECEIVER: Hotel Orchid Concierge Team</div>
+                      <div>RECEIVER: Hotel Mirage Concierge Team</div>
                       <div className="border-t border-sand-300/60 my-2 pt-2">MESSAGE TICKET CONTENT:</div>
                       <div className="italic">&ldquo;{formData.message}&rdquo;</div>
                     </div>

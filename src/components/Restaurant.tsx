@@ -23,11 +23,11 @@ export default function Restaurant({ onOpenBooking }: RestaurantProps) {
         {/* Visual 2-Column with left-to-right entry animation */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           
-          {/* LEFT COLUMN: Animated Culinary Display (Slides left-to-right gracefully) */}
+          {/* LEFT COLUMN: Animated Culinary Display (Slides up gracefully) */}
           <motion.div
             id="restaurant-animated-images"
-            initial={{ opacity: 0, x: -100 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-50px' }}
             transition={{ duration: 0.8, ease: 'easeOut' }}
             className="lg:col-span-7 relative group"
@@ -35,7 +35,7 @@ export default function Restaurant({ onOpenBooking }: RestaurantProps) {
             <div className="relative aspect-video rounded-sm overflow-hidden shadow-2xl border border-sand-300">
               <img
                 src={HOTEL_INFO.images.restaurant}
-                alt="Flavors of Hotel Orchid Sauraha"
+                alt="Flavors of Hotel Mirage Sauraha"
                 referrerPolicy="no-referrer"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
               />
@@ -46,7 +46,7 @@ export default function Restaurant({ onOpenBooking }: RestaurantProps) {
             <div className="absolute -bottom-6 -right-6 bg-ocean-800 text-sand-50 p-6 rounded-sm shadow-xl hidden md:block max-w-[240px] border border-ocean-700">
               <div className="flex items-center space-x-3 mb-2">
                 <Utensils className="w-5 h-5 text-coral-400" />
-                <span className="font-serif text-sm font-bold tracking-wide">Orchid Grill & Lounge</span>
+                <span className="font-serif text-sm font-bold tracking-wide">Mirage Grill & Lounge</span>
               </div>
               <p className="font-sans text-[11px] text-sand-300 leading-relaxed">
                 Experience open garden twilight seating coupled with fresh organic farm-to-table culinary treasures.
@@ -57,15 +57,15 @@ export default function Restaurant({ onOpenBooking }: RestaurantProps) {
           {/* RIGHT COLUMN: Culinary Text Info (Slides in slightly after the images) */}
           <motion.div
             id="restaurant-animated-info"
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-50px' }}
-            transition={{ duration: 0.7, delay: 0.2 }}
+            transition={{ duration: 0.8, delay: 0.15 }}
             className="lg:col-span-5 space-y-6"
           >
             <div className="space-y-3">
               <span className="font-mono text-xs text-coral-500 uppercase tracking-[0.2em] font-semibold block">
-                The Orchid Culinary
+                The Mirage Culinary
               </span>
               <h2 className="font-serif text-3xl sm:text-4xl font-bold text-ocean-950 tracking-tight leading-tight">
                 Authentic Spices, <br />

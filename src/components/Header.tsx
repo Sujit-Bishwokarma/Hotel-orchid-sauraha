@@ -173,7 +173,7 @@ export default function Header({ onOpenBooking }: HeaderProps) {
               onClick={onOpenBooking}
               className="px-5 py-2.5 bg-coral-500 hover:bg-coral-600 active:scale-95 text-sand-50 text-xs sm:text-sm font-sans font-semibold tracking-wider uppercase rounded-sm border border-coral-400 transition-all shadow-[0_4px_14px_rgba(235,96,68,0.4)] hover:shadow-[0_6px_20px_rgba(235,96,68,0.6)] focus:outline-none cursor-pointer"
             >
-              Book Orchid Now
+              Book Mirage Now
             </button>
           </div>
 
