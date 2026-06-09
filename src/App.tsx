@@ -25,6 +25,12 @@ export default function App() {
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [showAdminConsole, setShowAdminConsole] = useState(false);
 
+  const handleSignOut = () => {
+    localStorage.removeItem('hotel_orchid_admin_authorized');
+    setShowAdminConsole(false);
+    setIsAdminOpen(false);
+  };
+
   // Check URL parameters or local storage to show/hide the admin buttons
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -108,7 +114,11 @@ export default function App() {
         <Footer onOpenAdmin={showAdminConsole ? () => setIsAdminOpen(true) : undefined} />
 
         {/* Dynamic cPanel Administrative Console */}
-        <CPanelAdmin isOpen={isAdminOpen} onClose={() => setIsAdminOpen(false)} />
+        <CPanelAdmin 
+          isOpen={isAdminOpen} 
+          onClose={() => setIsAdminOpen(false)} 
+          onSignOut={handleSignOut}
+        />
 
       </div>
     </DataProvider>

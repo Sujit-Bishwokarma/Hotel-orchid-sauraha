@@ -3,7 +3,7 @@ import {
   X, LayoutGrid, Bed, Images, MessageSquare, 
   Settings, RotateCcw, Plus, Trash2, Edit2, 
   Upload, Check, ShieldAlert, Download, Save, 
-  HelpCircle, Star, Sparkles, MapPin, DollarSign
+  HelpCircle, Star, Sparkles, MapPin, DollarSign, Lock
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useData } from '../context/DataContext';
@@ -12,11 +12,12 @@ import { Room } from '../types';
 interface CPanelAdminProps {
   isOpen: boolean;
   onClose: () => void;
+  onSignOut?: () => void;
 }
 
 type TabType = 'dashboard' | 'rooms' | 'gallery' | 'reviews' | 'cpanel-info';
 
-export default function CPanelAdmin({ isOpen, onClose }: CPanelAdminProps) {
+export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminProps) {
   const {
     rooms,
     gallery,
@@ -255,8 +256,22 @@ export default function CPanelAdmin({ isOpen, onClose }: CPanelAdminProps) {
           </div>
 
           <div className="flex items-center space-x-3">
+            {onSignOut && (
+              <button
+                onClick={() => {
+                  if (window.confirm("Are you sure you want to sign out and lock this administrator console? This will hide the cPanel buttons from standard viewer layouts.")) {
+                    onSignOut();
+                  }
+                }}
+                className="px-3 py-1.5 bg-red-950/40 hover:bg-red-900/60 text-red-100 hover:text-white text-xs font-mono rounded-sm flex items-center gap-1.5 transition-colors border border-red-900/50"
+                title="Sign out of Admin Session and hide cPanel console shortcut buttons"
+              >
+                <Lock size={13} className="text-red-400" />
+                <span>Lock Console</span>
+              </button>
+            )}
             <button
-              onClick={resetToDefault}
+               onClick={resetToDefault}
               className="px-3 py-1.5 bg-stone-800 hover:bg-stone-700 text-stone-300 text-xs font-mono rounded-sm flex items-center gap-1.5 transition-colors border border-stone-700"
               title="Reset all content to original default package"
             >
