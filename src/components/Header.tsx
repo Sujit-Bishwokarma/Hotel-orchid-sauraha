@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 import { Menu, X, CalendarCheck, Phone, Settings } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { HOTEL_INFO } from '../data';
-import logoImg from '../assets/images/hotel_orchid_logo.jpg';
+const logoImg = '/assets/images/hotel_orchid_logo.jpg';
 
 interface HeaderProps {
   onOpenBooking: () => void;
