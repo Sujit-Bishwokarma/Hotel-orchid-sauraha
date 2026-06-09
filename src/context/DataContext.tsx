@@ -33,35 +33,70 @@ interface DataContextType {
   resetToDefault: () => void;
 }
 
+const cleanPath = (pathString: string, defaultValue: string): string => {
+  if (!pathString) return defaultValue;
+  if (pathString.startsWith('data:image')) return pathString; // Keep uploaded Base64 image
+  if (pathString.includes('/src/') || pathString.includes('../')) {
+    const match = pathString.match(/(?:src|assets)\/images\/(.+)$/);
+    if (match) {
+      return `/assets/images/${match[1]}`;
+    }
+    return defaultValue;
+  }
+  return pathString;
+};
+
+const cleanObjectPaths = <T extends Record<string, any>>(obj: T): T => {
+  const result = { ...obj };
+  for (const key in result) {
+    if (typeof result[key] === 'string') {
+      const val = result[key] as string;
+      if (val.includes('/src/') || val.includes('../')) {
+        result[key] = cleanPath(val, val) as any;
+      }
+    }
+  }
+  return result;
+};
+
 const DataContext = createContext<DataContextType | undefined>(undefined);
 
 export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [rooms, setRooms] = useState<Room[]>(() => {
     const saved = localStorage.getItem('hotel_orchid_rooms');
-    return saved ? JSON.parse(saved) : ROOMS_DATA;
+    const parsed = saved ? JSON.parse(saved) : ROOMS_DATA;
+    return parsed.map((item: any) => cleanObjectPaths(item));
   });
 
   const [gallery, setGallery] = useState<GallerySlide[]>(() => {
     const saved = localStorage.getItem('hotel_orchid_gallery');
-    return saved ? JSON.parse(saved) : GALLERY_SLIDES;
+    const parsed = saved ? JSON.parse(saved) : GALLERY_SLIDES;
+    return parsed.map((item: any) => cleanObjectPaths(item));
   });
 
   const [testimonials, setTestimonials] = useState<Testimonial[]>(() => {
     const saved = localStorage.getItem('hotel_orchid_testimonials');
-    return saved ? JSON.parse(saved) : TESTIMONIALS;
+    const parsed = saved ? JSON.parse(saved) : TESTIMONIALS;
+    return parsed.map((item: any) => cleanObjectPaths(item));
   });
 
   const [heroImage, setHeroImage] = useState<string>(() => {
-    return localStorage.getItem('hotel_orchid_hero_image') || HOTEL_INFO.images.hero;
+    const saved = localStorage.getItem('hotel_orchid_hero_image');
+    return cleanPath(saved || '', HOTEL_INFO.images.hero);
   });
 
   const [logoImage, setLogoImage] = useState<string>(() => {
-    return localStorage.getItem('hotel_orchid_logo_image') || HOTEL_INFO.images.logo;
+    const saved = localStorage.getItem('hotel_orchid_logo_image');
+    if (saved && saved.includes('brand_logo')) {
+      return HOTEL_INFO.images.logo;
+    }
+    return cleanPath(saved || '', HOTEL_INFO.images.logo);
   });
 
   const [activities, setActivities] = useState<Activity[]>(() => {
     const saved = localStorage.getItem('hotel_orchid_activities');
-    return saved ? JSON.parse(saved) : ACTIVITIES_DATA;
+    const parsed = saved ? JSON.parse(saved) : ACTIVITIES_DATA;
+    return parsed.map((item: any) => cleanObjectPaths(item));
   });
 
   // Sync with LocalStorage

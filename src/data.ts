@@ -10,7 +10,7 @@ import heroImg from './assets/images/hero_orchid_1780650357754.png';
 import roomDeluxeImg from './assets/images/room_deluxe_1780650380249.png';
 import roomSuiteImg from './assets/images/room_suite_1780650397324.png';
 import restaurantImg from './assets/images/restaurant_orchid_1780650414208.png';
-import logoImg from './assets/images/hotel_orchid_brand_logo_1780994580769.png';
+import logoImg from './assets/images/hotel_orchid_logo.jpg';
 
 export const HOTEL_INFO = {
   name: "Hotel Orchid",
