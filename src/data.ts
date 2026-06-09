@@ -13,7 +13,7 @@ import restaurantImg from './assets/images/restaurant_orchid_1780650414208.png';
 
 export const HOTEL_INFO = {
   name: "Hotel Mirage Sauraha",
-  subName: "Sauraha, Chitwan",
+  subName: "Chitwan",
   tagline: "Where Every Stay Becomes a Memory",
   location: "Ratnanagar 44200, Sauraha, Chitwan, Nepal",
   address: "Ratnanagar 44200, Sauraha, Chitwan, Nepal",
