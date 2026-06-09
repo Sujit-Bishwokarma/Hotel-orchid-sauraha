@@ -4,15 +4,16 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Menu, X, CalendarCheck, Phone } from 'lucide-react';
+import { Menu, X, CalendarCheck, Phone, Settings } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { HOTEL_INFO } from '../data';
 
 interface HeaderProps {
   onOpenBooking: () => void;
+  onOpenAdmin?: () => void;
 }
 
-export default function Header({ onOpenBooking }: HeaderProps) {
+export default function Header({ onOpenBooking, onOpenAdmin }: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
@@ -168,6 +169,17 @@ export default function Header({ onOpenBooking }: HeaderProps) {
               <Phone size={14} className="text-coral-500" />
               <span>{HOTEL_INFO.phone}</span>
             </a>
+            {onOpenAdmin && (
+              <button
+                id="header-cpanel-btn"
+                onClick={onOpenAdmin}
+                className="px-3.5 py-2.5 bg-stone-900 hover:bg-coral-500 hover:text-sand-50 text-sand-200 text-xs font-mono rounded-sm border border-stone-800 hover:border-coral-400 transition-all cursor-pointer focus:outline-none flex items-center gap-1.5"
+                title="Open cPanel Admin Portal"
+              >
+                <Settings size={13} className="text-coral-500 group-hover:text-sand-50" />
+                <span>cPanel Admin</span>
+              </button>
+            )}
             <button
               id="header-book-cta"
               onClick={onOpenBooking}
@@ -179,6 +191,17 @@ export default function Header({ onOpenBooking }: HeaderProps) {
 
           {/* Mobile menu toggle button */}
           <div className="flex items-center lg:hidden space-x-3">
+            {onOpenAdmin && (
+              <button
+                id="header-mobile-cpanel"
+                onClick={onOpenAdmin}
+                className="p-2 bg-stone-900 text-sand-200 rounded-sm focus:outline-none"
+                aria-label="cPanel Admin"
+                title="cPanel Admin Portal"
+              >
+                <Settings size={18} className="text-coral-500" />
+              </button>
+            )}
             <button
               id="header-mobile-book"
               onClick={onOpenBooking}

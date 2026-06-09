@@ -1,0 +1,939 @@
+import React, { useState, useRef } from 'react';
+import { 
+  X, LayoutGrid, Bed, Images, MessageSquare, 
+  Settings, RotateCcw, Plus, Trash2, Edit2, 
+  Upload, Check, ShieldAlert, Download, Save, 
+  HelpCircle, Star, Sparkles, MapPin, DollarSign
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+import { useData } from '../context/DataContext';
+import { Room } from '../types';
+
+interface CPanelAdminProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+type TabType = 'dashboard' | 'rooms' | 'gallery' | 'reviews' | 'cpanel-info';
+
+export default function CPanelAdmin({ isOpen, onClose }: CPanelAdminProps) {
+  const {
+    rooms,
+    gallery,
+    testimonials,
+    updateRoom,
+    addGalleryPhoto,
+    updateGalleryPhoto,
+    deleteGalleryPhoto,
+    addReview,
+    updateReview,
+    deleteReview,
+    resetToDefault
+  } = useData();
+
+  const [activeTab, setActiveTab] = useState<TabType>('dashboard');
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  // Edit Room State
+  const [editingRoomId, setEditingRoomId] = useState<string | null>(null);
+  const [roomForm, setRoomForm] = useState<Partial<Room>>({});
+
+  // Gallery Form State
+  const [editingGalleryId, setEditingGalleryId] = useState<string | null>(null);
+  const [isAddingGallery, setIsAddingGallery] = useState(false);
+  const [galleryForm, setGalleryForm] = useState({
+    image: '',
+    title: '',
+    caption: ''
+  });
+
+  // Review Form State
+  const [editingReviewId, setEditingReviewId] = useState<string | null>(null);
+  const [isAddingReview, setIsAddingReview] = useState(false);
+  const [reviewForm, setReviewForm] = useState({
+    author: '',
+    location: '',
+    rating: 5,
+    content: ''
+  });
+
+  // File Upload Handlers (converts image files to base64 strings so they persist locally)
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const showNotification = (msg: string) => {
+    setSuccessMessage(msg);
+    setTimeout(() => setSuccessMessage(null), 3000);
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, callback: (url: string) => void) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        alert("Image is too large. Please upload an image under 2MB to ensure local storage performance.");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        callback(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // ROOM ACTIONS
+  const handleEditRoomClick = (room: Room) => {
+    setEditingRoomId(room.id);
+    setRoomForm(room);
+  };
+
+  const handleSaveRoom = (roomId: string) => {
+    if (!roomForm.name || !roomForm.basePriceNPR) {
+      alert("Please fill in Room Name and Base Price.");
+      return;
+    }
+    updateRoom(roomId, roomForm);
+    setEditingRoomId(null);
+    showNotification("Room prices and specifications updated successfully!");
+  };
+
+  // GALLERY ACTIONS
+  const handleSaveGallery = () => {
+    if (!galleryForm.image || !galleryForm.title) {
+      alert("Please provide at least an image reference and title.");
+      return;
+    }
+
+    if (editingGalleryId) {
+      updateGalleryPhoto(editingGalleryId, galleryForm);
+      setEditingGalleryId(null);
+      showNotification("Gallery slide updated successfully!");
+    } else {
+      addGalleryPhoto(galleryForm);
+      setIsAddingGallery(false);
+      showNotification("New photo added to your dynamic Gallery!");
+    }
+
+    // Reset Form
+    setGalleryForm({ image: '', title: '', caption: '' });
+  };
+
+  const handleEditGalleryClick = (photo: any) => {
+    setEditingGalleryId(photo.id);
+    setGalleryForm({
+      image: photo.image,
+      title: photo.title,
+      caption: photo.caption
+    });
+    setIsAddingGallery(false);
+  };
+
+  const handleDeleteGalleryClick = (id: string) => {
+    if (window.confirm("Are you sure you want to delete this gallery photo?")) {
+      deleteGalleryPhoto(id);
+      showNotification("Gallery photo removed.");
+    }
+  };
+
+  // REVIEWS ACTIONS
+  const handleSaveReview = () => {
+    if (!reviewForm.author || !reviewForm.content) {
+      alert("Please provide the Guest Name and Review Comment.");
+      return;
+    }
+
+    if (editingReviewId) {
+      updateReview(editingReviewId, reviewForm);
+      setEditingReviewId(null);
+      showNotification("Review updated successfully!");
+    } else {
+      addReview(reviewForm);
+      setIsAddingReview(false);
+      showNotification("Thank you! New guest testimonial added successfully.");
+    }
+
+    // Reset Form
+    setReviewForm({ author: '', location: '', rating: 5, content: '' });
+  };
+
+  const handleEditReviewClick = (rev: any) => {
+    setEditingReviewId(rev.id);
+    setReviewForm({
+      author: rev.author,
+      location: rev.location,
+      rating: rev.rating,
+      content: rev.content
+    });
+    setIsAddingReview(false);
+  };
+
+  const handleDeleteReviewClick = (id: string) => {
+    if (window.confirm("Are you sure you want to delete this customer review?")) {
+      deleteReview(id);
+      showNotification("Review deleted successfully.");
+    }
+  };
+
+  // CPANEL PORTABILITY EXPORT / IMPORT
+  const handleExportDataForcPanel = () => {
+    const backup = {
+      rooms,
+      gallery,
+      testimonials,
+      exportedAt: new Date().toISOString(),
+      host: "bisup_hosting_cpanel"
+    };
+
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backup, null, 2));
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute("href", dataStr);
+    downloadAnchor.setAttribute("download", "hotel_orchid_dynamic_config.json");
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+    showNotification("Configuration file exported! Store this inside your dynamic document folders.");
+  };
+
+  const handleImportDataForcPanel = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const parsed = JSON.parse(event.target?.result as string);
+          if (parsed.rooms && parsed.gallery && parsed.testimonials) {
+            localStorage.setItem('hotel_orchid_rooms', JSON.stringify(parsed.rooms));
+            localStorage.setItem('hotel_orchid_gallery', JSON.stringify(parsed.gallery));
+            localStorage.setItem('hotel_orchid_testimonials', JSON.stringify(parsed.testimonials));
+            window.location.reload(); // Force refresh to re-init dynamic states
+          } else {
+            alert("Invalid configuration structure. Missing rooms, gallery, or testimonials data.");
+          }
+        } catch (e) {
+          alert("Could not parse JSON. Check file encoding.");
+        }
+      };
+      reader.readAsText(file);
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-0 sm:p-4 bg-ocean-950/80 backdrop-blur-md overflow-hidden">
+      
+      {/* Container holding the admin controls */}
+      <motion.div 
+        id="cpanel-container"
+        initial={{ opacity: 0, scale: 0.95, y: 15 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 15 }}
+        className="w-full h-full sm:h-[85vh] sm:max-w-6xl bg-stone-900 text-stone-100 flex flex-col rounded-none sm:rounded-md shadow-2xl border border-stone-800 overflow-hidden"
+      >
+        
+        {/* Header - cPanel Branding */}
+        <div className="bg-stone-950 border-b border-stone-800 px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="h-10 w-10 rounded-sm bg-coral-500 flex items-center justify-center text-sand-50 shadow-md">
+              <Settings size={22} className="animate-spin-slow" />
+            </div>
+            <div>
+              <div className="flex items-center space-x-2">
+                <h1 className="font-serif text-lg font-bold tracking-wider text-sand-50 flex items-center gap-1.5">
+                  ORCHID <span className="bg-coral-500/10 text-coral-400 border border-coral-500/20 px-2 py-0.5 text-[10px] uppercase font-mono font-bold tracking-widest rounded-sm">cPanel v4.2</span>
+                </h1>
+              </div>
+              <p className="text-[10px] sm:text-xs font-mono text-stone-400">
+                Dynamic Admin Controls • Bisup Hosting Cloud Invariant
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-3">
+            <button
+              onClick={resetToDefault}
+              className="px-3 py-1.5 bg-stone-800 hover:bg-stone-700 text-stone-300 text-xs font-mono rounded-sm flex items-center gap-1.5 transition-colors border border-stone-700"
+              title="Reset all content to original default package"
+            >
+              <RotateCcw size={13} />
+              <span className="hidden sm:inline">Reset Defaults</span>
+            </button>
+            <button
+              onClick={onClose}
+              className="p-2 text-stone-400 hover:text-stone-100 hover:bg-stone-850 transition-colors focus:outline-none rounded-full"
+              aria-label="Close Portal"
+            >
+              <X size={20} />
+            </button>
+          </div>
+        </div>
+
+        {/* Dynamic Alert Banner */}
+        <AnimatePresence>
+          {successMessage && (
+            <motion.div 
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="bg-emerald-800 text-emerald-100 px-6 py-2.5 text-xs font-mono font-semibold flex items-center space-x-2 shadow-inner"
+            >
+              <Check size={14} />
+              <span>{successMessage}</span>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Core Layout Split */}
+        <div className="flex-grow flex flex-col md:flex-row overflow-hidden">
+          
+          {/* Left Navigation Rails */}
+          <div className="w-full md:w-64 bg-stone-950 border-r border-stone-850 flex flex-row md:flex-col overflow-x-auto md:overflow-x-visible">
+            
+            <button
+              onClick={() => { setActiveTab('dashboard'); }}
+              className={`flex-shrink-0 flex items-center space-x-3 px-6 py-4 text-xs tracking-wider uppercase font-mono border-b md:border-b-0 md:border-r-4 transition-all w-auto md:w-full text-left font-bold ${
+                activeTab === 'dashboard'
+                  ? 'bg-stone-900 border-coral-500 text-coral-400'
+                  : 'border-transparent text-stone-400 hover:text-stone-100 hover:bg-stone-900/40'
+              }`}
+            >
+              <LayoutGrid size={16} />
+              <span>Overview</span>
+            </button>
+
+            <button
+              onClick={() => { setActiveTab('rooms'); }}
+              className={`flex-shrink-0 flex items-center space-x-3 px-6 py-4 text-xs tracking-wider uppercase font-mono border-b md:border-b-0 md:border-r-4 transition-all w-auto md:w-full text-left font-bold ${
+                activeTab === 'rooms'
+                  ? 'bg-stone-900 border-coral-500 text-coral-400'
+                  : 'border-transparent text-stone-400 hover:text-stone-100 hover:bg-stone-900/40'
+              }`}
+            >
+              <Bed size={16} />
+              <span>Room Control</span>
+            </button>
+
+            <button
+              onClick={() => { setActiveTab('gallery'); }}
+              className={`flex-shrink-0 flex items-center space-x-3 px-6 py-4 text-xs tracking-wider uppercase font-mono border-b md:border-b-0 md:border-r-4 transition-all w-auto md:w-full text-left font-bold ${
+                activeTab === 'gallery'
+                  ? 'bg-stone-900 border-coral-500 text-coral-400'
+                  : 'border-transparent text-stone-400 hover:text-stone-100 hover:bg-stone-900/40'
+              }`}
+            >
+              <Images size={16} />
+              <span>Gallery Control</span>
+            </button>
+
+            <button
+              onClick={() => { setActiveTab('reviews'); }}
+              className={`flex-shrink-0 flex items-center space-x-3 px-6 py-4 text-xs tracking-wider uppercase font-mono border-b md:border-b-0 md:border-r-4 transition-all w-auto md:w-full text-left font-bold ${
+                activeTab === 'reviews'
+                  ? 'bg-stone-900 border-coral-500 text-coral-400'
+                  : 'border-transparent text-stone-400 hover:text-stone-100 hover:bg-stone-900/40'
+              }`}
+            >
+              <MessageSquare size={16} />
+              <span>Guest Reviews</span>
+            </button>
+
+            <button
+              onClick={() => { setActiveTab('cpanel-info'); }}
+              className={`flex-shrink-0 flex items-center space-x-3 px-6 py-4 text-xs tracking-wider uppercase font-mono border-b md:border-b-0 md:border-r-4 transition-all w-auto md:w-full text-left font-bold ${
+                activeTab === 'cpanel-info'
+                  ? 'bg-stone-900 border-coral-500 text-coral-400'
+                  : 'border-transparent text-stone-400 hover:text-stone-100 hover:bg-stone-900/40'
+              }`}
+            >
+              <HelpCircle size={16} />
+              <span>Hosting Sync</span>
+            </button>
+
+          </div>
+
+          {/* Right Contents Window */}
+          <div className="flex-grow p-6 overflow-y-auto bg-stone-900/95 max-w-full">
+            
+            {/* OVERVIEW TAB */}
+            {activeTab === 'dashboard' && (
+              <div className="space-y-8">
+                <div className="space-y-2 text-left">
+                  <h2 className="font-serif text-xl sm:text-2xl font-bold text-sand-50">Website Dynamic Status</h2>
+                  <p className="text-xs sm:text-sm text-stone-400">
+                    Your changes automatically push live and persist immediately. No build steps required on bisup hosting cPanel.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                  <div className="bg-stone-950 p-6 rounded-sm border border-stone-850 flex items-center justify-between">
+                    <div className="space-y-1">
+                      <span className="block text-[10px] font-mono uppercase text-stone-400">Active Habitations</span>
+                      <span className="text-3xl font-serif font-bold text-sand-50">{rooms.length} Rooms</span>
+                    </div>
+                    <Bed size={32} className="text-coral-500 opacity-60" />
+                  </div>
+
+                  <div className="bg-stone-950 p-6 rounded-sm border border-stone-850 flex items-center justify-between">
+                    <div className="space-y-1">
+                      <span className="block text-[10px] font-mono uppercase text-stone-400">Gallery Items</span>
+                      <span className="text-3xl font-serif font-bold text-sand-50">{gallery.length} Photos</span>
+                    </div>
+                    <Images size={32} className="text-coral-500 opacity-60" />
+                  </div>
+
+                  <div className="bg-stone-950 p-6 rounded-sm border border-stone-850 flex items-center justify-between">
+                    <div className="space-y-1">
+                      <span className="block text-[10px] font-mono uppercase text-stone-400">Active Testimonials</span>
+                      <span className="text-3xl font-serif font-bold text-sand-50">{testimonials.length} Reviews</span>
+                    </div>
+                    <MessageSquare size={32} className="text-coral-500 opacity-60" />
+                  </div>
+                </div>
+
+                {/* cPanel Directives Instructions */}
+                <div className="bg-stone-950/60 p-6 rounded-sm border border-stone-850 space-y-4 text-left">
+                  <div className="flex items-center space-x-2 text-amber-500 font-bold text-xs uppercase font-mono">
+                    <ShieldAlert size={16} />
+                    <span>Dynamic Live Synchronizer Invariant</span>
+                  </div>
+                  <div className="text-xs sm:text-sm text-stone-300 space-y-2 leading-relaxed">
+                    <p>
+                      This custom cPanel dashboard manages your dynamic client-side content. It integrates with <strong>localStorage data caches</strong> to maintain deep data persistence without loading slow database APIs.
+                    </p>
+                    <p>
+                      When you host this website on your <strong>Bisup Hosting cPanel account</strong>, keep changes synchronized across devices by downloading the data envelope under the <strong>Hosting Sync</strong> tab. You can export a static backup JSON file and re-load it on other machines in seconds.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ROOMS TAB */}
+            {activeTab === 'rooms' && (
+              <div className="space-y-6">
+                <div className="flex items-center justify-between text-left">
+                  <div className="space-y-1">
+                    <h2 className="font-serif text-xl sm:text-2xl font-bold text-sand-50">Room Prices and Photos</h2>
+                    <p className="text-xs sm:text-sm text-stone-400">Update the name, description, rate per night, size, and photo for each sanctuary.</p>
+                  </div>
+                </div>
+
+                <div className="space-y-6">
+                  {rooms.map(room => {
+                    const isEditing = editingRoomId === room.id;
+
+                    return (
+                      <div key={room.id} className="bg-stone-950 border border-stone-850 p-6 rounded-sm space-y-6 text-left">
+                        {isEditing ? (
+                          <div className="space-y-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                              <div>
+                                <label className="block text-stone-400 text-xs font-mono uppercase mb-1">Room Name</label>
+                                <input
+                                  type="text"
+                                  value={roomForm.name || ''}
+                                  onChange={e => setRoomForm({ ...roomForm, name: e.target.value })}
+                                  className="w-full bg-stone-900 border border-stone-750 p-2 text-sm text-stone-100 rounded-sm focus:outline-none focus:border-coral-500"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-stone-400 text-xs font-mono uppercase mb-1">Price (NPR / Night)</label>
+                                <input
+                                  type="number"
+                                  value={roomForm.basePriceNPR || 0}
+                                  onChange={e => setRoomForm({ ...roomForm, basePriceNPR: parseInt(e.target.value) || 0 })}
+                                  className="w-full bg-stone-900 border border-stone-750 p-2 text-sm text-stone-100 rounded-sm focus:outline-none focus:border-coral-500"
+                                />
+                              </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                              <div>
+                                <label className="block text-stone-400 text-xs font-mono uppercase mb-1">Bed Installation Typology</label>
+                                <input
+                                  type="text"
+                                  value={roomForm.bedType || ''}
+                                  onChange={e => setRoomForm({ ...roomForm, bedType: e.target.value })}
+                                  className="w-full bg-stone-900 border border-stone-750 p-2 text-sm text-stone-100 rounded-sm focus:outline-none focus:border-coral-500"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-stone-400 text-xs font-mono uppercase mb-1">Room Dimensions (e.g., "26 m²")</label>
+                                <input
+                                  type="text"
+                                  value={roomForm.size || ''}
+                                  onChange={e => setRoomForm({ ...roomForm, size: e.target.value })}
+                                  className="w-full bg-stone-900 border border-stone-750 p-2 text-sm text-stone-100 rounded-sm focus:outline-none focus:border-coral-500"
+                                />
+                              </div>
+                            </div>
+
+                            <div>
+                              <label className="block text-stone-400 text-xs font-mono uppercase mb-1">Description Narrative</label>
+                              <textarea
+                                value={roomForm.description || ''}
+                                onChange={e => setRoomForm({ ...roomForm, description: e.target.value })}
+                                rows={3}
+                                className="w-full bg-stone-900 border border-stone-750 p-2.5 text-sm text-stone-100 rounded-sm focus:outline-none focus:border-coral-500"
+                              />
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
+                              <div>
+                                <label className="block text-stone-400 text-xs font-mono uppercase mb-1">Room Photo Source (URL or Upload below)</label>
+                                <input
+                                  type="text"
+                                  value={roomForm.image || ''}
+                                  onChange={e => setRoomForm({ ...roomForm, image: e.target.value })}
+                                  className="w-full bg-stone-900 border border-stone-750 p-2 text-xs text-stone-100 rounded-sm font-mono focus:outline-none focus:border-coral-500"
+                                />
+                              </div>
+                              <div className="flex space-x-2">
+                                <label className="flex-grow flex items-center justify-center space-x-2 bg-stone-800 hover:bg-stone-750 cursor-pointer pointer-events-auto border border-stone-700 py-2.5 px-3 rounded-sm transition-colors text-xs font-mono uppercase font-bold text-stone-200">
+                                  <Upload size={14} />
+                                  <span>Upload Photo</span>
+                                  <input
+                                    type="file"
+                                    accept="image/*"
+                                    className="hidden"
+                                    onChange={e => handleFileUpload(e, (url) => setRoomForm({ ...roomForm, image: url }))}
+                                  />
+                                </label>
+                              </div>
+                            </div>
+
+                            <div className="flex space-x-3 justify-end pt-4 border-t border-stone-850">
+                              <button
+                                onClick={() => setEditingRoomId(null)}
+                                className="px-4 py-2 bg-stone-850 hover:bg-stone-800 border border-stone-700 text-stone-300 text-xs font-mono uppercase tracking-wider rounded-sm"
+                              >
+                                Cancel
+                              </button>
+                              <button
+                                onClick={() => handleSaveRoom(room.id)}
+                                className="px-5 py-2 bg-coral-500 hover:bg-coral-600 text-sand-50 text-xs font-mono font-bold uppercase tracking-wider rounded-sm flex items-center gap-1.5"
+                              >
+                                <Save size={14} />
+                                <span>Save Changes</span>
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="flex flex-col sm:flex-row gap-6">
+                            <div className="w-full sm:w-48 h-32 bg-stone-900 border border-stone-800 rounded-sm overflow-hidden flex-shrink-0">
+                              <img
+                                src={room.image}
+                                alt={room.name}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                            <div className="flex-grow flex flex-col justify-between space-y-4">
+                              <div className="space-y-1.5">
+                                <div className="flex items-start justify-between">
+                                  <h3 className="font-serif text-lg font-bold text-sand-50">{room.name}</h3>
+                                  <span className="text-xl font-mono text-coral-400 font-bold">
+                                    NPR {room.basePriceNPR.toLocaleString()}
+                                  </span>
+                                </div>
+                                <div className="flex space-x-4 text-[10px] font-mono text-stone-400">
+                                  <span>{room.size} Space</span>
+                                  <span>•</span>
+                                  <span>{room.bedType}</span>
+                                </div>
+                                <p className="text-xs text-stone-300 line-clamp-2 leading-relaxed">
+                                  {room.description}
+                                </p>
+                              </div>
+
+                              <div className="flex justify-end pt-2">
+                                <button
+                                  onClick={() => handleEditRoomClick(room)}
+                                  className="px-4 py-2 bg-stone-900 hover:bg-stone-800 border border-stone-800 hover:border-stone-700 text-stone-200 text-xs font-mono uppercase tracking-wider rounded-sm flex items-center gap-1.5"
+                                >
+                                  <Edit2 size={13} className="text-coral-500" />
+                                  <span>Edit Room</span>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* GALLERY TAB */}
+            {activeTab === 'gallery' && (
+              <div className="space-y-6 text-left">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1">
+                    <h2 className="font-serif text-xl sm:text-2xl font-bold text-sand-50">Gallery Photographs</h2>
+                    <p className="text-xs sm:text-sm text-stone-400">Add, edit, or remove photos displayed in the auto-crossfade swiper slider.</p>
+                  </div>
+
+                  {!isAddingGallery && !editingGalleryId && (
+                    <button
+                      onClick={() => {
+                        setIsAddingGallery(true);
+                        setGalleryForm({ image: '', title: '', caption: '' });
+                      }}
+                      className="px-4 py-2 bg-coral-500 hover:bg-coral-600 text-sand-50 text-xs font-mono font-bold uppercase tracking-wider rounded-sm flex items-center gap-1.5"
+                    >
+                      <Plus size={14} />
+                      <span>New Photo</span>
+                    </button>
+                  )}
+                </div>
+
+                {/* Adding or Editing Mode Form Block */}
+                {(isAddingGallery || editingGalleryId) && (
+                  <div className="bg-stone-950 border border-stone-850 p-6 rounded-sm space-y-4">
+                    <h3 className="font-serif text-md font-bold text-coral-400">
+                      {editingGalleryId ? 'Edit Gallery Slide' : 'Add New Photograph to Gallery'}
+                    </h3>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-stone-400 text-xs font-mono uppercase mb-1">Photograph Title</label>
+                        <input
+                          type="text"
+                          value={galleryForm.title}
+                          onChange={e => setGalleryForm({ ...galleryForm, title: e.target.value })}
+                          placeholder="e.g., Sunset over Sauraha Gardens"
+                          className="w-full bg-stone-900 border border-stone-750 p-2 text-sm text-stone-100 rounded-sm focus:outline-none focus:border-coral-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-stone-400 text-xs font-mono uppercase mb-1">Short Caption</label>
+                        <input
+                          type="text"
+                          value={galleryForm.caption}
+                          onChange={e => setGalleryForm({ ...galleryForm, caption: e.target.value })}
+                          placeholder="Brief architectural or natural context description"
+                          className="w-full bg-stone-900 border border-stone-750 p-2 text-sm text-stone-100 rounded-sm focus:outline-none focus:border-coral-500"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-end">
+                      <div className="sm:col-span-8">
+                        <label className="block text-stone-400 text-xs font-mono uppercase mb-1">Image Asset (URL link or raw upload on right)</label>
+                        <input
+                          type="text"
+                          value={galleryForm.image}
+                          onChange={e => setGalleryForm({ ...galleryForm, image: e.target.value })}
+                          placeholder="Paste an Unsplash image URL or click to upload"
+                          className="w-full bg-stone-900 border border-stone-750 p-2 text-xs text-stone-100 font-mono rounded-sm focus:outline-none focus:border-coral-500"
+                        />
+                      </div>
+                      <div className="sm:col-span-4">
+                        <label className="flex items-center justify-center space-x-2 bg-stone-800 hover:bg-stone-750 cursor-pointer border border-stone-700 py-2.5 px-3 rounded-sm transition-colors text-xs font-mono uppercase font-bold text-stone-200">
+                          <Upload size={14} />
+                          <span>Attach Photo</span>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={e => handleFileUpload(e, (url) => setGalleryForm({ ...galleryForm, image: url }))}
+                          />
+                        </label>
+                      </div>
+                    </div>
+
+                    {galleryForm.image && (
+                      <div className="mt-2 text-center">
+                        <span className="block text-stone-500 text-[10px] font-mono mb-1">Asset Preview:</span>
+                        <div className="h-40 max-w-sm mx-auto bg-stone-900 rounded-sm border border-stone-800 overflow-hidden">
+                          <img
+                            src={galleryForm.image}
+                            alt="Preview"
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="flex space-x-3 justify-end pt-4 border-t border-stone-850">
+                      <button
+                        onClick={() => {
+                          setIsAddingGallery(false);
+                          setEditingGalleryId(null);
+                        }}
+                        className="px-4 py-2 bg-stone-850 hover:bg-stone-850 text-stone-300 text-xs font-mono uppercase tracking-wider rounded-sm border border-stone-750"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={handleSaveGallery}
+                        className="px-5 py-2 bg-coral-500 hover:bg-coral-600 text-sand-50 text-xs font-mono font-bold uppercase tracking-wider rounded-sm flex items-center gap-1.5"
+                      >
+                        <Save size={14} />
+                        <span>Save Photo</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* List Grid View of Gallery Cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                  {gallery.map(photo => (
+                    <div key={photo.id} className="bg-stone-950 border border-stone-850 rounded-sm overflow-hidden flex flex-col justify-between">
+                      <div className="relative aspect-video bg-stone-900">
+                        <img
+                          src={photo.image}
+                          alt={photo.title}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="p-4 space-y-2 flex-grow flex flex-col justify-between">
+                        <div>
+                          <h4 className="font-serif text-sm font-bold text-sand-50 line-clamp-1">{photo.title}</h4>
+                          <p className="text-[11px] text-stone-400 line-clamp-2 leading-relaxed min-h-[32px] mt-1">
+                            {photo.caption || 'No description provided.'}
+                          </p>
+                        </div>
+                        <div className="flex justify-end gap-2 pt-4 border-t border-stone-850 mt-4">
+                          <button
+                            onClick={() => handleEditGalleryClick(photo)}
+                            className="p-1.5 bg-stone-900 border border-stone-800 hover:border-stone-700 text-stone-200 rounded-sm transition-colors hover:text-coral-400"
+                            title="Edit Title / Image"
+                          >
+                            <Edit2 size={13} />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteGalleryClick(photo.id)}
+                            className="p-1.5 bg-stone-900 border border-stone-800 hover:border-stone-700 text-stone-200 rounded-sm transition-colors hover:text-red-400"
+                            title="Remove Photo"
+                          >
+                            <Trash2 size={13} />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* REVIEWS TAB */}
+            {activeTab === 'reviews' && (
+              <div className="space-y-6 text-left">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1">
+                    <h2 className="font-serif text-xl sm:text-2xl font-bold text-sand-50">Customer Reviews</h2>
+                    <p className="text-xs sm:text-sm text-stone-400">Manage real guest feedback, edit ratings, or insert new recommendations manually.</p>
+                  </div>
+
+                  {!isAddingReview && !editingReviewId && (
+                    <button
+                      onClick={() => {
+                        setIsAddingReview(true);
+                        setReviewForm({ author: '', location: '', rating: 5, content: '' });
+                      }}
+                      className="px-4 py-2 bg-coral-500 hover:bg-coral-600 text-sand-50 text-xs font-mono font-bold uppercase tracking-wider rounded-sm flex items-center gap-1.5"
+                    >
+                      <Plus size={14} />
+                      <span>Add Review</span>
+                    </button>
+                  )}
+                </div>
+
+                {/* Input review block */}
+                {(isAddingReview || editingReviewId) && (
+                  <div className="bg-stone-950 border border-stone-850 p-6 rounded-sm space-y-4">
+                    <h3 className="font-serif text-md font-bold text-coral-400">
+                      {editingReviewId ? 'Edit Review Data' : 'Insert Guest Recommendation'}
+                    </h3>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-stone-400 text-xs font-mono uppercase mb-1">Guest Name</label>
+                        <input
+                          type="text"
+                          value={reviewForm.author}
+                          onChange={e => setReviewForm({ ...reviewForm, author: e.target.value })}
+                          placeholder="e.g., Alexandra Jenkins"
+                          className="w-full bg-stone-900 border border-stone-750 p-2 text-sm text-stone-100 rounded-sm focus:outline-none focus:border-coral-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-stone-400 text-xs font-mono uppercase mb-1">Location / Country</label>
+                        <input
+                          type="text"
+                          value={reviewForm.location}
+                          onChange={e => setReviewForm({ ...reviewForm, location: e.target.value })}
+                          placeholder="e.g., Melbourne, Australia"
+                          className="w-full bg-stone-900 border border-stone-750 p-2 text-sm text-stone-100 rounded-sm focus:outline-none focus:border-coral-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-stone-400 text-xs font-mono uppercase mb-1">Rating Rating (1-5 Star Selection)</label>
+                        <select
+                          value={reviewForm.rating}
+                          onChange={e => setReviewForm({ ...reviewForm, rating: parseInt(e.target.value) || 5 })}
+                          className="w-full bg-stone-900 border border-stone-750 p-2 text-sm text-stone-100 rounded-sm focus:outline-none focus:border-coral-500"
+                        >
+                          <option value={5}>5 Stars - Outstanding</option>
+                          <option value={4}>4 Stars - Very Good</option>
+                          <option value={3}>3 Stars - Average</option>
+                          <option value={2}>2 Stars - Poor Quality</option>
+                          <option value={1}>1 Star - Critical Concern</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-stone-400 text-xs font-mono uppercase mb-1">Review Testimony Content</label>
+                      <textarea
+                        value={reviewForm.content}
+                        onChange={e => setReviewForm({ ...reviewForm, content: e.target.value })}
+                        rows={3}
+                        placeholder="Write out parent details or direct translations of client feedback..."
+                        className="w-full bg-stone-900 border border-stone-750 p-2.5 text-sm text-stone-100 rounded-sm focus:outline-none focus:border-coral-500"
+                      />
+                    </div>
+
+                    <div className="flex space-x-3 justify-end pt-4 border-t border-stone-850">
+                      <button
+                        onClick={() => {
+                          setIsAddingReview(false);
+                          setEditingReviewId(null);
+                        }}
+                        className="px-4 py-2 bg-stone-850 hover:bg-stone-800 text-stone-300 text-xs font-mono uppercase tracking-wider rounded-sm border border-stone-750"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={handleSaveReview}
+                        className="px-5 py-2 bg-coral-500 hover:bg-coral-600 text-sand-50 text-xs font-mono font-bold uppercase tracking-wider rounded-sm flex items-center gap-1.5"
+                      >
+                        <Save size={14} />
+                        <span>Save Feedback</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* List Content */}
+                <div className="space-y-4">
+                  {testimonials.map(rev => (
+                    <div key={rev.id} className="bg-stone-950 border border-stone-850 p-5 rounded-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                      <div className="flex items-start space-x-4">
+                        <div className="h-10 w-10 bg-coral-500/10 border border-coral-500/20 text-coral-400 rounded-full flex items-center justify-center font-serif font-bold text-sm shrink-0">
+                          {rev.avatarLetter}
+                        </div>
+                        <div className="space-y-1">
+                          <div className="flex items-center space-x-2">
+                            <h4 className="font-serif font-bold text-sm text-sand-50">{rev.author}</h4>
+                            <span className="text-[10px] text-stone-400">({rev.location})</span>
+                          </div>
+                          
+                          {/* Rating Stars layout */}
+                          <div className="flex space-x-0.5 text-coral-500">
+                            {Array.from({ length: rev.rating }).map((_, i) => (
+                              <Star key={i} size={11} className="fill-coral-500" />
+                            ))}
+                          </div>
+
+                          <p className="text-xs text-stone-300 leading-relaxed font-sans max-w-2xl pt-1">
+                            &ldquo;{rev.content}&rdquo;
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex sm:flex-col justify-end gap-2 border-t sm:border-t-0 p-2 sm:p-0 mt-2 sm:mt-0">
+                        <button
+                          onClick={() => handleEditReviewClick(rev)}
+                          className="px-3 py-1.5 bg-stone-900 border border-stone-800 hover:border-stone-700 text-stone-200 text-xs font-mono uppercase tracking-wider rounded-sm flex items-center gap-1"
+                        >
+                          <Edit2 size={11} />
+                          <span>Edit</span>
+                        </button>
+                        <button
+                          onClick={() => handleDeleteReviewClick(rev.id)}
+                          className="px-3 py-1.5 bg-stone-900 border border-stone-800 hover:border-stone-700 text-stone-200 text-xs font-mono uppercase tracking-wider rounded-sm flex items-center gap-1 hover:text-red-400"
+                        >
+                          <Trash2 size={11} />
+                          <span>Delete</span>
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* CPANEL PORTABILITY TAB */}
+            {activeTab === 'cpanel-info' && (
+              <div className="space-y-8 text-left">
+                <div className="space-y-1.5">
+                  <h2 className="font-serif text-xl sm:text-2xl font-bold text-sand-50">Bisup Hosting cPanel Synchronization</h2>
+                  <p className="text-xs sm:text-sm text-stone-400">Keep your dynamic data safe across development and production servers.</p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  
+                  {/* Backup Card */}
+                  <div className="bg-stone-950 border border-stone-850 p-6 rounded-sm space-y-4">
+                    <div className="flex items-center space-x-2 text-coral-400">
+                      <Download size={20} />
+                      <h3 className="font-serif font-bold text-md text-sand-50">Backup Dynamic Envelope</h3>
+                    </div>
+                    <p className="text-xs text-stone-350 leading-relaxed">
+                      Download the complete content payload (rooms, pricing models, gallery, ratings) as a structured <code>hotel_orchid_dynamic_config.json</code> file. You can back up this layout configuration or host it on your central servers.
+                    </p>
+                    <button
+                      onClick={handleExportDataForcPanel}
+                      className="w-full py-3 bg-stone-900 hover:bg-stone-800 text-stone-100 text-xs font-mono font-bold uppercase tracking-widest rounded-sm border border-stone-800 hover:border-stone-700 transition-all flex items-center justify-center gap-2"
+                    >
+                      <Download size={14} />
+                      <span>Download config.json</span>
+                    </button>
+                  </div>
+
+                  {/* Restore Card */}
+                  <div className="bg-stone-950 border border-stone-850 p-6 rounded-sm space-y-4">
+                    <div className="flex items-center space-x-2 text-amber-500">
+                      <Save size={20} />
+                      <h3 className="font-serif font-bold text-md text-sand-50">Restore Envelope Layout</h3>
+                    </div>
+                    <p className="text-xs text-stone-350 leading-relaxed">
+                      Import a previously exported config database JSON. Uploading a valid config file replaces room photos, prices, reviews, and slides across all page structures immediately.
+                    </p>
+                    
+                    <label className="w-full py-3 bg-stone-900 hover:bg-stone-800 text-stone-100 text-xs font-mono font-bold uppercase tracking-widest rounded-sm border border-stone-800 hover:border-stone-700 transition-all flex items-center justify-center gap-2 cursor-pointer">
+                      <Upload size={14} />
+                      <span>Upload config.json</span>
+                      <input
+                        type="file"
+                        accept="application/json"
+                        className="hidden"
+                        onChange={handleImportDataForcPanel}
+                      />
+                    </label>
+                  </div>
+
+                </div>
+
+                <div className="bg-neutral-850 border border-neutral-800 p-6 rounded-sm space-y-3">
+                  <h4 className="font-serif font-bold text-sand-50 text-sm">Deploying changes to Bisup Hosting cPanel:</h4>
+                  <ol className="list-decimal pl-5 text-xs text-stone-350 space-y-2 leading-relaxed">
+                    <li>This React website is styled using Tailwind CSS and served via an optimized, dynamic router.</li>
+                    <li>Because your dynamic data is serialized and compiled completely with standard browser mechanics, <strong>it is 100% compatible with shared static hosting environments on Bisup Hosting cPanel</strong>.</li>
+                    <li>No Node.js command lines or databases are required on your cPanel. Simply load your final zipped website bundle into the cPanel <code>public_html</code> directory.</li>
+                    <li>Access your admin panel at any time right from this menu link, customize things visually, and hit Backup Dynamic Envelope to secure structural layouts across sessions instantly!</li>
+                  </ol>
+                </div>
+              </div>
+            )}
+
+          </div>
+
+        </div>
+
+      </motion.div>
+
+    </div>
+  );
+}

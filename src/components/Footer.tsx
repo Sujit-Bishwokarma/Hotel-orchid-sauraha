@@ -3,10 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { ShieldCheck, ArrowUp, Mail, Phone, Heart } from 'lucide-react';
+import { ShieldCheck, ArrowUp, Mail, Phone, Heart, Settings } from 'lucide-react';
 import { HOTEL_INFO } from '../data';
 
-export default function Footer() {
+interface FooterProps {
+  onOpenAdmin?: () => void;
+}
+
+export default function Footer({ onOpenAdmin }: FooterProps) {
   const scrollToTop = () => {
     try {
       window.scrollTo({
@@ -102,7 +106,18 @@ export default function Footer() {
             <span>&copy; {new Date().getFullYear()} Hotel Orchid Sauraha, Chitwan. All rights strictly reserved.</span>
           </div>
 
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-6">
+            {onOpenAdmin && (
+              <button
+                id="footer-cpanel-portal-toggle"
+                onClick={onOpenAdmin}
+                className="text-xs text-sand-400 hover:text-coral-400 font-mono flex items-center gap-1.5 cursor-pointer transition-colors bg-ocean-900 px-2.5 py-1 rounded-sm border border-ocean-800"
+                title="Manage Room Prices, Gallery Photos, and Live Guest Reviews"
+              >
+                <Settings size={12} className="text-coral-500" />
+                <span>cPanel Admin</span>
+              </button>
+            )}
             <div className="text-xs text-sand-400 flex items-center space-x-1 font-sans">
               <span>Made with</span>
               <Heart size={10} className="text-coral-500 fill-coral-500 animate-pulse" />

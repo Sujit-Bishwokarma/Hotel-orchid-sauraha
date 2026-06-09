@@ -1,6 +1,6 @@
 {
   "name": "Hotel Orchid Sauraha",
-  "description": "Your peaceful retreat in the heart of Sauraha, Chitwan. Experience elegant comfort, natural beauty, and attentive hospitality.",
+  "description": "Hotel Orchid Sauraha booking portal with a dynamic cPanel Administrative Console to manage room prices, room photos, gallery content, and guest testimonials.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

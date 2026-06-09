@@ -5,13 +5,15 @@
 
 import { ShieldCheck, User, Users, Minimize, Bed, Sparkles, CheckCircle2 } from 'lucide-react';
 import { motion } from 'motion/react';
-import { ROOMS_DATA } from '../data';
+import { useData } from '../context/DataContext';
 
 interface RoomsProps {
   onBookRoom: (roomType: string) => void;
 }
 
 export default function Rooms({ onBookRoom }: RoomsProps) {
+  const { rooms } = useData();
+
   return (
     <section id="rooms" className="scroll-mt-24 py-24 bg-white relative overflow-hidden">
       {/* Dynamic background aesthetics */}
@@ -35,7 +37,7 @@ export default function Rooms({ onBookRoom }: RoomsProps) {
 
         {/* Room Gallery Cards */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {ROOMS_DATA.map((room, idx) => {
+          {rooms.map((room, idx) => {
             return (
               <motion.div
                 key={room.id}

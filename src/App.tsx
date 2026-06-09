@@ -16,11 +16,13 @@ import Testimonials from './components/Testimonials';
 import Footer from './components/Footer';
 import BookingForm from './components/BookingForm';
 import WhatsAppButton from './components/WhatsAppButton';
-import { motion } from 'motion/react';
+import CPanelAdmin from './components/CPanelAdmin';
+import { DataProvider } from './context/DataContext';
 
 export default function App() {
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [selectedRoomId, setSelectedRoomId] = useState<string | undefined>(undefined);
+  const [isAdminOpen, setIsAdminOpen] = useState(false);
 
   // Trigger modal with prefilled details
   const handleOpenBooking = (roomId?: string) => {
@@ -34,51 +36,61 @@ export default function App() {
   };
 
   return (
-    <div id="hotel-orchid-application-root" className="bg-sand-50 min-h-screen text-ocean-950 flex flex-col font-sans selection:bg-coral-500 selection:text-sand-50">
-      {/* Sticky Header with scrolling callbacks */}
-      <Header onOpenBooking={() => handleOpenBooking()} />
-
-      {/* Main Single Page Sections */}
-      <main className="flex-grow">
+    <DataProvider>
+      <div id="hotel-orchid-application-root" className="bg-sand-50 min-h-screen text-ocean-950 flex flex-col font-sans selection:bg-coral-500 selection:text-sand-50">
         
-        {/* Full-Screen Hero */}
-        <Hero onOpenBooking={() => handleOpenBooking()} />
+        {/* Sticky Header with scrolling callbacks */}
+        <Header 
+          onOpenBooking={() => handleOpenBooking()} 
+          onOpenAdmin={() => setIsAdminOpen(true)}
+        />
 
-        {/* Brand Highlights section */}
-        <Highlights />
+        {/* Main Single Page Sections */}
+        <main className="flex-grow">
+          
+          {/* Full-Screen Hero */}
+          <Hero onOpenBooking={() => handleOpenBooking()} />
 
-        {/* Room Gallery & Specifications */}
-        <Rooms onBookRoom={(roomId) => handleOpenBooking(roomId)} />
+          {/* Brand Highlights section */}
+          <Highlights />
 
-        {/* Culinary Restaurant slide reveal block */}
-        <Restaurant onOpenBooking={() => handleOpenBooking()} />
+          {/* Room Gallery & Specifications */}
+          <Rooms onBookRoom={(roomId) => handleOpenBooking(roomId)} />
 
-        {/* Comp Perks List (Strict Icon Mode) */}
-        <Amenities />
+          {/* Culinary Restaurant slide reveal block */}
+          <Restaurant onOpenBooking={() => handleOpenBooking()} />
 
-        {/* Interactive Photo Swiper */}
-        <Gallery />
+          {/* Comp Perks List (Strict Icon Mode) */}
+          <Amenities />
 
-        {/* Guest Reviews list */}
-        <Testimonials />
+          {/* Interactive Photo Swiper */}
+          <Gallery />
 
-        {/* Maps, Contact Info & Forms */}
-        <Contact />
+          {/* Guest Reviews list */}
+          <Testimonials />
 
-      </main>
+          {/* Maps, Contact Info & Forms */}
+          <Contact />
 
-      {/* Secure Invoice Booking Overlay Modal */}
-      <BookingForm
-        isOpen={isBookingOpen}
-        onClose={handleCloseBooking}
-        preSelectedRoomId={selectedRoomId}
-      />
+        </main>
 
-      {/* Floating Interactive Live WhatsApp Chat Box */}
-      <WhatsAppButton />
+        {/* Secure Invoice Booking Overlay Modal */}
+        <BookingForm
+          isOpen={isBookingOpen}
+          onClose={handleCloseBooking}
+          preSelectedRoomId={selectedRoomId}
+        />
 
-      {/* Structured Copywrite Footer */}
-      <Footer />
-    </div>
+        {/* Floating Interactive Live WhatsApp Chat Box */}
+        <WhatsAppButton />
+
+        {/* Structured Copywrite Footer */}
+        <Footer onOpenAdmin={() => setIsAdminOpen(true)} />
+
+        {/* Dynamic cPanel Administrative Console */}
+        <CPanelAdmin isOpen={isAdminOpen} onClose={() => setIsAdminOpen(false)} />
+
+      </div>
+    </DataProvider>
   );
 }

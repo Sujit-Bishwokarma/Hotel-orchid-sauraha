@@ -6,20 +6,31 @@
 import { useState } from 'react';
 import { Quote, Star, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { TESTIMONIALS } from '../data';
+import { useData } from '../context/DataContext';
 
 export default function Testimonials() {
+  const { testimonials } = useData();
   const [activeIndex, setActiveIndex] = useState(0);
 
   const prevReview = () => {
-    setActiveIndex((prev) => (prev === 0 ? TESTIMONIALS.length - 1 : prev - 1));
+    if (testimonials.length === 0) return;
+    setActiveIndex((prev) => (prev === 0 ? testimonials.length - 1 : prev - 1));
   };
 
   const nextReview = () => {
-    setActiveIndex((prev) => (prev === TESTIMONIALS.length - 1 ? 0 : prev + 1));
+    if (testimonials.length === 0) return;
+    setActiveIndex((prev) => (prev === testimonials.length - 1 ? 0 : prev + 1));
   };
 
-  const active = TESTIMONIALS[activeIndex];
+  const safeIndex = activeIndex < testimonials.length ? activeIndex : 0;
+  const active = testimonials[safeIndex] || {
+    id: 'placeholder',
+    author: 'Hotel Orchid Sauraha',
+    location: 'Sauraha, Chitwan, Nepal',
+    rating: 5,
+    content: 'Authentic local comfort. Adjust and add tourist testimonials right inside your bisup hosting cPanel dashboard.',
+    avatarLetter: 'O'
+  };
 
   return (
     <section id="testimonials-section" className="py-24 bg-sand-100 relative overflow-hidden">
@@ -44,13 +55,13 @@ export default function Testimonials() {
         <div className="relative bg-white border border-sand-300 p-8 sm:p-14 rounded-sm shadow-xl overflow-hidden min-h-[300px] flex flex-col justify-center">
           
           {/* Large decorative quotation icon background */}
-          <div className="absolute top-6 left-6 text-sand-200">
+          <div className="absolute top-6 left-6 text-sand-200 p-2 select-none pointer-events-none">
             <Quote size={80} className="opacity-40" />
           </div>
 
           <AnimatePresence mode="wait">
             <motion.div
-              key={activeIndex}
+              key={safeIndex}
               initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.98 }}
@@ -83,44 +94,50 @@ export default function Testimonials() {
             </motion.div>
           </AnimatePresence>
 
-          {/* Navigtion Arrows left-side, right-side */}
-          <div className="absolute inset-y-0 left-4 flex items-center">
-            <button
-              id="testimonial-prev-arrow"
-              onClick={prevReview}
-              className="p-1.5 sm:p-2 hover:bg-sand-100 text-sand-500 hover:text-coral-500 rounded-full transition-all focus:outline-none cursor-pointer"
-              aria-label="Previous Review"
-            >
-              <ChevronLeft size={18} />
-            </button>
-          </div>
+          {/* Navigation Arrows left-side, right-side */}
+          {testimonials.length > 1 && (
+            <>
+              <div className="absolute inset-y-0 left-4 flex items-center">
+                <button
+                  id="testimonial-prev-arrow"
+                  onClick={prevReview}
+                  className="p-1.5 sm:p-2 hover:bg-sand-100 text-sand-500 hover:text-coral-500 rounded-full transition-all focus:outline-none cursor-pointer"
+                  aria-label="Previous Review"
+                >
+                  <ChevronLeft size={18} />
+                </button>
+              </div>
 
-          <div className="absolute inset-y-0 right-4 flex items-center">
-            <button
-              id="testimonial-next-arrow"
-              onClick={nextReview}
-              className="p-1.5 sm:p-2 hover:bg-sand-100 text-sand-500 hover:text-coral-500 rounded-full transition-all focus:outline-none cursor-pointer"
-              aria-label="Next Review"
-            >
-              <ChevronRight size={18} />
-            </button>
-          </div>
+              <div className="absolute inset-y-0 right-4 flex items-center">
+                <button
+                  id="testimonial-next-arrow"
+                  onClick={nextReview}
+                  className="p-1.5 sm:p-2 hover:bg-sand-100 text-sand-500 hover:text-coral-500 rounded-full transition-all focus:outline-none cursor-pointer"
+                  aria-label="Next Review"
+                >
+                  <ChevronRight size={18} />
+                </button>
+              </div>
+            </>
+          )}
 
         </div>
 
         {/* Index indicator dots */}
-        <div className="flex justify-center space-x-2 mt-6">
-          {TESTIMONIALS.map((_, idx) => (
-            <button
-              key={idx}
-              id={`testi-dot-${idx}`}
-              onClick={() => setActiveIndex(idx)}
-              className={`h-2 rounded-full transition-all focus:outline-none cursor-pointer ${
-                activeIndex === idx ? 'w-6 bg-coral-500' : 'w-2 bg-sand-300 hover:bg-sand-400'
-              }`}
-            />
-          ))}
-        </div>
+        {testimonials.length > 1 && (
+          <div className="flex justify-center space-x-2 mt-6">
+            {testimonials.map((_, idx) => (
+              <button
+                key={idx}
+                id={`testi-dot-${idx}`}
+                onClick={() => setActiveIndex(idx)}
+                className={`h-2 rounded-full transition-all focus:outline-none cursor-pointer ${
+                  safeIndex === idx ? 'w-6 bg-coral-500' : 'w-2 bg-sand-300 hover:bg-sand-400'
+                }`}
+              />
+            ))}
+          </div>
+        )}
 
       </div>
     </section>
