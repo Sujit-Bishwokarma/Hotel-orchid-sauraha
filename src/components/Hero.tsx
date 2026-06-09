@@ -65,7 +65,10 @@ export default function Hero({ onOpenBooking }: HeroProps) {
           {/* Main Display Headline */}
           <h1 id="hero-title" className="font-serif text-4xl sm:text-6xl md:text-7xl font-bold text-sand-50 tracking-tight leading-none drop-shadow-md">
             Hotel Orchid <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-sand-100 via-coral-400 to-sand-200 font-serif italic font-normal block mt-2 text-3xl sm:text-5xl md:text-6xl">
+            <span 
+              className="text-transparent bg-clip-text bg-gradient-to-r from-sand-100 via-coral-400 to-sand-200 font-serif italic font-normal block mt-2 text-[28px]"
+              style={{ fontSize: '28px' }}
+            >
               Sauraha, Chitwan
             </span>
           </h1>
@@ -96,17 +99,14 @@ export default function Hero({ onOpenBooking }: HeroProps) {
             <div className="flex flex-col items-center space-y-1">
               <Award className="w-4 h-4 text-coral-400 mb-1" />
               <span>Premium Rooms</span>
-              <span className="text-[8px] sm:text-[10px] text-sand-400 lowercase">from 2097 NPR</span>
             </div>
             <div className="flex flex-col items-center space-y-1 border-x border-sand-300/10">
               <ShieldCheck className="w-4 h-4 text-coral-400 mb-1" />
               <span>Top Security</span>
-              <span className="text-[8px] sm:text-[10px] text-sand-400 lowercase">smart code locks</span>
             </div>
             <div className="flex flex-col items-center space-y-1">
               <Compass className="w-4 h-4 text-coral-400 mb-1" />
               <span>Free Transfers</span>
-              <span className="text-[8px] sm:text-[10px] text-sand-400 lowercase">Airport Pickup</span>
             </div>
           </div>
         </motion.div>

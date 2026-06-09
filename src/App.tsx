@@ -10,6 +10,7 @@ import Highlights from './components/Highlights';
 import Rooms from './components/Rooms';
 import Restaurant from './components/Restaurant';
 import Amenities from './components/Amenities';
+import Activities from './components/Activities';
 import Gallery from './components/Gallery';
 import Contact from './components/Contact';
 import Testimonials from './components/Testimonials';
@@ -88,6 +89,9 @@ export default function App() {
 
           {/* Comp Perks List (Strict Icon Mode) */}
           <Amenities />
+
+          {/* Curated Local Activities section */}
+          <Activities />
 
           {/* Interactive Photo Swiper */}
           <Gallery />

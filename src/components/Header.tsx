@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react';
 import { Menu, X, CalendarCheck, Phone, Settings } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { HOTEL_INFO } from '../data';
+import logoImg from '../assets/images/hotel_orchid_logo.jpg';
 
 interface HeaderProps {
   onOpenBooking: () => void;
@@ -124,14 +125,24 @@ export default function Header({ onOpenBooking, onOpenAdmin }: HeaderProps) {
           <button
             onClick={() => scrollToSection('home')}
             id="nav-logo"
-            className="flex flex-col items-start text-left cursor-pointer group focus:outline-none"
+            className="flex items-center space-x-3 text-left cursor-pointer group focus:outline-none"
           >
-            <span className="font-serif text-lg sm:text-xl font-bold tracking-wider text-sand-50 group-hover:text-coral-400 transition-colors">
-              {HOTEL_INFO.name.toUpperCase()}
-            </span>
-            <span className="text-[10px] sm:text-xs font-mono uppercase tracking-[0.2em] text-sand-300">
-              {HOTEL_INFO.subName}
-            </span>
+            <div className="relative w-12 h-12 overflow-hidden rounded-full border border-sand-300/30 bg-white transition-all duration-300 group-hover:scale-105 shadow-md flex-shrink-0">
+              <img
+                src={logoImg} 
+                alt="Hotel Orchid Logo" 
+                className="w-full h-full object-cover rounded-full"
+                referrerPolicy="no-referrer"
+              />
+            </div>
+            <div className="flex flex-col items-start">
+              <span className="font-serif text-lg sm:text-xl font-bold tracking-wider text-sand-50 group-hover:text-coral-400 transition-colors">
+                {HOTEL_INFO.name.toUpperCase()}
+              </span>
+              <span className="text-[10px] sm:text-xs font-mono uppercase tracking-[0.2em] text-sand-300">
+                {HOTEL_INFO.subName}
+              </span>
+            </div>
           </button>
 
           {/* Desktop Navigation Links */}

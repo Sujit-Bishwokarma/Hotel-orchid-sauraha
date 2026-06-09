@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Room, Testimonial } from '../types';
-import { HOTEL_INFO, ROOMS_DATA, GALLERY_SLIDES, TESTIMONIALS } from '../data';
+import { Room, Testimonial, Activity } from '../types';
+import { HOTEL_INFO, ROOMS_DATA, GALLERY_SLIDES, TESTIMONIALS, ACTIVITIES_DATA } from '../data';
 
 export interface GallerySlide {
   id: string;
@@ -14,7 +14,10 @@ interface DataContextType {
   gallery: GallerySlide[];
   testimonials: Testimonial[];
   heroImage: string;
+  activities: Activity[];
   updateRoom: (roomId: string, updatedFields: Partial<Room>) => void;
+  addRoom: (room: Omit<Room, 'id'>) => void;
+  deleteRoom: (roomId: string) => void;
   addGalleryPhoto: (photo: Omit<GallerySlide, 'id'>) => void;
   updateGalleryPhoto: (photoId: string, updatedFields: Partial<GallerySlide>) => void;
   deleteGalleryPhoto: (photoId: string) => void;
@@ -22,6 +25,9 @@ interface DataContextType {
   updateReview: (reviewId: string, updatedFields: Partial<Testimonial>) => void;
   deleteReview: (reviewId: string) => void;
   updateHeroImage: (image: string) => void;
+  addActivity: (activity: Omit<Activity, 'id'>) => void;
+  updateActivity: (activityId: string, updatedFields: Partial<Activity>) => void;
+  deleteActivity: (activityId: string) => void;
   resetToDefault: () => void;
 }
 
@@ -47,6 +53,11 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return localStorage.getItem('hotel_orchid_hero_image') || HOTEL_INFO.images.hero;
   });
 
+  const [activities, setActivities] = useState<Activity[]>(() => {
+    const saved = localStorage.getItem('hotel_orchid_activities');
+    return saved ? JSON.parse(saved) : ACTIVITIES_DATA;
+  });
+
   // Sync with LocalStorage
   useEffect(() => {
     localStorage.setItem('hotel_orchid_rooms', JSON.stringify(rooms));
@@ -64,9 +75,23 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem('hotel_orchid_hero_image', heroImage);
   }, [heroImage]);
 
+  useEffect(() => {
+    localStorage.setItem('hotel_orchid_activities', JSON.stringify(activities));
+  }, [activities]);
+
   // Action methods
   const updateRoom = (roomId: string, updatedFields: Partial<Room>) => {
     setRooms(prev => prev.map(room => room.id === roomId ? { ...room, ...updatedFields } : room));
+  };
+
+  const addRoom = (room: Omit<Room, 'id'>) => {
+    const nextId = `room-${Date.now()}`;
+    const newRoom: Room = { id: nextId, ...room };
+    setRooms(prev => [...prev, newRoom]);
+  };
+
+  const deleteRoom = (roomId: string) => {
+    setRooms(prev => prev.filter(room => room.id !== roomId));
   };
 
   const addGalleryPhoto = (photo: Omit<GallerySlide, 'id'>) => {
@@ -111,12 +136,27 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setHeroImage(image);
   };
 
+  const addActivity = (activity: Omit<Activity, 'id'>) => {
+    const nextId = `act-${Date.now()}`;
+    const newActivity: Activity = { id: nextId, ...activity };
+    setActivities(prev => [...prev, newActivity]);
+  };
+
+  const updateActivity = (activityId: string, updatedFields: Partial<Activity>) => {
+    setActivities(prev => prev.map(act => act.id === activityId ? { ...act, ...updatedFields } : act));
+  };
+
+  const deleteActivity = (activityId: string) => {
+    setActivities(prev => prev.filter(act => act.id !== activityId));
+  };
+
   const resetToDefault = () => {
     if (window.confirm('Are you sure you want to reset all modifications to default values? This will override all updates.')) {
       setRooms(ROOMS_DATA);
       setGallery(GALLERY_SLIDES);
       setTestimonials(TESTIMONIALS);
       setHeroImage(HOTEL_INFO.images.hero);
+      setActivities(ACTIVITIES_DATA);
     }
   };
 
@@ -126,7 +166,10 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       gallery,
       testimonials,
       heroImage,
+      activities,
       updateRoom,
+      addRoom,
+      deleteRoom,
       addGalleryPhoto,
       updateGalleryPhoto,
       deleteGalleryPhoto,
@@ -134,6 +177,9 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       updateReview,
       deleteReview,
       updateHeroImage,
+      addActivity,
+      updateActivity,
+      deleteActivity,
       resetToDefault
     }}>
       {children}

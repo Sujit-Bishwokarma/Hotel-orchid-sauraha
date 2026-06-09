@@ -3,7 +3,8 @@ import {
   X, LayoutGrid, Bed, Images, MessageSquare, 
   Settings, RotateCcw, Plus, Trash2, Edit2, 
   Upload, Check, ShieldAlert, Download, Save, 
-  HelpCircle, Star, Sparkles, MapPin, DollarSign, Lock
+  HelpCircle, Star, Sparkles, MapPin, DollarSign, Lock,
+  Compass
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useData } from '../context/DataContext';
@@ -15,7 +16,7 @@ interface CPanelAdminProps {
   onSignOut?: () => void;
 }
 
-type TabType = 'dashboard' | 'rooms' | 'gallery' | 'reviews' | 'cpanel-info';
+type TabType = 'dashboard' | 'rooms' | 'gallery' | 'reviews' | 'activities' | 'cpanel-info';
 
 export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminProps) {
   const {
@@ -23,7 +24,10 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
     gallery,
     testimonials,
     heroImage,
+    activities,
     updateRoom,
+    addRoom,
+    deleteRoom,
     addGalleryPhoto,
     updateGalleryPhoto,
     deleteGalleryPhoto,
@@ -31,6 +35,9 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
     updateReview,
     deleteReview,
     updateHeroImage,
+    addActivity,
+    updateActivity,
+    deleteActivity,
     resetToDefault
   } = useData();
 
@@ -39,6 +46,7 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
 
   // Edit Room State
   const [editingRoomId, setEditingRoomId] = useState<string | null>(null);
+  const [isAddingRoom, setIsAddingRoom] = useState(false);
   const [roomForm, setRoomForm] = useState<Partial<Room>>({});
 
   // Gallery Form State
@@ -58,6 +66,15 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
     location: '',
     rating: 5,
     content: ''
+  });
+
+  // Activity Form State
+  const [editingActivityId, setEditingActivityId] = useState<string | null>(null);
+  const [isAddingActivity, setIsAddingActivity] = useState(false);
+  const [activityForm, setActivityForm] = useState({
+    name: '',
+    description: '',
+    image: ''
   });
 
   // File Upload Handlers (converts image files to base64 strings so they persist locally)
@@ -86,7 +103,23 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
   // ROOM ACTIONS
   const handleEditRoomClick = (room: Room) => {
     setEditingRoomId(room.id);
+    setIsAddingRoom(false);
     setRoomForm(room);
+  };
+
+  const handleAddRoomClick = () => {
+    setIsAddingRoom(true);
+    setEditingRoomId(null);
+    setRoomForm({
+      name: '',
+      basePriceNPR: 2500,
+      bedType: '1 King Bed',
+      size: '32 m²',
+      description: 'Spacious serene room offering custom comfortable bedding, modern high-end amenities, and warm ambient decor.',
+      image: 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=80&w=800',
+      capacity: 2,
+      amenities: ['Wi-Fi', 'Air Conditioning', 'Room Service', 'Flat-screen TV']
+    });
   };
 
   const handleSaveRoom = (roomId: string) => {
@@ -97,6 +130,34 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
     updateRoom(roomId, roomForm);
     setEditingRoomId(null);
     showNotification("Room prices and specifications updated successfully!");
+  };
+
+  const handleSaveNewRoom = () => {
+    if (!roomForm.name || !roomForm.basePriceNPR) {
+      alert("Please fill in Room Name and Base Price.");
+      return;
+    }
+    const safeRoom: Omit<Room, 'id'> = {
+      name: roomForm.name || 'New Room Sanctuary',
+      description: roomForm.description || '',
+      image: roomForm.image || 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=80&w=800',
+      basePriceNPR: roomForm.basePriceNPR || 2500,
+      capacity: roomForm.capacity || 2,
+      amenities: roomForm.amenities || ['Wi-Fi', 'Air Conditioning', 'Room Service'],
+      bedType: roomForm.bedType || '1 King Bed',
+      size: roomForm.size || '32 m²'
+    };
+    addRoom(safeRoom);
+    setIsAddingRoom(false);
+    setRoomForm({});
+    showNotification("New room sanctuary added successfully!");
+  };
+
+  const handleDeleteRoomClick = (id: string) => {
+    if (window.confirm("Are you sure you want to delete this room? This is permanent unless you reset to default.")) {
+      deleteRoom(id);
+      showNotification("Room sanctuary removed successfully.");
+    }
   };
 
   // GALLERY ACTIONS
@@ -176,6 +237,53 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
     }
   };
 
+  // ACTIVITIES ACTIONS
+  const handleEditActivityClick = (act: any) => {
+    setEditingActivityId(act.id);
+    setIsAddingActivity(false);
+    setActivityForm({
+      name: act.name,
+      description: act.description,
+      image: act.image
+    });
+  };
+
+  const handleAddActivityClick = () => {
+    setIsAddingActivity(true);
+    setEditingActivityId(null);
+    setActivityForm({
+      name: '',
+      description: '',
+      image: 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&q=80&w=800'
+    });
+  };
+
+  const handleSaveActivity = () => {
+    if (!activityForm.name || !activityForm.description) {
+      alert("Please fill in the Activity Name and Description.");
+      return;
+    }
+
+    if (editingActivityId) {
+      updateActivity(editingActivityId, activityForm);
+      setEditingActivityId(null);
+      showNotification("Activity specifications updated successfully!");
+    } else {
+      addActivity(activityForm);
+      setIsAddingActivity(false);
+      showNotification("New Orchid activity registered successfully!");
+    }
+
+    setActivityForm({ name: '', description: '', image: '' });
+  };
+
+  const handleDeleteActivityClick = (id: string) => {
+    if (window.confirm("Are you sure you want to delete this activity? This is permanent unless you reset to default.")) {
+      deleteActivity(id);
+      showNotification("Activity removed successfully.");
+    }
+  };
+
   // CPANEL PORTABILITY EXPORT / IMPORT
   const handleExportDataForcPanel = () => {
     const backup = {
@@ -183,6 +291,7 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
       gallery,
       testimonials,
       heroImage,
+      activities,
       exportedAt: new Date().toISOString(),
       host: "bisup_hosting_cpanel"
     };
@@ -208,6 +317,9 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
             localStorage.setItem('hotel_orchid_rooms', JSON.stringify(parsed.rooms));
             localStorage.setItem('hotel_orchid_gallery', JSON.stringify(parsed.gallery));
             localStorage.setItem('hotel_orchid_testimonials', JSON.stringify(parsed.testimonials));
+            if (parsed.activities) {
+              localStorage.setItem('hotel_orchid_activities', JSON.stringify(parsed.activities));
+            }
             if (parsed.heroImage) {
               localStorage.setItem('hotel_orchid_hero_image', parsed.heroImage);
             }
@@ -358,6 +470,18 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
             </button>
 
             <button
+              onClick={() => { setActiveTab('activities'); }}
+              className={`flex-shrink-0 flex items-center space-x-3 px-6 py-4 text-xs tracking-wider uppercase font-mono border-b md:border-b-0 md:border-r-4 transition-all w-auto md:w-full text-left font-bold ${
+                activeTab === 'activities'
+                  ? 'bg-stone-900 border-coral-500 text-coral-400'
+                  : 'border-transparent text-stone-400 hover:text-stone-100 hover:bg-stone-900/40'
+              }`}
+            >
+              <Compass size={16} />
+              <span>Activities Control</span>
+            </button>
+
+            <button
               onClick={() => { setActiveTab('cpanel-info'); }}
               className={`flex-shrink-0 flex items-center space-x-3 px-6 py-4 text-xs tracking-wider uppercase font-mono border-b md:border-b-0 md:border-r-4 transition-all w-auto md:w-full text-left font-bold ${
                 activeTab === 'cpanel-info'
@@ -384,7 +508,7 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                   <div className="bg-stone-950 p-6 rounded-sm border border-stone-850 flex items-center justify-between">
                     <div className="space-y-1">
                       <span className="block text-[10px] font-mono uppercase text-stone-400">Active Habitations</span>
@@ -407,6 +531,14 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
                       <span className="text-3xl font-serif font-bold text-sand-50">{testimonials.length} Reviews</span>
                     </div>
                     <MessageSquare size={32} className="text-coral-500 opacity-60" />
+                  </div>
+
+                  <div className="bg-stone-950 p-6 rounded-sm border border-stone-850 flex items-center justify-between">
+                    <div className="space-y-1">
+                      <span className="block text-[10px] font-mono uppercase text-stone-400">Chitwan Activities</span>
+                      <span className="text-3xl font-serif font-bold text-sand-50">{activities.length} Active</span>
+                    </div>
+                    <Compass size={32} className="text-coral-500 opacity-60" />
                   </div>
                 </div>
 
@@ -515,7 +647,125 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
                     <h2 className="font-serif text-xl sm:text-2xl font-bold text-sand-50">Room Prices and Photos</h2>
                     <p className="text-xs sm:text-sm text-stone-400">Update the name, description, rate per night, size, and photo for each sanctuary.</p>
                   </div>
+
+                  {!isAddingRoom && !editingRoomId && (
+                    <button
+                      onClick={handleAddRoomClick}
+                      className="px-4 py-2 bg-coral-500 hover:bg-coral-600 text-sand-50 text-xs font-mono font-bold uppercase tracking-wider rounded-sm flex items-center gap-1.5 transition-colors"
+                    >
+                      <Plus size={14} />
+                      <span>New Room</span>
+                    </button>
+                  )}
                 </div>
+
+                {/* Adding New Room Form Block */}
+                {isAddingRoom && (
+                  <div className="bg-stone-950 border border-coral-500/30 p-6 rounded-sm space-y-6 text-left">
+                    <h3 className="font-serif text-md sm:text-lg font-bold text-coral-400">Create New Room Sanctuary</h3>
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-stone-400 text-xs font-mono uppercase mb-1">Room Name</label>
+                          <input
+                            type="text"
+                            placeholder="e.g., Executive Suite Canopy"
+                            value={roomForm.name || ''}
+                            onChange={e => setRoomForm({ ...roomForm, name: e.target.value })}
+                            className="w-full bg-stone-900 border border-stone-750 p-2 text-sm text-stone-100 rounded-sm focus:outline-none focus:border-coral-500"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-stone-400 text-xs font-mono uppercase mb-1">Price (NPR / Night)</label>
+                          <input
+                            type="number"
+                            placeholder="2500"
+                            value={roomForm.basePriceNPR || ''}
+                            onChange={e => setRoomForm({ ...roomForm, basePriceNPR: parseInt(e.target.value) || 0 })}
+                            className="w-full bg-stone-900 border border-stone-750 p-2 text-sm text-stone-100 rounded-sm focus:outline-none focus:border-coral-500"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-stone-400 text-xs font-mono uppercase mb-1">Bed Installation Typology</label>
+                          <input
+                            type="text"
+                            placeholder="e.g., 1 King Bed"
+                            value={roomForm.bedType || ''}
+                            onChange={e => setRoomForm({ ...roomForm, bedType: e.target.value })}
+                            className="w-full bg-stone-900 border border-stone-750 p-2 text-sm text-stone-100 rounded-sm focus:outline-none focus:border-coral-500"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-stone-400 text-xs font-mono uppercase mb-1">Room Dimensions (e.g., "32 m²")</label>
+                          <input
+                            type="text"
+                            placeholder="e.g., 32 m²"
+                            value={roomForm.size || ''}
+                            onChange={e => setRoomForm({ ...roomForm, size: e.target.value })}
+                            className="w-full bg-stone-900 border border-stone-750 p-2 text-sm text-stone-100 rounded-sm focus:outline-none focus:border-coral-500"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-stone-400 text-xs font-mono uppercase mb-1">Description Narrative</label>
+                        <textarea
+                          placeholder="Provide a wonderful description of this peaceful retreat space..."
+                          value={roomForm.description || ''}
+                          onChange={e => setRoomForm({ ...roomForm, description: e.target.value })}
+                          rows={3}
+                          className="w-full bg-stone-900 border border-stone-750 p-2.5 text-sm text-stone-100 rounded-sm focus:outline-none focus:border-coral-500"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
+                        <div>
+                          <label className="block text-stone-400 text-xs font-mono uppercase mb-1">Room Photo Source (URL or Upload below)</label>
+                          <input
+                            type="text"
+                            value={roomForm.image || ''}
+                            onChange={e => setRoomForm({ ...roomForm, image: e.target.value })}
+                            className="w-full bg-stone-900 border border-stone-750 p-2 text-xs text-stone-100 rounded-sm font-mono focus:outline-none focus:border-coral-500"
+                          />
+                        </div>
+                        <div className="flex space-x-2">
+                          <label className="flex-grow flex items-center justify-center space-x-2 bg-stone-800 hover:bg-stone-750 cursor-pointer pointer-events-auto border border-stone-700 py-2.5 px-3 rounded-sm transition-colors text-xs font-mono uppercase font-bold text-stone-200">
+                            <Upload size={14} />
+                            <span>Upload Photo</span>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={e => handleFileUpload(e, (url) => setRoomForm({ ...roomForm, image: url }))}
+                            />
+                          </label>
+                        </div>
+                      </div>
+
+                      <div className="flex space-x-3 justify-end pt-4 border-t border-stone-850">
+                        <button
+                          onClick={() => {
+                            setIsAddingRoom(false);
+                            setRoomForm({});
+                          }}
+                          className="px-4 py-2 bg-stone-850 hover:bg-stone-800 border border-stone-700 text-stone-300 text-xs font-mono uppercase tracking-wider rounded-sm transition-colors"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          onClick={handleSaveNewRoom}
+                          className="px-5 py-2 bg-coral-500 hover:bg-coral-600 text-sand-50 text-xs font-mono font-bold uppercase tracking-wider rounded-sm flex items-center gap-1.5 transition-colors"
+                        >
+                          <Save size={14} />
+                          <span>Create Room</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 <div className="space-y-6">
                   {rooms.map(room => {
@@ -604,13 +854,13 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
                             <div className="flex space-x-3 justify-end pt-4 border-t border-stone-850">
                               <button
                                 onClick={() => setEditingRoomId(null)}
-                                className="px-4 py-2 bg-stone-850 hover:bg-stone-800 border border-stone-700 text-stone-300 text-xs font-mono uppercase tracking-wider rounded-sm"
+                                className="px-4 py-2 bg-stone-850 hover:bg-stone-800 border border-stone-700 text-stone-300 text-xs font-mono uppercase tracking-wider rounded-sm transition-colors"
                               >
                                 Cancel
                               </button>
                               <button
                                 onClick={() => handleSaveRoom(room.id)}
-                                className="px-5 py-2 bg-coral-500 hover:bg-coral-600 text-sand-50 text-xs font-mono font-bold uppercase tracking-wider rounded-sm flex items-center gap-1.5"
+                                className="px-5 py-2 bg-coral-500 hover:bg-coral-600 text-sand-50 text-xs font-mono font-bold uppercase tracking-wider rounded-sm flex items-center gap-1.5 transition-colors"
                               >
                                 <Save size={14} />
                                 <span>Save Changes</span>
@@ -639,15 +889,23 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
                                   <span>•</span>
                                   <span>{room.bedType}</span>
                                 </div>
-                                <p className="text-xs text-stone-300 line-clamp-2 leading-relaxed">
+                                <p className="text-xs text-stone-300 line-clamp-2 leading-relaxed font-sans">
                                   {room.description}
                                 </p>
                               </div>
 
-                              <div className="flex justify-end pt-2">
+                              <div className="flex justify-end gap-3 pt-2">
+                                <button
+                                  onClick={() => handleDeleteRoomClick(room.id)}
+                                  className="px-3 py-1.5 bg-stone-950 hover:bg-red-950/40 border border-stone-850 hover:border-red-900/40 text-stone-400 hover:text-red-200 text-xs font-mono uppercase tracking-wider rounded-sm flex items-center gap-1.5 transition-colors"
+                                  title="Remove this room sanctuary"
+                                >
+                                  <Trash2 size={13} className="text-stone-500 hover:text-red-400" />
+                                  <span>Delete Room</span>
+                                </button>
                                 <button
                                   onClick={() => handleEditRoomClick(room)}
-                                  className="px-4 py-2 bg-stone-900 hover:bg-stone-800 border border-stone-800 hover:border-stone-700 text-stone-200 text-xs font-mono uppercase tracking-wider rounded-sm flex items-center gap-1.5"
+                                  className="px-4 py-1.5 bg-stone-900 hover:bg-stone-800 border border-stone-800 hover:border-stone-700 text-stone-200 text-xs font-mono uppercase tracking-wider rounded-sm flex items-center gap-1.5 transition-colors"
                                 >
                                   <Edit2 size={13} className="text-coral-500" />
                                   <span>Edit Room</span>
@@ -955,6 +1213,174 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
                           className="px-3 py-1.5 bg-stone-900 border border-stone-800 hover:border-stone-700 text-stone-200 text-xs font-mono uppercase tracking-wider rounded-sm flex items-center gap-1 hover:text-red-400"
                         >
                           <Trash2 size={11} />
+                          <span>Delete</span>
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* CURATED ACTIVITIES TAB */}
+            {activeTab === 'activities' && (
+              <div className="space-y-6 text-left">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="space-y-1">
+                    <h2 className="font-serif text-xl sm:text-2xl font-bold text-sand-50">Local Activities Control</h2>
+                    <p className="text-xs text-stone-400">Manage client adventures, safaris, and culture dances shown on the page.</p>
+                  </div>
+                  {!isAddingActivity && !editingActivityId && (
+                    <button
+                      onClick={handleAddActivityClick}
+                      className="px-4 py-2 bg-coral-500 hover:bg-coral-600 text-sand-50 font-mono text-xs uppercase tracking-wider rounded-sm flex items-center justify-center gap-2 self-start transition-colors cursor-pointer"
+                    >
+                      <Plus size={14} />
+                      <span>Add Activity</span>
+                    </button>
+                  )}
+                </div>
+
+                {/* Adding / Editing Activity Form */}
+                {(isAddingActivity || editingActivityId) && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="p-6 bg-stone-950 border border-stone-800 rounded-sm space-y-4"
+                  >
+                    <h3 className="font-serif text-md font-bold text-coral-400">
+                      {editingActivityId ? 'Modify Activity Specifications' : 'Register New Chitwan Activity'}
+                    </h3>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block text-stone-400 text-xs font-mono uppercase mb-1">Activity Name</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. Elephant Breeding Center Visit"
+                            value={activityForm.name}
+                            onChange={e => setActivityForm({ ...activityForm, name: e.target.value })}
+                            className="w-full bg-stone-900 border border-stone-800 focus:border-stone-700 text-sm p-2.5 rounded-sm text-stone-100 outline-none"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-stone-400 text-xs font-mono uppercase mb-1">Adventure Description</label>
+                          <textarea
+                            placeholder="Write comprehensive descriptions about this adventure..."
+                            value={activityForm.description}
+                            onChange={e => setActivityForm({ ...activityForm, description: e.target.value })}
+                            rows={3}
+                            className="w-full bg-stone-900 border border-stone-800 focus:border-stone-700 text-sm p-2.5 rounded-sm text-stone-100 outline-none resize-none"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block text-stone-400 text-xs font-mono uppercase mb-1">Activity Photo (Image URL or File Upload)</label>
+                          <div className="flex gap-2 mb-2">
+                            <input
+                              type="text"
+                              placeholder="Paste visual URL reference..."
+                              value={activityForm.image}
+                              onChange={e => setActivityForm({ ...activityForm, image: e.target.value })}
+                              className="flex-1 bg-stone-900 border border-stone-800 focus:border-stone-700 text-sm p-2.5 rounded-sm text-stone-100 outline-none"
+                            />
+                            <label className="px-3 py-2 bg-stone-800 hover:bg-stone-700 cursor-pointer rounded-sm border border-stone-700 flex items-center gap-1.5 font-mono text-xs transition-colors text-stone-200">
+                              <Upload size={14} />
+                              <span>Upload</span>
+                              <input
+                                type="file"
+                                accept="image/*"
+                                className="hidden"
+                                onChange={e => handleFileUpload(e, (url) => setActivityForm({ ...activityForm, image: url }))}
+                              />
+                            </label>
+                          </div>
+                        </div>
+
+                        {/* Image Preview */}
+                        {activityForm.image && (
+                          <div>
+                            <span className="block text-[10px] font-mono text-stone-400 uppercase mb-1">Visual Preview</span>
+                            <div className="aspect-video relative rounded-sm overflow-hidden bg-stone-900 border border-stone-800">
+                              <img
+                                src={activityForm.image}
+                                alt="Activity preview"
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-end gap-3 pt-4 border-t border-stone-900">
+                      <button
+                        onClick={() => {
+                          setIsAddingActivity(false);
+                          setEditingActivityId(null);
+                          setActivityForm({ name: '', description: '', image: '' });
+                        }}
+                        className="px-4 py-2 bg-stone-900 border border-stone-800 hover:border-stone-700 text-xs font-mono uppercase rounded-sm cursor-pointer"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={handleSaveActivity}
+                        className="px-4 py-2 bg-coral-500 hover:bg-coral-600 text-sand-50 font-mono text-xs uppercase tracking-wider rounded-sm flex items-center gap-1.5 cursor-pointer"
+                      >
+                        <Save size={13} />
+                        <span>Save Changes</span>
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* List of Registered Activities */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {activities.map((act) => (
+                    <div
+                      key={act.id}
+                      className="bg-stone-950 border border-stone-850 rounded-sm overflow-hidden flex flex-col justify-between group"
+                    >
+                      <div>
+                        {/* Img Banner */}
+                        <div className="aspect-video bg-stone-900 overflow-hidden relative border-b border-stone-900">
+                          <img
+                            src={act.image}
+                            alt={act.name}
+                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          />
+                        </div>
+
+                        {/* Text */}
+                        <div className="p-4 space-y-2 text-left">
+                          <h4 className="font-serif text-base font-bold text-sand-50">
+                            {act.name}
+                          </h4>
+                          <p className="text-xs text-stone-400 leading-relaxed font-sans line-clamp-3">
+                            {act.description}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Footer actions */}
+                      <div className="border-t border-stone-900 p-3 bg-stone-950 flex justify-end gap-2">
+                        <button
+                          onClick={() => handleEditActivityClick(act)}
+                          className="px-2.5 py-1.5 bg-stone-900 border border-stone-800 hover:border-stone-700 text-stone-200 text-[10px] font-mono uppercase tracking-wider rounded-sm flex items-center gap-1 transition-colors cursor-pointer"
+                        >
+                          <Edit2 size={10} />
+                          <span>Edit</span>
+                        </button>
+                        <button
+                          onClick={() => handleDeleteActivityClick(act.id)}
+                          className="px-2.5 py-1.5 bg-stone-900 border border-stone-800 hover:border-stone-700 text-stone-200 text-[10px] font-mono uppercase tracking-wider rounded-sm flex items-center gap-1 hover:text-red-400 transition-colors cursor-pointer"
+                        >
+                          <Trash2 size={10} />
                           <span>Delete</span>
                         </button>
                       </div>

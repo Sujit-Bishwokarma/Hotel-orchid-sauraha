@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Room, Testimonial, AmenityItem } from './types';
+import { Room, Testimonial, AmenityItem, Activity } from './types';
 
 // Static assets imported so Vite bundles and resolves them correctly in production
 import heroImg from './assets/images/hero_orchid_1780650357754.png';
@@ -169,3 +169,25 @@ export const TESTIMONIALS: Testimonial[] = [
     avatarLetter: "C"
   }
 ];
+
+export const ACTIVITIES_DATA: Activity[] = [
+  {
+    id: "act-1",
+    name: "Jungle Walk",
+    description: "Explore the deep forests of Chitwan National Park on foot with our expert local naturalists. Get up close with exotic bird species, monkeys, flora, and possibly observe the rare One-Horned Rhinoceros from a safe distance.",
+    image: "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&q=80&w=1200"
+  },
+  {
+    id: "act-2",
+    name: "Jeep Safari",
+    description: "Embark on an exciting 4x4 offroad adventure deep into the heart of the jungle. Our structured safari routes offer high-probability wildlife viewings, including wild boar, deer, leopards, and the majestic Bengal Tiger.",
+    image: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=1200"
+  },
+  {
+    id: "act-3",
+    name: "Tharu Culture Dance",
+    description: "Experience the colorful heritage of the indigenous Tharu community. Enjoy a vibrant evening of traditional music, spectacular stick dances, and fire performances that portray their deep cultural connection to nature.",
+    image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&q=80&w=1200"
+  }
+];
+
