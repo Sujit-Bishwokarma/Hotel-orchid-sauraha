@@ -21,6 +21,7 @@ export default function CPanelAdmin({ isOpen, onClose }: CPanelAdminProps) {
     rooms,
     gallery,
     testimonials,
+    heroImage,
     updateRoom,
     addGalleryPhoto,
     updateGalleryPhoto,
@@ -28,6 +29,7 @@ export default function CPanelAdmin({ isOpen, onClose }: CPanelAdminProps) {
     addReview,
     updateReview,
     deleteReview,
+    updateHeroImage,
     resetToDefault
   } = useData();
 
@@ -179,6 +181,7 @@ export default function CPanelAdmin({ isOpen, onClose }: CPanelAdminProps) {
       rooms,
       gallery,
       testimonials,
+      heroImage,
       exportedAt: new Date().toISOString(),
       host: "bisup_hosting_cpanel"
     };
@@ -204,6 +207,9 @@ export default function CPanelAdmin({ isOpen, onClose }: CPanelAdminProps) {
             localStorage.setItem('hotel_orchid_rooms', JSON.stringify(parsed.rooms));
             localStorage.setItem('hotel_orchid_gallery', JSON.stringify(parsed.gallery));
             localStorage.setItem('hotel_orchid_testimonials', JSON.stringify(parsed.testimonials));
+            if (parsed.heroImage) {
+              localStorage.setItem('hotel_orchid_hero_image', parsed.heroImage);
+            }
             window.location.reload(); // Force refresh to re-init dynamic states
           } else {
             alert("Invalid configuration structure. Missing rooms, gallery, or testimonials data.");
@@ -386,6 +392,85 @@ export default function CPanelAdmin({ isOpen, onClose }: CPanelAdminProps) {
                       <span className="text-3xl font-serif font-bold text-sand-50">{testimonials.length} Reviews</span>
                     </div>
                     <MessageSquare size={32} className="text-coral-500 opacity-60" />
+                  </div>
+                </div>
+
+                {/* Hero Background Customizer */}
+                <div className="bg-stone-950 border border-stone-850 p-6 rounded-sm space-y-6 text-left">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <Sparkles size={16} className="text-coral-500" />
+                      <h3 className="font-serif text-base sm:text-lg font-bold text-sand-50">Hero Background Customization</h3>
+                    </div>
+                    <p className="text-xs text-stone-400">
+                      Configure your main landing page background cover image. You can paste any online image URL or upload a beautiful local photograph.
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+                    {/* Visual Preview */}
+                    <div className="space-y-2">
+                      <span className="block text-[10px] font-mono uppercase text-stone-400">Live Active Background Preview</span>
+                      <div className="relative aspect-video rounded-sm overflow-hidden border border-stone-800 bg-stone-900 group">
+                        <img
+                          src={heroImage}
+                          alt="Hero background preview"
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                        <div className="absolute bottom-3 left-3">
+                          <span className="text-[9px] font-mono bg-coral-500 text-sand-50 px-2 py-0.5 rounded-sm">
+                            Active Stage Main Cover
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Controls */}
+                    <div className="space-y-4">
+                      {/* Paste URL */}
+                      <div>
+                        <label className="block text-stone-400 text-xs font-mono uppercase mb-1.5">Paste Image URL</label>
+                        <input
+                          type="text"
+                          value={heroImage}
+                          onChange={(e) => {
+                            updateHeroImage(e.target.value);
+                          }}
+                          placeholder="https://images.unsplash.com/photo-..."
+                          className="w-full bg-stone-900 border border-stone-750 p-2 text-xs text-stone-100 rounded-sm focus:outline-none focus:border-coral-500 font-mono"
+                        />
+                      </div>
+
+                      {/* Upload Picture File */}
+                      <div>
+                        <label className="block text-stone-400 text-xs font-mono uppercase mb-1.5">Or Upload Custom Image File (Max 2MB)</label>
+                        <div className="flex flex-wrap items-center gap-3">
+                          <label className="px-4 py-2.5 bg-stone-800 hover:bg-stone-750 hover:text-sand-50 text-stone-200 text-xs font-mono rounded-sm border border-stone-700 cursor-pointer flex items-center gap-1.5 transition-colors">
+                            <Upload size={14} className="text-coral-400" />
+                            <span>Select Local File</span>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => {
+                                handleFileUpload(e, (url) => {
+                                  updateHeroImage(url);
+                                  showNotification("Hero background photo changed successfully!");
+                                });
+                              }}
+                            />
+                          </label>
+                          <span className="text-[10px] text-stone-500 font-mono">
+                            Auto compressed to dynamic system cache
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="pt-2 text-[11px] text-coral-400 leading-relaxed font-sans bg-coral-500/5 p-3 rounded-sm border border-coral-500/10">
+                        ✨ <strong>Pro Tip:</strong> High-resolution landscape shots of gardens, jungle sights, or wooden resort interiors (aspect ratio 16:9) work wonderfully as the welcome cover image!
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -907,7 +992,6 @@ export default function CPanelAdmin({ isOpen, onClose }: CPanelAdminProps) {
                       <span>Upload config.json</span>
                       <input
                         type="file"
-                        accept="application/json"
                         className="hidden"
                         onChange={handleImportDataForcPanel}
                       />

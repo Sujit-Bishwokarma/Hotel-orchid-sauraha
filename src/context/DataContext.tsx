@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Room, Testimonial } from '../types';
-import { ROOMS_DATA, GALLERY_SLIDES, TESTIMONIALS } from '../data';
+import { HOTEL_INFO, ROOMS_DATA, GALLERY_SLIDES, TESTIMONIALS } from '../data';
 
 export interface GallerySlide {
   id: string;
@@ -13,6 +13,7 @@ interface DataContextType {
   rooms: Room[];
   gallery: GallerySlide[];
   testimonials: Testimonial[];
+  heroImage: string;
   updateRoom: (roomId: string, updatedFields: Partial<Room>) => void;
   addGalleryPhoto: (photo: Omit<GallerySlide, 'id'>) => void;
   updateGalleryPhoto: (photoId: string, updatedFields: Partial<GallerySlide>) => void;
@@ -20,6 +21,7 @@ interface DataContextType {
   addReview: (review: Omit<Testimonial, 'id' | 'avatarLetter'>) => void;
   updateReview: (reviewId: string, updatedFields: Partial<Testimonial>) => void;
   deleteReview: (reviewId: string) => void;
+  updateHeroImage: (image: string) => void;
   resetToDefault: () => void;
 }
 
@@ -41,6 +43,10 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return saved ? JSON.parse(saved) : TESTIMONIALS;
   });
 
+  const [heroImage, setHeroImage] = useState<string>(() => {
+    return localStorage.getItem('hotel_orchid_hero_image') || HOTEL_INFO.images.hero;
+  });
+
   // Sync with LocalStorage
   useEffect(() => {
     localStorage.setItem('hotel_orchid_rooms', JSON.stringify(rooms));
@@ -53,6 +59,10 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     localStorage.setItem('hotel_orchid_testimonials', JSON.stringify(testimonials));
   }, [testimonials]);
+
+  useEffect(() => {
+    localStorage.setItem('hotel_orchid_hero_image', heroImage);
+  }, [heroImage]);
 
   // Action methods
   const updateRoom = (roomId: string, updatedFields: Partial<Room>) => {
@@ -97,11 +107,16 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setTestimonials(prev => prev.filter(rev => rev.id !== reviewId));
   };
 
+  const updateHeroImage = (image: string) => {
+    setHeroImage(image);
+  };
+
   const resetToDefault = () => {
     if (window.confirm('Are you sure you want to reset all modifications to default values? This will override all updates.')) {
       setRooms(ROOMS_DATA);
       setGallery(GALLERY_SLIDES);
       setTestimonials(TESTIMONIALS);
+      setHeroImage(HOTEL_INFO.images.hero);
     }
   };
 
@@ -110,6 +125,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       rooms,
       gallery,
       testimonials,
+      heroImage,
       updateRoom,
       addGalleryPhoto,
       updateGalleryPhoto,
@@ -117,6 +133,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       addReview,
       updateReview,
       deleteReview,
+      updateHeroImage,
       resetToDefault
     }}>
       {children}

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import Highlights from './components/Highlights';
@@ -23,6 +23,26 @@ export default function App() {
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [selectedRoomId, setSelectedRoomId] = useState<string | undefined>(undefined);
   const [isAdminOpen, setIsAdminOpen] = useState(false);
+  const [showAdminConsole, setShowAdminConsole] = useState(false);
+
+  // Check URL parameters or local storage to show/hide the admin buttons
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const hasAdminQuery = params.get('admin') === 'true';
+    const isAlreadyAuthorized = localStorage.getItem('hotel_orchid_admin_authorized') === 'true';
+
+    if (hasAdminQuery) {
+      // Authorize this device and save it in temporary memory
+      localStorage.setItem('hotel_orchid_admin_authorized', 'true');
+      setShowAdminConsole(true);
+      
+      // Clean up the URL so it looks clean to the user
+      const cleanUrl = window.location.pathname + window.location.hash;
+      window.history.replaceState({}, document.title, cleanUrl);
+    } else if (isAlreadyAuthorized) {
+      setShowAdminConsole(true);
+    }
+  }, []);
 
   // Trigger modal with prefilled details
   const handleOpenBooking = (roomId?: string) => {
@@ -42,7 +62,7 @@ export default function App() {
         {/* Sticky Header with scrolling callbacks */}
         <Header 
           onOpenBooking={() => handleOpenBooking()} 
-          onOpenAdmin={() => setIsAdminOpen(true)}
+          onOpenAdmin={showAdminConsole ? () => setIsAdminOpen(true) : undefined}
         />
 
         {/* Main Single Page Sections */}
@@ -85,7 +105,7 @@ export default function App() {
         <WhatsAppButton />
 
         {/* Structured Copywrite Footer */}
-        <Footer onOpenAdmin={() => setIsAdminOpen(true)} />
+        <Footer onOpenAdmin={showAdminConsole ? () => setIsAdminOpen(true) : undefined} />
 
         {/* Dynamic cPanel Administrative Console */}
         <CPanelAdmin isOpen={isAdminOpen} onClose={() => setIsAdminOpen(false)} />

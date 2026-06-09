@@ -6,12 +6,14 @@
 import { Calendar, ChevronDown, Award, Compass, ShieldCheck } from 'lucide-react';
 import { motion } from 'motion/react';
 import { HOTEL_INFO } from '../data';
+import { useData } from '../context/DataContext';
 
 interface HeroProps {
   onOpenBooking: () => void;
 }
 
 export default function Hero({ onOpenBooking }: HeroProps) {
+  const { heroImage } = useData();
   const scrollToRooms = () => {
     const el = document.getElementById('rooms');
     if (el) {
@@ -34,7 +36,7 @@ export default function Hero({ onOpenBooking }: HeroProps) {
       {/* Background Image */}
       <div className="absolute inset-0">
         <img
-          src={HOTEL_INFO.images.hero}
+          src={heroImage}
           alt="Hotel Orchid Sauraha Sunset Exterior View"
           referrerPolicy="no-referrer"
           className="w-full h-full object-cover"
