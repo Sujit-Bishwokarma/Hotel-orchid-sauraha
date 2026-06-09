@@ -34,7 +34,7 @@ export default function App() {
   };
 
   return (
-    <div id="hotel-orchid-application-root" className="bg-sand-50 min-h-screen text-ocean-950 flex flex-col font-sans selection:bg-coral-500 selection:text-sand-50 overflow-x-hidden">
+    <div id="hotel-orchid-application-root" className="bg-sand-50 min-h-screen text-ocean-950 flex flex-col font-sans selection:bg-coral-500 selection:text-sand-50">
       {/* Sticky Header with scrolling callbacks */}
       <Header onOpenBooking={() => handleOpenBooking()} />
 

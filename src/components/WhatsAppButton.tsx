@@ -11,7 +11,7 @@ import { HOTEL_INFO } from '../data';
 export default function WhatsAppButton() {
   const [isOpen, setIsOpen] = useState(false);
 
-  const whatsappLink = `https://wa.me/9779845355551?text=Namaste!%20I%20am%20interested%20in%20reserving%20a%20sanctuary%20stay%20at%20Hotel%20Mirage%20Sauraha.%20Please%20advise%20availability!`;
+  const whatsappLink = `https://wa.me/9779845523412?text=Namaste!%20I%20am%20interested%20in%20reserving%20a%20sanctuary%20stay%20at%20Hotel%20Orchid%20Sauraha.%20Please%20advise%20availability!`;
 
   return (
     <div id="whatsapp-floating-system" className="fixed bottom-6 right-6 z-40 font-sans">
@@ -36,7 +36,7 @@ export default function WhatsAppButton() {
                 </div>
                 <div>
                   <h4 className="font-serif text-sm font-semibold text-sand-50">Sabina (Concierge)</h4>
-                  <span className="text-[10px] font-mono text-sand-300 tracking-wide uppercase">Hotel Mirage Host</span>
+                  <span className="text-[10px] font-mono text-sand-300 tracking-wide uppercase">Hotel Orchid Host</span>
                 </div>
               </div>
               <button

@@ -12,14 +12,14 @@ import roomSuiteImg from './assets/images/room_suite_1780650397324.png';
 import restaurantImg from './assets/images/restaurant_orchid_1780650414208.png';
 
 export const HOTEL_INFO = {
-  name: "Hotel Mirage Sauraha",
-  subName: "Chitwan",
-  tagline: "Where Every Stay Becomes a Memory",
-  location: "Ratnanagar 44200, Sauraha, Chitwan, Nepal",
+  name: "Hotel Orchid",
+  subName: "Sauraha, Chitwan",
+  tagline: "Your peaceful retreat in the heart of Sauraha",
+  location: "Ratnanagar 44200, Chitwan, Nepal",
   address: "Ratnanagar 44200, Sauraha, Chitwan, Nepal",
-  phone: "984-5355551",
-  email: "stay@hotelmiragesauraha.com",
-  about: "Nestled near the natural beauty of Chitwan, Hotel Mirage Sauraha welcomes guests with comfortable rooms, warm service, and a peaceful atmosphere. Whether you're exploring the jungle or unwinding with family and friends, every stay is designed to be memorable.",
+  phone: "984-5523412",
+  email: "stay@hotelorchidsauraha.com",
+  about: "Discover the charm of Chitwan at Hotel Orchid Sauraha, where elegant comfort meets natural beauty. Enjoy spacious rooms, attentive hospitality, and a prime location close to the region's most popular attractions, creating the perfect base for your unforgettable Nepal adventure.",
   images: {
     hero: heroImg,
     roomDeluxe: roomDeluxeImg,
@@ -53,7 +53,7 @@ export const ROOMS_DATA: Room[] = [
   {
     id: "deluxe-double",
     name: "Deluxe Garden Sanctuary",
-    description: "Perfect for couples seeking a refined, tranquil retreat. Spacious air-conditioned layout with artisan solid teak timber accents, a cozy write-up desk, private balcony, and state-of-the-art secure entrance, looking onto our beautiful lush gardens.",
+    description: "Perfect for couples seeking a refined, tranquil retreat. Spacious air-conditioned layout with artisan solid teak timber accents, a cozy write-up desk, private balcony, and state-of-the-art secure entrance, looking onto our beautiful orchid gardens.",
     image: HOTEL_INFO.images.roomDeluxe,
     basePriceNPR: 2097,
     capacity: 2,
@@ -69,7 +69,7 @@ export const ROOMS_DATA: Room[] = [
   },
   {
     id: "family-suite",
-    name: "Mirage Gold Family Suite",
+    name: "Orchid Gold Family Suite",
     description: "An incredibly spacious haven designed for families or travel companions. Boasts highly-secured triple bedding installations, robust safety fixtures, elegant seating space, full glass window view of beautiful national park trees, and curated local art.",
     image: HOTEL_INFO.images.roomSuite,
     basePriceNPR: 2317,
@@ -126,7 +126,7 @@ export const GALLERY_SLIDES = [
   {
     id: "gal-1",
     image: HOTEL_INFO.images.hero,
-    title: "Hotel Mirage Exterior",
+    title: "Hotel Orchid Exterior",
     caption: "A peaceful retreat seamlessly blending modern luxury with traditional Nepalese architecture, surrounded by lush landscaped gardens."
   },
   {
@@ -149,7 +149,7 @@ export const TESTIMONIALS: Testimonial[] = [
     author: "Elena Petrova",
     location: "Sofia, Bulgaria",
     rating: 5,
-    content: "The best stay in Nepal! Hotel Mirage Sauraha is extremely safe and stylish. The wood interiors are gorgeous, security is state-of-the-art, and the bed made us sleep like babies. Very near to the main safari bookings too!",
+    content: "The best stay in Nepal! Hotel Orchid Sauraha is extremely safe and stylish. The wood interiors are gorgeous, security is state-of-the-art, and the bed made us sleep like babies. Very near to the main safari bookings too!",
     avatarLetter: "E"
   },
   {
@@ -165,7 +165,7 @@ export const TESTIMONIALS: Testimonial[] = [
     author: "Clara & Tom",
     location: "Munich, Germany",
     rating: 5,
-    content: "We felt incredibly pampered here. The airport transfer was seamless, and the complimentary breakfast was cooked to perfection. Hotel Mirage Sauraha is an absolute peace haven in Sauraha!",
+    content: "We felt incredibly pampered here. The airport transfer was seamless, and the complimentary breakfast was cooked to perfection. Orchid is an absolute peace haven in Sauraha!",
     avatarLetter: "C"
   }
 ];

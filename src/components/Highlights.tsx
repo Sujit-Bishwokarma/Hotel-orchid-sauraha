@@ -31,7 +31,7 @@ export default function Highlights() {
               Hotel Highlights
             </span>
             <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-ocean-950 tracking-tight leading-tight">
-              A Mirage of Peace <br />
+              An Orchid of Peace <br />
               <span className="italic font-normal text-coral-600 font-serif">In Sauraha</span>
             </h2>
           </div>
