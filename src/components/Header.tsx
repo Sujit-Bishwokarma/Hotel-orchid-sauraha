@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 import { Menu, X, CalendarCheck, Phone, Settings } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { HOTEL_INFO } from '../data';
-import logoImg from '../assets/images/hotel_orchid_logo.jpg';
+import { useData } from '../context/DataContext';
 
 interface HeaderProps {
   onOpenBooking: () => void;
@@ -15,6 +15,7 @@ interface HeaderProps {
 }
 
 export default function Header({ onOpenBooking, onOpenAdmin }: HeaderProps) {
+  const { logoImage } = useData();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
@@ -129,7 +130,7 @@ export default function Header({ onOpenBooking, onOpenAdmin }: HeaderProps) {
           >
             <div className="relative w-12 h-12 overflow-hidden rounded-full border border-sand-300/30 bg-white transition-all duration-300 group-hover:scale-105 shadow-md flex-shrink-0">
               <img
-                src={logoImg} 
+                src={logoImage} 
                 alt="Hotel Orchid Logo" 
                 className="w-full h-full object-cover rounded-full"
                 referrerPolicy="no-referrer"

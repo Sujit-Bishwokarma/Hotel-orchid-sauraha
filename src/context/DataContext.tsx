@@ -14,6 +14,7 @@ interface DataContextType {
   gallery: GallerySlide[];
   testimonials: Testimonial[];
   heroImage: string;
+  logoImage: string;
   activities: Activity[];
   updateRoom: (roomId: string, updatedFields: Partial<Room>) => void;
   addRoom: (room: Omit<Room, 'id'>) => void;
@@ -25,6 +26,7 @@ interface DataContextType {
   updateReview: (reviewId: string, updatedFields: Partial<Testimonial>) => void;
   deleteReview: (reviewId: string) => void;
   updateHeroImage: (image: string) => void;
+  updateLogoImage: (image: string) => void;
   addActivity: (activity: Omit<Activity, 'id'>) => void;
   updateActivity: (activityId: string, updatedFields: Partial<Activity>) => void;
   deleteActivity: (activityId: string) => void;
@@ -53,6 +55,10 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return localStorage.getItem('hotel_orchid_hero_image') || HOTEL_INFO.images.hero;
   });
 
+  const [logoImage, setLogoImage] = useState<string>(() => {
+    return localStorage.getItem('hotel_orchid_logo_image') || HOTEL_INFO.images.logo;
+  });
+
   const [activities, setActivities] = useState<Activity[]>(() => {
     const saved = localStorage.getItem('hotel_orchid_activities');
     return saved ? JSON.parse(saved) : ACTIVITIES_DATA;
@@ -74,6 +80,10 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     localStorage.setItem('hotel_orchid_hero_image', heroImage);
   }, [heroImage]);
+
+  useEffect(() => {
+    localStorage.setItem('hotel_orchid_logo_image', logoImage);
+  }, [logoImage]);
 
   useEffect(() => {
     localStorage.setItem('hotel_orchid_activities', JSON.stringify(activities));
@@ -136,6 +146,10 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setHeroImage(image);
   };
 
+  const updateLogoImage = (image: string) => {
+    setLogoImage(image);
+  };
+
   const addActivity = (activity: Omit<Activity, 'id'>) => {
     const nextId = `act-${Date.now()}`;
     const newActivity: Activity = { id: nextId, ...activity };
@@ -156,6 +170,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setGallery(GALLERY_SLIDES);
       setTestimonials(TESTIMONIALS);
       setHeroImage(HOTEL_INFO.images.hero);
+      setLogoImage(HOTEL_INFO.images.logo);
       setActivities(ACTIVITIES_DATA);
     }
   };
@@ -166,6 +181,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       gallery,
       testimonials,
       heroImage,
+      logoImage,
       activities,
       updateRoom,
       addRoom,
@@ -177,6 +193,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       updateReview,
       deleteReview,
       updateHeroImage,
+      updateLogoImage,
       addActivity,
       updateActivity,
       deleteActivity,

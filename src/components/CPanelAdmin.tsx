@@ -24,6 +24,7 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
     gallery,
     testimonials,
     heroImage,
+    logoImage,
     activities,
     updateRoom,
     addRoom,
@@ -35,6 +36,7 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
     updateReview,
     deleteReview,
     updateHeroImage,
+    updateLogoImage,
     addActivity,
     updateActivity,
     deleteActivity,
@@ -291,6 +293,7 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
       gallery,
       testimonials,
       heroImage,
+      logoImage,
       activities,
       exportedAt: new Date().toISOString(),
       host: "bisup_hosting_cpanel"
@@ -322,6 +325,9 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
             }
             if (parsed.heroImage) {
               localStorage.setItem('hotel_orchid_hero_image', parsed.heroImage);
+            }
+            if (parsed.logoImage) {
+              localStorage.setItem('hotel_orchid_logo_image', parsed.logoImage);
             }
             window.location.reload(); // Force refresh to re-init dynamic states
           } else {
@@ -616,6 +622,81 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
 
                       <div className="pt-2 text-[11px] text-coral-400 leading-relaxed font-sans bg-coral-500/5 p-3 rounded-sm border border-coral-500/10">
                         ✨ <strong>Pro Tip:</strong> High-resolution landscape shots of gardens, jungle sights, or wooden resort interiors (aspect ratio 16:9) work wonderfully as the welcome cover image!
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Brand Logo Customizer */}
+                <div className="bg-stone-950 border border-stone-850 p-6 rounded-sm space-y-6 text-left">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <Settings size={16} className="text-coral-500" />
+                      <h3 className="font-serif text-base sm:text-lg font-bold text-sand-50">Hotel Logo Customization</h3>
+                    </div>
+                    <p className="text-xs text-stone-400">
+                      Configure your main brand logo icon shown in the top navigation header bar. You can paste any online image URL or upload a beautiful local graphic image.
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+                    {/* Visual Preview */}
+                    <div className="space-y-2">
+                      <span className="block text-[10px] font-mono uppercase text-stone-400">Active Brand Logo Preview</span>
+                      <div className="flex items-center justify-center p-6 rounded-sm border border-stone-800 bg-stone-900/50 w-full aspect-video">
+                        <div className="relative w-24 h-24 overflow-hidden rounded-full border border-sand-300/30 bg-white shadow-xl flex-shrink-0 flex items-center justify-center">
+                          <img
+                            src={logoImage}
+                            alt="Brand Logo Preview"
+                            className="w-full h-full object-cover rounded-full"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Controls */}
+                    <div className="space-y-4">
+                      {/* Paste URL */}
+                      <div>
+                        <label className="block text-stone-400 text-xs font-mono uppercase mb-1.5">Paste Logo Image URL</label>
+                        <input
+                          type="text"
+                          value={logoImage}
+                          onChange={(e) => {
+                            updateLogoImage(e.target.value);
+                          }}
+                          placeholder="https://example.com/logo.png"
+                          className="w-full bg-stone-900 border border-stone-750 p-2 text-xs text-stone-100 rounded-sm focus:outline-none focus:border-coral-500 font-mono"
+                        />
+                      </div>
+
+                      {/* Upload Picture File */}
+                      <div>
+                        <label className="block text-stone-400 text-xs font-mono uppercase mb-1.5">Or Upload Custom Logo Image (Max 2MB)</label>
+                        <div className="flex flex-wrap items-center gap-3">
+                          <label className="px-4 py-2.5 bg-stone-800 hover:bg-stone-750 hover:text-sand-50 text-stone-200 text-xs font-mono rounded-sm border border-stone-700 cursor-pointer flex items-center gap-1.5 transition-colors">
+                            <Upload size={14} className="text-coral-400" />
+                            <span>Select Brand Image</span>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => {
+                                handleFileUpload(e, (url) => {
+                                  updateLogoImage(url);
+                                  showNotification("Brand logo photo changed successfully!");
+                                });
+                              }}
+                            />
+                          </label>
+                          <span className="text-[10px] text-stone-500 font-mono">
+                            Square or round PNG works best
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="pt-2 text-[11px] text-coral-400 leading-relaxed font-sans bg-coral-500/5 p-3 rounded-sm border border-coral-500/10">
+                        ⭐️ <strong>Best Quality:</strong> A clean square visual logo with transparent or white background is recommended for premium visual appeal!
                       </div>
                     </div>
                   </div>

@@ -10,6 +10,7 @@ import heroImg from './assets/images/hero_orchid_1780650357754.png';
 import roomDeluxeImg from './assets/images/room_deluxe_1780650380249.png';
 import roomSuiteImg from './assets/images/room_suite_1780650397324.png';
 import restaurantImg from './assets/images/restaurant_orchid_1780650414208.png';
+import logoImg from './assets/images/hotel_orchid_brand_logo_1780994580769.png';
 
 export const HOTEL_INFO = {
   name: "Hotel Orchid",
@@ -22,6 +23,7 @@ export const HOTEL_INFO = {
   about: "Discover the charm of Chitwan at Hotel Orchid Sauraha, where elegant comfort meets natural beauty. Enjoy spacious rooms, attentive hospitality, and a prime location close to the region's most popular attractions, creating the perfect base for your unforgettable Nepal adventure.",
   images: {
     hero: heroImg,
+    logo: logoImg,
     roomDeluxe: roomDeluxeImg,
     roomSuite: roomSuiteImg,
     restaurant: restaurantImg
