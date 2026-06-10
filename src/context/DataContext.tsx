@@ -59,23 +59,108 @@ const cleanObjectPaths = <T extends Record<string, any>>(obj: T): T => {
   return result;
 };
 
+// Image optimization compression helper to handle heavy base64 strings gracefully on load
+const compressImage = (base64Str: string, maxWidth = 1000, maxHeight = 1000, quality = 0.65): Promise<string> => {
+  return new Promise((resolve) => {
+    if (!base64Str || !base64Str.startsWith('data:image')) {
+      resolve(base64Str);
+      return;
+    }
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      let width = img.width;
+      let height = img.height;
+
+      if (width > height) {
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        }
+      } else {
+        if (height > maxHeight) {
+          width = Math.round((width * maxHeight) / height);
+          height = maxHeight;
+        }
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        resolve(base64Str);
+        return;
+      }
+
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(img, 0, 0, width, height);
+
+      const compressed = canvas.toDataURL('image/jpeg', quality);
+      resolve(compressed);
+    };
+    img.onerror = () => {
+      resolve(base64Str);
+    };
+    img.src = base64Str;
+  });
+};
+
+const compressObjectImages = async <T extends Record<string, any>>(obj: T): Promise<T> => {
+  const result = { ...obj };
+  for (const key in result) {
+    if (typeof result[key] === 'string') {
+      const val = result[key] as string;
+      if (val.startsWith('data:image')) {
+        try {
+          result[key] = (await compressImage(val, 1000, 1000, 0.65)) as any;
+        } catch (err) {
+          console.warn("[DataContext] Image load-time compression failed slightly:", err);
+        }
+      }
+    }
+  }
+  return result;
+};
+
+const compressArrayImages = async <T extends Record<string, any>>(arr: T[]): Promise<T[]> => {
+  if (!arr || !Array.isArray(arr)) return arr;
+  const promises = arr.map(item => compressObjectImages(item));
+  return Promise.all(promises);
+};
+
+let lastAlertTime = 0;
+
 const safeSetItem = (key: string, value: string) => {
   try {
     localStorage.setItem(key, value);
   } catch (error) {
     console.error(`[LocalStorage Sync Error] Failed to write key "${key}":`, error);
-    if (
-      error instanceof DOMException &&
-      (error.name === 'QuotaExceededError' ||
-       error.name === 'NS_ERROR_DOM_QUOTA_REACHED' ||
-       error.code === 22 ||
-       error.code === 1014)
-    ) {
-      alert(
-        "⚠️ Browser Storage Quota Exceeded!\n\nThe image or file you uploaded is too large for the browser's local sandbox storage (maximum 5MB limit across all data).\n\nTo resolve this and make sure your updates are saved, please:\n1. Copy & paste a web image URL address instead, or\n2. Upload a smaller/highly-compressed image file (ideally under 150KB)."
-      );
+    
+    const isQuotaError = 
+      (error instanceof DOMException &&
+        (error.name === 'QuotaExceededError' ||
+         error.name === 'NS_ERROR_DOM_QUOTA_REACHED' ||
+         error.code === 22 ||
+         error.code === 1014)) ||
+      (error instanceof Error && error.message.toLowerCase().includes('quota'));
+
+    if (isQuotaError) {
+      const now = Date.now();
+      // Only alert once every 10 seconds to prevent rendering freeze-loops inside the iframe
+      if (now - lastAlertTime > 10000) {
+        lastAlertTime = now;
+        try {
+          alert(
+            "⚠️ Browser Storage Quota Exceeded!\n\nThe picture or layout you updated is too large for the browser's local sandbox storage (5MB limit across all data).\n\nTo prevent this, the website now automatically compresses images you upload to make them lightweight (often under 80KB). Try uploading a fresh image to replace the large one!"
+          );
+        } catch (alertErr) {
+          console.warn("[LocalStorage Alert Blocked] Could not show alert in iframe sandbox:", alertErr);
+        }
+      }
     } else {
-      alert(`⚠️ Storage Sync Error: Could not save details locally (${error instanceof Error ? error.message : String(error)}).`);
+      console.warn(`[LocalStorage Error] Sync failed for "${key}" to avoid page freeze.`);
     }
   }
 };
@@ -160,17 +245,25 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
             
             // If the local user is a regular visitor (or has empty storage), apply server truth
             if (!isAuthorizedAdmin) {
-              setRooms(parsed.rooms.map((item: any) => cleanObjectPaths(item)));
-              setGallery(parsed.gallery.map((item: any) => cleanObjectPaths(item)));
-              setTestimonials(parsed.testimonials.map((item: any) => cleanObjectPaths(item)));
+              const optRooms = await compressArrayImages(parsed.rooms.map((item: any) => cleanObjectPaths(item)));
+              const optGallery = await compressArrayImages(parsed.gallery.map((item: any) => cleanObjectPaths(item)));
+              const optTestimonials = await compressArrayImages(parsed.testimonials.map((item: any) => cleanObjectPaths(item)));
+
+              setRooms(optRooms);
+              setGallery(optGallery);
+              setTestimonials(optTestimonials);
+
               if (parsed.activities) {
-                setActivities(parsed.activities.map((item: any) => cleanObjectPaths(item)));
+                const optActivities = await compressArrayImages(parsed.activities.map((item: any) => cleanObjectPaths(item)));
+                setActivities(optActivities);
               }
               if (parsed.heroImage) {
-                setHeroImage(cleanPath(parsed.heroImage, HOTEL_INFO.images.hero));
+                const optHero = await compressImage(parsed.heroImage, 1000, 1000, 0.65);
+                setHeroImage(cleanPath(optHero, HOTEL_INFO.images.hero));
               }
               if (parsed.logoImage) {
-                setLogoImage(cleanPath(parsed.logoImage, HOTEL_INFO.images.logo));
+                const optLogo = await compressImage(parsed.logoImage, 300, 300, 0.65);
+                setLogoImage(cleanPath(optLogo, HOTEL_INFO.images.logo));
               }
             }
           }

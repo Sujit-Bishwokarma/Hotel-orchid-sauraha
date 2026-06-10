@@ -79,6 +79,54 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
     image: ''
   });
 
+  // Compress uploaded images dynamically to prevent localStorage QuotaExceededError
+  const compressImage = (base64Str: string, maxWidth = 1000, maxHeight = 1000, quality = 0.65): Promise<string> => {
+    return new Promise((resolve) => {
+      if (!base64Str || !base64Str.startsWith('data:image')) {
+        resolve(base64Str);
+        return;
+      }
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          resolve(base64Str);
+          return;
+        }
+
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(img, 0, 0, width, height);
+
+        const compressed = canvas.toDataURL('image/jpeg', quality);
+        resolve(compressed);
+      };
+      img.onerror = () => {
+        resolve(base64Str);
+      };
+      img.src = base64Str;
+    });
+  };
+
   // File Upload Handlers (converts image files to base64 strings so they persist locally)
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -90,13 +138,22 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, callback: (url: string) => void) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 2 * 1024 * 1024) {
-        alert("Image is too large. Please upload an image under 2MB to ensure local storage performance.");
+      // Auto-compressor allows handling larger original photos up to 10MB with ease!
+      if (file.size > 10 * 1024 * 1024) {
+        alert("Image is extremely large (above 10MB). Please select a file under 10MB.");
         return;
       }
       const reader = new FileReader();
       reader.onloadend = () => {
-        callback(reader.result as string);
+        const rawBase64 = reader.result as string;
+        compressImage(rawBase64, 1000, 1000, 0.65)
+          .then((compressedUrl) => {
+            callback(compressedUrl);
+          })
+          .catch((err) => {
+            console.error("[CPanel] Image compression failed, fallback to original:", err);
+            callback(rawBase64);
+          });
       };
       reader.readAsDataURL(file);
     }
