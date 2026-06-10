@@ -102,25 +102,29 @@ export const FREE_AMENITIES: AmenityItem[] = [
     id: "pk",
     name: "Free Secure Parking",
     description: "Spacious on-site secure parking for motorbikes and private tourist coaches.",
-    iconName: "Car"
+    iconName: "Car",
+    isFree: true
   },
   {
     id: "bf",
-    name: "Complimentary Breakfast",
-    description: "Chef-curated warm buffet and custom ordered Nepalese structure breakfast each morning.",
-    iconName: "Coffee"
+    name: "Warm Savory Breakfast",
+    description: "Chef-curated warm buffet and custom ordered Nepalese hot breakfast options each morning.",
+    iconName: "Coffee",
+    isFree: false
   },
   {
     id: "wf",
     name: "High-Speed Wi-Fi",
     description: "Blazing fast fiber internet coverage available both inside rooms and in public gardens.",
-    iconName: "Wifi"
+    iconName: "Wifi",
+    isFree: true
   },
   {
     id: "ap",
-    name: "Airport Transfer",
-    description: "Free pickup and drop assistance from Bharatpur Airport or Sauraha Tourist Bus Park.",
-    iconName: "Plane"
+    name: "Airport Transfer Service",
+    description: "Convenient pickup and drop-off assistance from Bharatpur Airport or Sauraha Tourist Bus Park.",
+    iconName: "Plane",
+    isFree: false
   }
 ];
 
@@ -167,7 +171,7 @@ export const TESTIMONIALS: Testimonial[] = [
     author: "Clara & Tom",
     location: "Munich, Germany",
     rating: 5,
-    content: "We felt incredibly pampered here. The airport transfer was seamless, and the complimentary breakfast was cooked to perfection. Orchid is an absolute peace haven in Sauraha!",
+    content: "We felt incredibly pampered here. The airport transfer service was seamless, and the warm breakfast was cooked to perfection. Orchid is an absolute peace haven in Sauraha!",
     avatarLetter: "C"
   }
 ];

@@ -1613,14 +1613,26 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
 
                 </div>
 
-                <div className="bg-neutral-850 border border-neutral-800 p-6 rounded-sm space-y-3">
-                  <h4 className="font-serif font-bold text-sand-50 text-sm">Deploying changes to Bisup Hosting cPanel:</h4>
-                  <ol className="list-decimal pl-5 text-xs text-stone-350 space-y-2 leading-relaxed">
-                    <li>This React website is styled using Tailwind CSS and served via an optimized, dynamic router.</li>
-                    <li>Because your dynamic data is serialized and compiled completely with standard browser mechanics, <strong>it is 100% compatible with shared static hosting environments on Bisup Hosting cPanel</strong>.</li>
-                    <li>No Node.js command lines or databases are required on your cPanel. Simply load your final zipped website bundle into the cPanel <code>public_html</code> directory.</li>
-                    <li>Access your admin panel at any time right from this menu link, customize things visually, and hit Backup Dynamic Envelope to secure structural layouts across sessions instantly!</li>
-                  </ol>
+                <div className="bg-neutral-850 border border-neutral-800 p-6 rounded-sm space-y-6">
+                  <div>
+                    <h4 className="font-serif font-bold text-coral-400 text-sm mb-2">How to publish your changes on Vercel (Current setup):</h4>
+                    <ol className="list-decimal pl-5 text-xs text-stone-300 space-y-2 leading-relaxed">
+                      <li>Use the Admin panel controls above to visual-edit your rooms, reviews, activities, and layout details in your browser. (The updates will render on your screen instantly).</li>
+                      <li>In the <strong>cPanel Synchronization</strong> tab (this section), click <strong className="text-coral-400">Download config.json</strong> to save your customized configuration file named <code className="bg-stone-900 px-1 py-0.5 rounded text-[11px] text-amber-400">hotel_orchid_dynamic_config.json</code>.</li>
+                      <li>Place this downloaded file inside the <strong className="text-sand-100">/public</strong> folder of your React project code directory (so the final path is <code className="bg-stone-900 px-1 py-0.5 rounded text-[11px] text-amber-400">public/hotel_orchid_dynamic_config.json</code>).</li>
+                      <li>Commit and push the file to your <strong className="text-sand-100">GitHub Repository</strong>.</li>
+                      <li>Vercel will detect the new commit, build the app, and re-deploy. Your new rooms, pricing, ratings, and custom layouts will immediately load live for all visitors worldwide!</li>
+                    </ol>
+                  </div>
+
+                  <div className="border-t border-neutral-800 pt-4">
+                    <h4 className="font-serif font-bold text-amber-500 text-sm mb-2">How it works on Bisup Hosting / cPanel (Future setup):</h4>
+                    <ol className="list-decimal pl-5 text-xs text-stone-305 space-y-2 leading-relaxed">
+                      <li>Upload your static React website bundle (typically inside an archive like <code className="bg-stone-900 px-1 py-0.5 rounded text-[11px] text-amber-400">dist.zip</code>) directly to your cPanel's <strong className="text-sand-100">public_html</strong> directory and extract it there.</li>
+                      <li>To update copy, pictures, or ratings on cPanel, simply access the Admin panel from any machine, click <strong className="text-amber-500">Restore Envelope Layout</strong> to upload your golden layout configuration file, or make changes directly on screen.</li>
+                      <li>For instant automatic synchronization across all visitor browsers without committing code, you can use the File Manager in your Bisup Hosting cPanel dashboard to upload your updated <code className="bg-stone-900 px-1 py-0.5 rounded text-[11px]">hotel_orchid_dynamic_config.json</code> file straight to the root of your public folder.</li>
+                    </ol>
+                  </div>
                 </div>
               </div>
             )}

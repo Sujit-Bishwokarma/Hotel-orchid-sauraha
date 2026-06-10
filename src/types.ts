@@ -29,6 +29,7 @@ export interface AmenityItem {
   name: string;
   description: string;
   iconName: string;
+  isFree?: boolean;
 }
 
 export interface BookingDetails {

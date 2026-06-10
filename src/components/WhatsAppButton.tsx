@@ -57,7 +57,7 @@ export default function WhatsAppButton() {
                 <p className="font-sans text-sand-700 leading-relaxed text-xs sm:text-sm pt-0.5">
                   Namasté! 🙏 Warm greetings from beautiful Sauraha, Chitwan.
                   <br /><br />
-                  I'm here to help customize your room booking, answer questions about jungle tour safaris, or plan your free airport transfer. How can I help you today?
+                  I'm here to help customize your room booking, answer questions about jungle tour safaris, or plan your airport transfer. How can I help you today?
                 </p>
                 <span className="block mt-2 font-mono text-[9px] text-sand-400 text-right">Online Just Now</span>
               </div>

@@ -145,6 +145,45 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     safeSetItem('hotel_orchid_activities', JSON.stringify(activities));
   }, [activities]);
 
+  // Dynamically fetch published config file from server / public directory on first load
+  useEffect(() => {
+    const fetchPublishedConfig = async () => {
+      try {
+        const response = await fetch('/hotel_orchid_dynamic_config.json');
+        if (response.ok) {
+          const parsed = await response.json();
+          if (parsed && typeof parsed === 'object' && parsed.rooms && parsed.gallery && parsed.testimonials) {
+            console.log('[CPanel Sync] Found live server configuration file. Applying updates globally...');
+            
+            // Check if user is the admin actively working on draft updates in their cPanel module
+            const isAuthorizedAdmin = localStorage.getItem('hotel_orchid_admin_authorized') === 'true';
+            
+            // If the local user is a regular visitor (or has empty storage), apply server truth
+            if (!isAuthorizedAdmin) {
+              setRooms(parsed.rooms.map((item: any) => cleanObjectPaths(item)));
+              setGallery(parsed.gallery.map((item: any) => cleanObjectPaths(item)));
+              setTestimonials(parsed.testimonials.map((item: any) => cleanObjectPaths(item)));
+              if (parsed.activities) {
+                setActivities(parsed.activities.map((item: any) => cleanObjectPaths(item)));
+              }
+              if (parsed.heroImage) {
+                setHeroImage(cleanPath(parsed.heroImage, HOTEL_INFO.images.hero));
+              }
+              if (parsed.logoImage) {
+                setLogoImage(cleanPath(parsed.logoImage, HOTEL_INFO.images.logo));
+              }
+            }
+          }
+        }
+      } catch (err) {
+        // Silent catch: file simply doesn't exist yet in the hosted location
+        console.log('[CPanel Sync] Dynamic configuration file not found in public directory. Falling back to default bundle.');
+      }
+    };
+    
+    fetchPublishedConfig();
+  }, []);
+
   // Action methods
   const updateRoom = (roomId: string, updatedFields: Partial<Room>) => {
     setRooms(prev => prev.map(room => room.id === roomId ? { ...room, ...updatedFields } : room));

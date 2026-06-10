@@ -28,14 +28,14 @@ export default function Amenities() {
         {/* Section Title */}
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
           <span className="font-mono text-xs text-coral-500 uppercase tracking-[0.2em] font-semibold block">
-            Complimentary Perks
+            Guest Conveniences
           </span>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-ocean-950 tracking-tight">
-            Absolutely Free For Our Guests
+            Curated Services & Amenities
           </h2>
           <div className="w-12 h-1 bg-coral-500 mx-auto" />
           <p className="font-sans text-sm sm:text-base text-sand-700 leading-relaxed max-w-xl mx-auto">
-            These essential hospitality upgrades are completely bundled with every room booking to ensure a tranquil Nepal adventure.
+            Enjoy carefully planned resort services designed to make your Nepal jungle adventure completely relaxing and memorable.
           </p>
         </div>
 
@@ -67,8 +67,12 @@ export default function Amenities() {
                   {item.description}
                 </p>
                 
-                <span className="inline-block mt-4 text-[10px] sm:text-xs font-mono font-bold uppercase tracking-wider text-coral-500 bg-coral-50/50 py-1 px-3 border border-coral-200/40 rounded-sm">
-                  100% Free
+                <span className={`inline-block mt-4 text-[10px] sm:text-xs font-mono font-bold uppercase tracking-wider py-1 px-3 border rounded-sm ${
+                  item.isFree 
+                    ? "text-coral-500 bg-coral-50/50 border-coral-200/40" 
+                    : "text-ocean-700 bg-sand-100/60 border-sand-300/40"
+                }`}>
+                  {item.isFree ? "100% Free" : "On-Request / Paid"}
                 </span>
               </motion.div>
             );
