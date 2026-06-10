@@ -83,3 +83,12 @@ html {
 .coral-glow-btn {
   animation: coralGlow 3s infinite;
 }
+
+/* Hide scrollbar for clean horizontal mobile slides */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}

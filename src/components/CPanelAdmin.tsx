@@ -579,7 +579,7 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
         <div className="flex-grow flex flex-col md:flex-row overflow-hidden">
           
           {/* Left Navigation Rails */}
-          <div className="w-full md:w-64 bg-stone-950 border-r border-stone-850 flex flex-row md:flex-col overflow-x-auto md:overflow-x-visible">
+          <div className="w-full md:w-64 bg-stone-950 border-b md:border-b-0 md:border-r border-stone-850 flex flex-row md:flex-col overflow-x-auto md:overflow-x-visible no-scrollbar">
             
             <button
               onClick={() => { setActiveTab('dashboard'); }}
