@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Room, Testimonial, AmenityItem, Activity } from './types';
+import { Room, Testimonial, AmenityItem, Activity, OwnerInfo } from './types';
 
-// Static assets imported so Vite bundles and resolves them correctly in production
-import heroImg from './assets/images/hero_orchid_1780650357754.png';
-import roomDeluxeImg from './assets/images/room_deluxe_1780650380249.png';
-import roomSuiteImg from './assets/images/room_suite_1780650397324.png';
-import restaurantImg from './assets/images/restaurant_orchid_1780650414208.png';
-import logoImg from './assets/images/hotel_orchid_logo.jpg';
+// Static assets using direct premium Unsplash URLs for high performance and stability
+const heroImg = "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=1920";
+const roomDeluxeImg = "https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=80&w=1200";
+const roomSuiteImg = "https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&q=80&w=1200";
+const restaurantImg = "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&q=80&w=1200";
+const logoImg = "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&q=80&w=300";
 
 export const HOTEL_INFO = {
   name: "Hotel Orchid",
@@ -196,4 +196,42 @@ export const ACTIVITIES_DATA: Activity[] = [
     image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&q=80&w=1200"
   }
 ];
+
+export const DEFAULT_OWNER_INFO: OwnerInfo = {
+  name: "Jit Bahadur Tamang (jitu)",
+  role: "Founder & Passionate Owner",
+  photo: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&q=80&w=600",
+  description: "Jit Bahadur Tamang (lovingly known as Jitu) is the devoted founder of Hotel Orchid, and a prominent champion of Sauraha's wildlife and community welfare. For decades, Jitu has served at the absolute forefront of nature preservation and eco-conscious tourism in Chitwan. His hands-on leadership as former president of several prestigious conservation associations has pioneered standards of safari operations, wildlife rescue guidance,-and sustainable livelihood practices for local families.",
+  achievements: [
+    {
+      id: "ach-1",
+      period: "2062 to 2066",
+      title: "Nature Guide Association, Chitwan",
+      role: "President",
+      image: "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&q=80&w=300"
+    },
+    {
+      id: "ach-2",
+      period: "2068 to 2069",
+      title: "Tiger Conservation Sub-committee",
+      role: "President",
+      image: "https://images.unsplash.com/photo-1602491453977-14a022988d21?auto=format&fit=crop&q=80&w=300"
+    },
+    {
+      id: "ach-3",
+      period: "2074 to 2080",
+      title: "Baghmara Bufferzone Community Forest",
+      role: "President",
+      image: "https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&q=80&w=300"
+    },
+    {
+      id: "ach-4",
+      period: "2080 to Now",
+      title: "Regional Hotel Association Nepal, Chitwan",
+      role: "Active Member",
+      image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=300"
+    }
+  ]
+};
+
 

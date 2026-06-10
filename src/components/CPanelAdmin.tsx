@@ -4,7 +4,7 @@ import {
   Settings, RotateCcw, Plus, Trash2, Edit2, 
   Upload, Check, ShieldAlert, Download, Save, 
   HelpCircle, Star, Sparkles, MapPin, DollarSign, Lock,
-  Compass
+  Compass, Award
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useData } from '../context/DataContext';
@@ -16,7 +16,7 @@ interface CPanelAdminProps {
   onSignOut?: () => void;
 }
 
-type TabType = 'dashboard' | 'rooms' | 'gallery' | 'reviews' | 'activities' | 'cpanel-info';
+type TabType = 'dashboard' | 'rooms' | 'gallery' | 'reviews' | 'activities' | 'owner' | 'cpanel-info';
 
 export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminProps) {
   const {
@@ -26,6 +26,7 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
     heroImage,
     logoImage,
     activities,
+    ownerInfo,
     updateRoom,
     addRoom,
     deleteRoom,
@@ -40,6 +41,7 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
     addActivity,
     updateActivity,
     deleteActivity,
+    updateOwnerInfo,
     resetToDefault
   } = useData();
 
@@ -396,6 +398,7 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
         heroImage,
         logoImage,
         activities,
+        ownerInfo,
         exportedAt: new Date().toISOString(),
         host: "bisup_hosting_cpanel"
       };
@@ -466,6 +469,9 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
               }
               if (parsed.logoImage) {
                 localStorage.setItem('hotel_orchid_logo_image', parsed.logoImage);
+              }
+              if (parsed.ownerInfo) {
+                localStorage.setItem('hotel_orchid_owner_info', JSON.stringify(parsed.ownerInfo));
               }
               
               showNotification("Database configuration imported successfully!");
@@ -633,6 +639,18 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
             >
               <Compass size={16} />
               <span>Activities Control</span>
+            </button>
+
+            <button
+              onClick={() => { setActiveTab('owner'); }}
+              className={`flex-shrink-0 flex items-center space-x-3 px-6 py-4 text-xs tracking-wider uppercase font-mono border-b md:border-b-0 md:border-r-4 transition-all w-auto md:w-full text-left font-bold ${
+                activeTab === 'owner'
+                  ? 'bg-stone-900 border-coral-500 text-coral-400'
+                  : 'border-transparent text-stone-400 hover:text-stone-100 hover:bg-stone-900/40'
+              }`}
+            >
+              <Award size={16} className="text-coral-400" />
+              <span>Meet Our Owner</span>
             </button>
 
             <button
@@ -1615,6 +1633,221 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
                       </div>
                     </div>
                   ))}
+                </div>
+              </div>
+            )}
+
+            {/* MEET OUR OWNER TAB */}
+            {activeTab === 'owner' && (
+              <div className="space-y-6">
+                <div className="space-y-1 text-left">
+                  <h2 className="font-serif text-xl sm:text-2xl font-bold text-sand-50">Meet Our Owner Section Control</h2>
+                  <p className="text-xs sm:text-sm text-stone-400">
+                    Update Jit Bahadur Tamang (Jitu)'s portfolio portrait photo, name, designation, biographical description, and change his historical timeline service cards.
+                  </p>
+                </div>
+
+                <div className="bg-stone-950 border border-stone-850 p-6 rounded-sm space-y-6 text-left">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <Compass size={16} className="text-coral-500" />
+                      <h3 className="font-serif text-base sm:text-lg font-bold text-sand-50">Primary Identity & Biography</h3>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                    {/* Portrait Image, Name, Role */}
+                    <div className="lg:col-span-4 bg-stone-900/40 p-4 border border-stone-800 rounded-sm space-y-4">
+                      <span className="block text-[10px] font-mono uppercase text-stone-400">Owner Profile Image</span>
+                      
+                      <div className="aspect-square w-full rounded-sm overflow-hidden border border-stone-750 bg-stone-900 relative">
+                        {ownerInfo.photo ? (
+                          <img 
+                            src={ownerInfo.photo} 
+                            alt="Owner Portrait" 
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-xs text-stone-600">
+                            No Portrait Selected
+                          </div>
+                        )}
+                        <div className="absolute bottom-2 left-2 bg-black/70 px-2 py-0.5 rounded text-[9px] font-mono text-sand-100">
+                          Active Portrait
+                        </div>
+                      </div>
+
+                      <div className="space-y-3">
+                        <div>
+                          <label className="block text-stone-400 text-[10px] font-mono uppercase mb-1">Owner Name</label>
+                          <input 
+                            type="text"
+                            value={ownerInfo.name || ''}
+                            onChange={(e) => updateOwnerInfo({ name: e.target.value })}
+                            className="w-full bg-stone-900 border border-stone-750 p-2 text-xs text-stone-100 rounded-sm focus:outline-none focus:border-coral-500 font-sans"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-stone-400 text-[10px] font-mono uppercase mb-1">Designation Title</label>
+                          <input 
+                            type="text"
+                            value={ownerInfo.role || ''}
+                            onChange={(e) => updateOwnerInfo({ role: e.target.value })}
+                            className="w-full bg-stone-900 border border-stone-750 p-2 text-xs text-stone-100 rounded-sm focus:outline-none focus:border-coral-500 font-sans"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Biography & Achievements Customizer */}
+                    <div className="lg:col-span-8 space-y-4">
+                      <div>
+                        <label className="block text-stone-400 text-[10px] font-mono uppercase mb-1.5">Owner Photo URL</label>
+                        <input
+                          type="text"
+                          value={ownerInfo.photo || ''}
+                          onChange={(e) => updateOwnerInfo({ photo: e.target.value })}
+                          className="w-full bg-stone-900 border border-stone-750 p-2 text-xs text-stone-100 rounded-sm focus:outline-none focus:border-coral-500 font-mono"
+                          placeholder="Or enter complete photo URL..."
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-stone-400 text-xs font-mono uppercase mb-1.5">Or Upload Custom Portrait File (Auto-compressed to 600px)</label>
+                        <div>
+                          <label className="inline-flex px-4 py-2 bg-stone-800 hover:bg-stone-750 hover:text-sand-50 text-stone-200 text-xs font-mono rounded-sm border border-stone-700 cursor-pointer items-center gap-1.5 transition-colors">
+                            <Upload size={14} className="text-coral-400" />
+                            <span>Select Local Photo</span>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => {
+                                handleFileUpload(e, (url) => {
+                                  updateOwnerInfo({ photo: url });
+                                  showNotification("Owner portfolio portrait changed successfully!");
+                                });
+                              }}
+                            />
+                          </label>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-stone-400 text-[10px] font-mono uppercase mb-1">Biography Narrative & Conservation Philosophy</label>
+                        <textarea
+                          rows={6}
+                          value={ownerInfo.description || ''}
+                          onChange={(e) => updateOwnerInfo({ description: e.target.value })}
+                          className="w-full bg-stone-900 border border-stone-750 p-2.5 text-xs text-stone-100 rounded-sm focus:outline-none focus:border-coral-500 font-sans leading-relaxed"
+                          placeholder="Enter Chitwan conservation bio or owner biography info..."
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 4 Achievements row customization */}
+                  <div className="pt-6 border-t border-stone-850">
+                    <span className="block text-xs font-mono uppercase text-coral-400 mb-4 font-bold">Historical Achievements Timeline Slider Cards (1 Row, 4 Cards)</span>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                      {(ownerInfo.achievements || []).map((ach, achIdx) => (
+                        <div key={ach.id} className="bg-stone-900/60 p-3 border border-stone-800 rounded-sm space-y-3 flex flex-col justify-between">
+                          <div className="space-y-3">
+                            <div className="flex items-center justify-between border-b border-stone-800 pb-1.5">
+                              <span className="text-[10px] font-mono text-stone-400">Card #{achIdx + 1}</span>
+                              <span className="text-[10px] font-sans font-bold text-coral-500">Timeline State</span>
+                            </div>
+
+                            <div>
+                              <label className="block text-[9px] font-mono text-stone-400 uppercase mb-0.5">Service Period (e.g. 2074 to 2080)</label>
+                              <input
+                                type="text"
+                                value={ach.period || ''}
+                                onChange={(e) => {
+                                  const nextAch = [...ownerInfo.achievements];
+                                  nextAch[achIdx] = { ...nextAch[achIdx], period: e.target.value };
+                                  updateOwnerInfo({ achievements: nextAch });
+                                }}
+                                className="w-full bg-stone-950 border border-stone-800 p-1.5 text-xs text-stone-100 rounded-sm focus:outline-none font-sans"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="block text-[9px] font-mono text-stone-400 uppercase mb-0.5">Title / Association</label>
+                              <input
+                                type="text"
+                                value={ach.title || ''}
+                                onChange={(e) => {
+                                  const nextAch = [...ownerInfo.achievements];
+                                  nextAch[achIdx] = { ...nextAch[achIdx], title: e.target.value };
+                                  updateOwnerInfo({ achievements: nextAch });
+                                }}
+                                className="w-full bg-stone-950 border border-stone-800 p-1.5 text-xs text-stone-100 rounded-sm focus:outline-none font-sans"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="block text-[9px] font-mono text-stone-400 uppercase mb-0.5">Role Held (e.g. President)</label>
+                              <input
+                                type="text"
+                                value={ach.role || ''}
+                                onChange={(e) => {
+                                  const nextAch = [...ownerInfo.achievements];
+                                  nextAch[achIdx] = { ...nextAch[achIdx], role: e.target.value };
+                                  updateOwnerInfo({ achievements: nextAch });
+                                }}
+                                className="w-full bg-stone-900 border border-stone-800 p-1.5 text-xs text-stone-100 rounded-sm focus:outline-none font-sans"
+                              />
+                            </div>
+                          </div>
+
+                          <div className="space-y-2 pt-2 border-t border-stone-800">
+                            <span className="block text-[9px] font-mono text-stone-500 uppercase">Card Background Image</span>
+                            <div className="aspect-[4/3] w-full rounded-sm bg-stone-950 overflow-hidden border border-stone-850 relative">
+                              {ach.image ? (
+                                <img src={ach.image} alt={ach.title} className="w-full h-full object-cover" />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center text-[10px] text-stone-600">
+                                  No Image
+                                </div>
+                              )}
+                            </div>
+
+                            <input
+                              type="text"
+                              value={ach.image || ''}
+                              placeholder="Photo URL"
+                              onChange={(e) => {
+                                const nextAch = [...ownerInfo.achievements];
+                                nextAch[achIdx] = { ...nextAch[achIdx], image: e.target.value };
+                                updateOwnerInfo({ achievements: nextAch });
+                              }}
+                              className="w-full bg-stone-950 border border-stone-850 p-1 text-[10px] text-stone-400 rounded-sm focus:outline-none font-mono"
+                            />
+
+                            <label className="w-full block text-center py-1 bg-stone-800 hover:bg-stone-750 text-stone-200 text-[10px] font-mono rounded-sm border border-stone-750 cursor-pointer transition-colors">
+                              <span>Upload Photo</span>
+                              <input
+                                type="file"
+                                accept="image/*"
+                                className="hidden"
+                                onChange={(e) => {
+                                  handleFileUpload(e, (url) => {
+                                    const nextAch = [...ownerInfo.achievements];
+                                    nextAch[achIdx] = { ...nextAch[achIdx], image: url };
+                                    updateOwnerInfo({ achievements: nextAch });
+                                    showNotification(`Achievement card #${achIdx + 1} photo uploaded!`);
+                                  });
+                                }}
+                              />
+                            </label>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
             )}

@@ -32,16 +32,6 @@ export interface AmenityItem {
   isFree?: boolean;
 }
 
-export interface BookingDetails {
-  name: string;
-  emailOrPhone: string;
-  checkIn: string;
-  checkOut: string;
-  guests: number;
-  roomType: string;
-  specialRequests?: string;
-}
-
 export interface Activity {
   id: string;
   name: string;
@@ -49,3 +39,28 @@ export interface Activity {
   image: string;
 }
 
+export interface BookingDetails {
+  name: string;
+  emailOrPhone: string;
+  checkIn: string;
+  checkOut: string;
+  guests: number;
+  roomType: string;
+  specialRequests: string;
+}
+
+export interface OwnerAchievement {
+  id: string;
+  period: string;
+  title: string;
+  role: string;
+  image: string;
+}
+
+export interface OwnerInfo {
+  name: string;
+  role: string;
+  photo: string;
+  description: string;
+  achievements: OwnerAchievement[];
+}

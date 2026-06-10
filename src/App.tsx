@@ -13,6 +13,7 @@ import Activities from './components/Activities';
 import Gallery from './components/Gallery';
 import Contact from './components/Contact';
 import Testimonials from './components/Testimonials';
+import Owner from './components/Owner';
 import Footer from './components/Footer';
 import BookingForm from './components/BookingForm';
 import WhatsAppButton from './components/WhatsAppButton';
@@ -88,6 +89,9 @@ export default function App() {
 
           {/* Curated Local Activities section */}
           <Activities />
+
+          {/* Meet our Owner Section */}
+          <Owner />
 
           {/* Interactive Photo Swiper */}
           <Gallery />

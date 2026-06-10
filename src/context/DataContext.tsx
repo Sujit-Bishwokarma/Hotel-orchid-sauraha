@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Room, Testimonial, Activity } from '../types';
-import { HOTEL_INFO, ROOMS_DATA, GALLERY_SLIDES, TESTIMONIALS, ACTIVITIES_DATA } from '../data';
+import { Room, Testimonial, Activity, OwnerInfo } from '../types';
+import { HOTEL_INFO, ROOMS_DATA, GALLERY_SLIDES, TESTIMONIALS, ACTIVITIES_DATA, DEFAULT_OWNER_INFO } from '../data';
 
 export interface GallerySlide {
   id: string;
@@ -16,6 +16,7 @@ interface DataContextType {
   heroImage: string;
   logoImage: string;
   activities: Activity[];
+  ownerInfo: OwnerInfo;
   updateRoom: (roomId: string, updatedFields: Partial<Room>) => void;
   addRoom: (room: Omit<Room, 'id'>) => void;
   deleteRoom: (roomId: string) => void;
@@ -30,6 +31,7 @@ interface DataContextType {
   addActivity: (activity: Omit<Activity, 'id'>) => void;
   updateActivity: (activityId: string, updatedFields: Partial<Activity>) => void;
   deleteActivity: (activityId: string) => void;
+  updateOwnerInfo: (info: Partial<OwnerInfo>) => void;
   resetToDefault: () => void;
 }
 
@@ -205,6 +207,17 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return parsed.map((item: any) => cleanObjectPaths(item));
   });
 
+  const [ownerInfo, setOwnerInfo] = useState<OwnerInfo>(() => {
+    const saved = localStorage.getItem('hotel_orchid_owner_info');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === 'object' && parsed.name) return parsed;
+      } catch {}
+    }
+    return DEFAULT_OWNER_INFO;
+  });
+
   // Sync with LocalStorage
   useEffect(() => {
     safeSetItem('hotel_orchid_rooms', JSON.stringify(rooms));
@@ -229,6 +242,10 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     safeSetItem('hotel_orchid_activities', JSON.stringify(activities));
   }, [activities]);
+
+  useEffect(() => {
+    safeSetItem('hotel_orchid_owner_info', JSON.stringify(ownerInfo));
+  }, [ownerInfo]);
 
   // Dynamically fetch published config file from server / public directory on first load
   useEffect(() => {
@@ -264,6 +281,20 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
               if (parsed.logoImage) {
                 const optLogo = await compressImage(parsed.logoImage, 300, 300, 0.65);
                 setLogoImage(cleanPath(optLogo, HOTEL_INFO.images.logo));
+              }
+              if (parsed.ownerInfo) {
+                const optPhoto = await compressImage(parsed.ownerInfo.photo, 600, 600, 0.65);
+                const optAchievements = await Promise.all(
+                  parsed.ownerInfo.achievements.map(async (ach: any) => {
+                    const optAchImg = await compressImage(ach.image, 400, 400, 0.65);
+                    return { ...ach, image: optAchImg };
+                  })
+                );
+                setOwnerInfo({
+                  ...parsed.ownerInfo,
+                  photo: optPhoto,
+                  achievements: optAchievements
+                });
               }
             }
           }
@@ -352,6 +383,10 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setActivities(prev => prev.filter(act => act.id !== activityId));
   };
 
+  const updateOwnerInfo = (updatedFields: Partial<OwnerInfo>) => {
+    setOwnerInfo(prev => ({ ...prev, ...updatedFields }));
+  };
+
   const resetToDefault = () => {
     if (window.confirm('Are you sure you want to reset all modifications to default values? This will override all updates.')) {
       setRooms(ROOMS_DATA);
@@ -360,6 +395,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setHeroImage(HOTEL_INFO.images.hero);
       setLogoImage(HOTEL_INFO.images.logo);
       setActivities(ACTIVITIES_DATA);
+      setOwnerInfo(DEFAULT_OWNER_INFO);
     }
   };
 
@@ -371,6 +407,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       heroImage,
       logoImage,
       activities,
+      ownerInfo,
       updateRoom,
       addRoom,
       deleteRoom,
@@ -385,6 +422,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       addActivity,
       updateActivity,
       deleteActivity,
+      updateOwnerInfo,
       resetToDefault
     }}>
       {children}
