@@ -129,9 +129,14 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
       alert("Please fill in Room Name and Base Price.");
       return;
     }
-    updateRoom(roomId, roomForm);
-    setEditingRoomId(null);
-    showNotification("Room prices and specifications updated successfully!");
+    try {
+      updateRoom(roomId, roomForm);
+      setEditingRoomId(null);
+      showNotification("Room prices and specifications updated successfully!");
+    } catch (error) {
+      console.error("[CPanel Error] Failed to update room:", error);
+      alert(`⚠️ Failed to update room details: ${error instanceof Error ? error.message : String(error)}`);
+    }
   };
 
   const handleSaveNewRoom = () => {
@@ -139,26 +144,36 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
       alert("Please fill in Room Name and Base Price.");
       return;
     }
-    const safeRoom: Omit<Room, 'id'> = {
-      name: roomForm.name || 'New Room Sanctuary',
-      description: roomForm.description || '',
-      image: roomForm.image || 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=80&w=800',
-      basePriceNPR: roomForm.basePriceNPR || 2500,
-      capacity: roomForm.capacity || 2,
-      amenities: roomForm.amenities || ['Wi-Fi', 'Air Conditioning', 'Room Service'],
-      bedType: roomForm.bedType || '1 King Bed',
-      size: roomForm.size || '32 m²'
-    };
-    addRoom(safeRoom);
-    setIsAddingRoom(false);
-    setRoomForm({});
-    showNotification("New room sanctuary added successfully!");
+    try {
+      const safeRoom: Omit<Room, 'id'> = {
+        name: roomForm.name || 'New Room Sanctuary',
+        description: roomForm.description || '',
+        image: roomForm.image || 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=80&w=800',
+        basePriceNPR: roomForm.basePriceNPR || 2500,
+        capacity: roomForm.capacity || 2,
+        amenities: roomForm.amenities || ['Wi-Fi', 'Air Conditioning', 'Room Service'],
+        bedType: roomForm.bedType || '1 King Bed',
+        size: roomForm.size || '32 m²'
+      };
+      addRoom(safeRoom);
+      setIsAddingRoom(false);
+      setRoomForm({});
+      showNotification("New room sanctuary added successfully!");
+    } catch (error) {
+      console.error("[CPanel Error] Failed to save new room:", error);
+      alert(`⚠️ Failed to create new room: ${error instanceof Error ? error.message : String(error)}`);
+    }
   };
 
   const handleDeleteRoomClick = (id: string) => {
     if (window.confirm("Are you sure you want to delete this room? This is permanent unless you reset to default.")) {
-      deleteRoom(id);
-      showNotification("Room sanctuary removed successfully.");
+      try {
+        deleteRoom(id);
+        showNotification("Room sanctuary removed successfully.");
+      } catch (error) {
+        console.error("[CPanel Error] Failed to delete room:", error);
+        alert(`⚠️ Failed to delete room: ${error instanceof Error ? error.message : String(error)}`);
+      }
     }
   };
 
@@ -169,18 +184,22 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
       return;
     }
 
-    if (editingGalleryId) {
-      updateGalleryPhoto(editingGalleryId, galleryForm);
-      setEditingGalleryId(null);
-      showNotification("Gallery slide updated successfully!");
-    } else {
-      addGalleryPhoto(galleryForm);
-      setIsAddingGallery(false);
-      showNotification("New photo added to your dynamic Gallery!");
+    try {
+      if (editingGalleryId) {
+        updateGalleryPhoto(editingGalleryId, galleryForm);
+        setEditingGalleryId(null);
+        showNotification("Gallery slide updated successfully!");
+      } else {
+        addGalleryPhoto(galleryForm);
+        setIsAddingGallery(false);
+        showNotification("New photo added to your dynamic Gallery!");
+      }
+      // Reset Form on successful save only
+      setGalleryForm({ image: '', title: '', caption: '' });
+    } catch (error) {
+      console.error("[CPanel Error] Failed to save gallery photo:", error);
+      alert(`⚠️ Failed to save gallery photo: ${error instanceof Error ? error.message : String(error)}`);
     }
-
-    // Reset Form
-    setGalleryForm({ image: '', title: '', caption: '' });
   };
 
   const handleEditGalleryClick = (photo: any) => {
@@ -195,8 +214,13 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
 
   const handleDeleteGalleryClick = (id: string) => {
     if (window.confirm("Are you sure you want to delete this gallery photo?")) {
-      deleteGalleryPhoto(id);
-      showNotification("Gallery photo removed.");
+      try {
+        deleteGalleryPhoto(id);
+        showNotification("Gallery photo removed.");
+      } catch (error) {
+        console.error("[CPanel Error] Failed to delete gallery photo:", error);
+        alert(`⚠️ Failed to delete photo: ${error instanceof Error ? error.message : String(error)}`);
+      }
     }
   };
 
@@ -207,18 +231,22 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
       return;
     }
 
-    if (editingReviewId) {
-      updateReview(editingReviewId, reviewForm);
-      setEditingReviewId(null);
-      showNotification("Review updated successfully!");
-    } else {
-      addReview(reviewForm);
-      setIsAddingReview(false);
-      showNotification("Thank you! New guest testimonial added successfully.");
+    try {
+      if (editingReviewId) {
+        updateReview(editingReviewId, reviewForm);
+        setEditingReviewId(null);
+        showNotification("Review updated successfully!");
+      } else {
+        addReview(reviewForm);
+        setIsAddingReview(false);
+        showNotification("Thank you! New guest testimonial added successfully.");
+      }
+      // Reset Form on successful save only
+      setReviewForm({ author: '', location: '', rating: 5, content: '' });
+    } catch (error) {
+      console.error("[CPanel Error] Failed to save review:", error);
+      alert(`⚠️ Failed to save review: ${error instanceof Error ? error.message : String(error)}`);
     }
-
-    // Reset Form
-    setReviewForm({ author: '', location: '', rating: 5, content: '' });
   };
 
   const handleEditReviewClick = (rev: any) => {
@@ -234,8 +262,13 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
 
   const handleDeleteReviewClick = (id: string) => {
     if (window.confirm("Are you sure you want to delete this customer review?")) {
-      deleteReview(id);
-      showNotification("Review deleted successfully.");
+      try {
+        deleteReview(id);
+        showNotification("Review deleted successfully.");
+      } catch (error) {
+        console.error("[CPanel Error] Failed to delete review:", error);
+        alert(`⚠️ Failed to delete review: ${error instanceof Error ? error.message : String(error)}`);
+      }
     }
   };
 
@@ -266,23 +299,33 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
       return;
     }
 
-    if (editingActivityId) {
-      updateActivity(editingActivityId, activityForm);
-      setEditingActivityId(null);
-      showNotification("Activity specifications updated successfully!");
-    } else {
-      addActivity(activityForm);
-      setIsAddingActivity(false);
-      showNotification("New Orchid activity registered successfully!");
+    try {
+      if (editingActivityId) {
+        updateActivity(editingActivityId, activityForm);
+        setEditingActivityId(null);
+        showNotification("Activity specifications updated successfully!");
+      } else {
+        addActivity(activityForm);
+        setIsAddingActivity(false);
+        showNotification("New Orchid activity registered successfully!");
+      }
+      // Reset Form on successful save only
+      setActivityForm({ name: '', description: '', image: '' });
+    } catch (error) {
+      console.error("[CPanel Error] Failed to save activity:", error);
+      alert(`⚠️ Failed to save activity details: ${error instanceof Error ? error.message : String(error)}`);
     }
-
-    setActivityForm({ name: '', description: '', image: '' });
   };
 
   const handleDeleteActivityClick = (id: string) => {
     if (window.confirm("Are you sure you want to delete this activity? This is permanent unless you reset to default.")) {
-      deleteActivity(id);
-      showNotification("Activity removed successfully.");
+      try {
+        deleteActivity(id);
+        showNotification("Activity removed successfully.");
+      } catch (error) {
+        console.error("[CPanel Error] Failed to delete activity:", error);
+        alert(`⚠️ Failed to delete activity: ${error instanceof Error ? error.message : String(error)}`);
+      }
     }
   };
 

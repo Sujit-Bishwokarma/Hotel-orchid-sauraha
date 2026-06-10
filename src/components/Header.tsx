@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Menu, X, CalendarCheck, Phone, Settings } from 'lucide-react';
+import { Menu, X, CalendarCheck, Phone, Settings, MessageCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { HOTEL_INFO } from '../data';
 import { useData } from '../context/DataContext';
@@ -23,7 +23,6 @@ export default function Header({ onOpenBooking, onOpenAdmin }: HeaderProps) {
   const navItems = [
     { label: 'Home', id: 'home' },
     { label: 'Rooms & Suites', id: 'rooms' },
-    { label: 'Restaurant', id: 'restaurant' },
     { label: 'Amenities', id: 'amenities' },
     { label: 'Gallery', id: 'gallery' },
     { label: 'Contact', id: 'contact' },
@@ -44,7 +43,6 @@ export default function Header({ onOpenBooking, onOpenAdmin }: HeaderProps) {
         'home': 'home',
         'highlights-section': 'home',
         'rooms': 'rooms',
-        'restaurant': 'restaurant',
         'amenities': 'amenities',
         'gallery': 'gallery',
         'testimonials-section': 'gallery',
@@ -181,6 +179,17 @@ export default function Header({ onOpenBooking, onOpenAdmin }: HeaderProps) {
               <Phone size={14} className="text-coral-500" />
               <span>{HOTEL_INFO.phone}</span>
             </a>
+            <a
+              href="https://wa.me/9779855080337"
+              target="_blank"
+              rel="noopener noreferrer"
+              id="header-whatsapp-link"
+              className="flex items-center space-x-1 px-2 py-1 rounded bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 text-xs font-sans font-medium transition-all border border-emerald-500/20"
+              title="Direct WhatsApp Chat"
+            >
+              <MessageCircle size={12} className="text-emerald-500 fill-emerald-500" />
+              <span>WhatsApp</span>
+            </a>
             {onOpenAdmin && (
               <button
                 id="header-cpanel-btn"
@@ -268,6 +277,15 @@ export default function Header({ onOpenBooking, onOpenAdmin }: HeaderProps) {
                 >
                   <Phone size={16} className="text-coral-500" />
                   <span>{HOTEL_INFO.phone}</span>
+                </a>
+                <a
+                  href="https://wa.me/9779855080337"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center space-x-3 text-sand-300 hover:text-sand-50 font-sans text-sm py-1"
+                >
+                  <MessageCircle size={16} className="text-emerald-500 fill-emerald-500" />
+                  <span>Direct WhatsApp Chat</span>
                 </a>
                 <button
                   onClick={onOpenBooking}

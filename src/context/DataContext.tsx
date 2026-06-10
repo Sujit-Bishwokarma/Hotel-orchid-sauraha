@@ -59,6 +59,27 @@ const cleanObjectPaths = <T extends Record<string, any>>(obj: T): T => {
   return result;
 };
 
+const safeSetItem = (key: string, value: string) => {
+  try {
+    localStorage.setItem(key, value);
+  } catch (error) {
+    console.error(`[LocalStorage Sync Error] Failed to write key "${key}":`, error);
+    if (
+      error instanceof DOMException &&
+      (error.name === 'QuotaExceededError' ||
+       error.name === 'NS_ERROR_DOM_QUOTA_REACHED' ||
+       error.code === 22 ||
+       error.code === 1014)
+    ) {
+      alert(
+        "⚠️ Browser Storage Quota Exceeded!\n\nThe image or file you uploaded is too large for the browser's local sandbox storage (maximum 5MB limit across all data).\n\nTo resolve this and make sure your updates are saved, please:\n1. Copy & paste a web image URL address instead, or\n2. Upload a smaller/highly-compressed image file (ideally under 150KB)."
+      );
+    } else {
+      alert(`⚠️ Storage Sync Error: Could not save details locally (${error instanceof Error ? error.message : String(error)}).`);
+    }
+  }
+};
+
 const DataContext = createContext<DataContextType | undefined>(undefined);
 
 export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -101,27 +122,27 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Sync with LocalStorage
   useEffect(() => {
-    localStorage.setItem('hotel_orchid_rooms', JSON.stringify(rooms));
+    safeSetItem('hotel_orchid_rooms', JSON.stringify(rooms));
   }, [rooms]);
 
   useEffect(() => {
-    localStorage.setItem('hotel_orchid_gallery', JSON.stringify(gallery));
+    safeSetItem('hotel_orchid_gallery', JSON.stringify(gallery));
   }, [gallery]);
 
   useEffect(() => {
-    localStorage.setItem('hotel_orchid_testimonials', JSON.stringify(testimonials));
+    safeSetItem('hotel_orchid_testimonials', JSON.stringify(testimonials));
   }, [testimonials]);
 
   useEffect(() => {
-    localStorage.setItem('hotel_orchid_hero_image', heroImage);
+    safeSetItem('hotel_orchid_hero_image', heroImage);
   }, [heroImage]);
 
   useEffect(() => {
-    localStorage.setItem('hotel_orchid_logo_image', logoImage);
+    safeSetItem('hotel_orchid_logo_image', logoImage);
   }, [logoImage]);
 
   useEffect(() => {
-    localStorage.setItem('hotel_orchid_activities', JSON.stringify(activities));
+    safeSetItem('hotel_orchid_activities', JSON.stringify(activities));
   }, [activities]);
 
   // Action methods

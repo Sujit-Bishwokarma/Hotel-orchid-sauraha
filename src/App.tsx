@@ -8,7 +8,6 @@ import Header from './components/Header';
 import Hero from './components/Hero';
 import Highlights from './components/Highlights';
 import Rooms from './components/Rooms';
-import Restaurant from './components/Restaurant';
 import Amenities from './components/Amenities';
 import Activities from './components/Activities';
 import Gallery from './components/Gallery';
@@ -83,9 +82,6 @@ export default function App() {
 
           {/* Room Gallery & Specifications */}
           <Rooms onBookRoom={(roomId) => handleOpenBooking(roomId)} />
-
-          {/* Culinary Restaurant slide reveal block */}
-          <Restaurant onOpenBooking={() => handleOpenBooking()} />
 
           {/* Comp Perks List (Strict Icon Mode) */}
           <Amenities />

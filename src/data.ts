@@ -18,8 +18,8 @@ export const HOTEL_INFO = {
   tagline: "Your peaceful retreat in the heart of Sauraha",
   location: "Ratnanagar 44200, Chitwan, Nepal",
   address: "Ratnanagar 44200, Sauraha, Chitwan, Nepal",
-  phone: "984-5523412",
-  email: "stay@hotelorchidsauraha.com",
+  phone: "985-5080337",
+  email: "hotelorchid2017@gmail.com",
   about: "Discover the charm of Chitwan at Hotel Orchid Sauraha, where elegant comfort meets natural beauty. Enjoy spacious rooms, attentive hospitality, and a prime location close to the region's most popular attractions, creating the perfect base for your unforgettable Nepal adventure.",
   images: {
     hero: heroImg,

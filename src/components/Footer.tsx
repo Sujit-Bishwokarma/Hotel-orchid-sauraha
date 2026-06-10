@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { ShieldCheck, ArrowUp, Mail, Phone, Heart, Settings } from 'lucide-react';
+import { ShieldCheck, ArrowUp, Mail, Phone, Heart, Settings, MessageCircle } from 'lucide-react';
 import { HOTEL_INFO } from '../data';
 
 interface FooterProps {
@@ -81,9 +81,16 @@ export default function Footer({ onOpenAdmin }: FooterProps) {
             <div className="space-y-3 text-xs sm:text-sm text-sand-300">
               <div>
                 <span className="block font-mono text-[9px] uppercase tracking-wider text-sand-500">Concierge Desk</span>
-                <a href={`tel:${HOTEL_INFO.phone}`} className="hover:text-coral-400 transition-colors font-semibold text-sand-50">
-                  {HOTEL_INFO.phone}
-                </a>
+                <div className="flex flex-col space-y-1.5 mt-0.5">
+                  <a href={`tel:${HOTEL_INFO.phone}`} className="hover:text-coral-400 transition-colors font-semibold text-sand-50 flex items-center gap-1.5">
+                    <Phone size={12} className="text-coral-500" />
+                    <span>{HOTEL_INFO.phone}</span>
+                  </a>
+                  <a href="https://wa.me/9779855080337" target="_blank" rel="noopener noreferrer" className="hover:text-emerald-400 text-emerald-400 font-semibold flex items-center gap-1.5 transition-colors">
+                    <MessageCircle size={12} className="fill-emerald-500 text-stone-900" />
+                    <span>Direct WhatsApp Chat</span>
+                  </a>
+                </div>
               </div>
               <div>
                 <span className="block font-mono text-[9px] uppercase tracking-wider text-sand-500">Support Email</span>

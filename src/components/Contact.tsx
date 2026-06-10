@@ -4,7 +4,7 @@
  */
 
 import React, { useState } from 'react';
-import { Phone, Mail, MapPin, Send, MessageSquareCode, Facebook, Instagram, Twitter, Check } from 'lucide-react';
+import { Phone, Mail, MapPin, Send, MessageSquareCode, Facebook, Instagram, Twitter, Check, MessageCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { HOTEL_INFO } from '../data';
 
@@ -90,6 +90,20 @@ export default function Contact() {
                     <span className="block font-mono text-[10px] text-sand-600 uppercase tracking-widest">Call Directly</span>
                     <a href={`tel:${HOTEL_INFO.phone}`} className="font-semibold text-ocean-950 hover:text-coral-500 transition-colors">
                       {HOTEL_INFO.phone}
+                    </a>
+                  </div>
+                </div>
+
+                {/* WhatsApp Support */}
+                <div className="flex items-start space-x-4">
+                  <div className="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-sm flex items-center justify-center flex-shrink-0 border border-emerald-200">
+                    <MessageCircle size={18} className="fill-emerald-600 text-white" />
+                  </div>
+                  <div>
+                    <span className="block font-mono text-[10px] text-emerald-700 uppercase tracking-widest">WhatsApp Support</span>
+                    <a href="https://wa.me/9779855080337" target="_blank" rel="noopener noreferrer" className="font-semibold text-ocean-950 hover:text-emerald-600 transition-colors flex items-center gap-1">
+                      +977-9855080337
+                      <span className="inline-block px-1.5 py-0.5 text-[9px] font-mono bg-emerald-100 text-emerald-800 rounded uppercase">Online</span>
                     </a>
                   </div>
                 </div>

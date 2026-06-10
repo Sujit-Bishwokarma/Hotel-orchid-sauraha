@@ -103,12 +103,33 @@ export default function Rooms({ onBookRoom }: RoomsProps) {
                     </div>
                     
                     <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 text-xs text-sand-700 font-sans">
-                      {room.amenities.map((amenity, idx) => (
-                        <li key={idx} className="flex items-start space-x-2 py-0.5">
-                          <CheckCircle2 size={13} className="text-coral-500 mt-0.5 flex-shrink-0" />
-                          <span>{amenity}</span>
-                        </li>
-                      ))}
+                      {room.amenities
+                        .filter(amenity => {
+                          const lower = amenity.toLowerCase();
+                          return (
+                            lower.includes('lock') ||
+                            lower.includes('security') ||
+                            lower.includes('surveillance') ||
+                            lower.includes('fire') ||
+                            lower.includes('safe') ||
+                            lower.includes('privacy') ||
+                            lower.includes('sound-dampened') ||
+                            lower.includes('noise-reducing') ||
+                            lower.includes('mattress') ||
+                            lower.includes('orthopedic') ||
+                            lower.includes('guard') ||
+                            lower.includes('door') ||
+                            lower.includes('window') ||
+                            lower.includes('air conditioning') ||
+                            lower.includes('heating')
+                          );
+                        })
+                        .map((amenity, idx) => (
+                          <li key={idx} className="flex items-start space-x-2 py-0.5">
+                            <CheckCircle2 size={13} className="text-coral-500 mt-0.5 flex-shrink-0" />
+                            <span>{amenity}</span>
+                          </li>
+                        ))}
                     </ul>
                   </div>
 
