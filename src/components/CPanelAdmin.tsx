@@ -331,53 +331,101 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
 
   // CPANEL PORTABILITY EXPORT / IMPORT
   const handleExportDataForcPanel = () => {
-    const backup = {
-      rooms,
-      gallery,
-      testimonials,
-      heroImage,
-      logoImage,
-      activities,
-      exportedAt: new Date().toISOString(),
-      host: "bisup_hosting_cpanel"
-    };
+    try {
+      const backup = {
+        rooms,
+        gallery,
+        testimonials,
+        heroImage,
+        logoImage,
+        activities,
+        exportedAt: new Date().toISOString(),
+        host: "bisup_hosting_cpanel"
+      };
 
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backup, null, 2));
-    const downloadAnchor = document.createElement('a');
-    downloadAnchor.setAttribute("href", dataStr);
-    downloadAnchor.setAttribute("download", "hotel_orchid_dynamic_config.json");
-    document.body.appendChild(downloadAnchor);
-    downloadAnchor.click();
-    downloadAnchor.remove();
-    showNotification("Configuration file exported! Store this inside your dynamic document folders.");
+      const jsonString = JSON.stringify(backup, null, 2);
+      const blob = new Blob([jsonString], { type: "application/json;charset=utf-8" });
+      const blobUrl = URL.createObjectURL(blob);
+      
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", blobUrl);
+      downloadAnchor.setAttribute("download", "hotel_orchid_dynamic_config.json");
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+      URL.revokeObjectURL(blobUrl);
+      
+      showNotification("Configuration file exported! Store this inside your dynamic document folders.");
+    } catch (err) {
+      console.error("[CPanel Error] Export failed:", err);
+      alert(`⚠️ Failed to export layout configuration: ${err instanceof Error ? err.message : String(err)}`);
+    }
   };
 
   const handleImportDataForcPanel = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
+      reader.onerror = (evt) => {
+        console.error("[CPanel Info] FileReader error:", evt);
+        alert("⚠️ Failed to read the selected file from disk.");
+      };
+      
       reader.onload = (event) => {
         try {
-          const parsed = JSON.parse(event.target?.result as string);
-          if (parsed.rooms && parsed.gallery && parsed.testimonials) {
-            localStorage.setItem('hotel_orchid_rooms', JSON.stringify(parsed.rooms));
-            localStorage.setItem('hotel_orchid_gallery', JSON.stringify(parsed.gallery));
-            localStorage.setItem('hotel_orchid_testimonials', JSON.stringify(parsed.testimonials));
-            if (parsed.activities) {
-              localStorage.setItem('hotel_orchid_activities', JSON.stringify(parsed.activities));
-            }
-            if (parsed.heroImage) {
-              localStorage.setItem('hotel_orchid_hero_image', parsed.heroImage);
-            }
-            if (parsed.logoImage) {
-              localStorage.setItem('hotel_orchid_logo_image', parsed.logoImage);
-            }
-            window.location.reload(); // Force refresh to re-init dynamic states
-          } else {
-            alert("Invalid configuration structure. Missing rooms, gallery, or testimonials data.");
+          let text = event.target?.result as string;
+          if (!text) {
+            alert("⚠️ The uploaded file appears to be empty.");
+            return;
           }
-        } catch (e) {
-          alert("Could not parse JSON. Check file encoding.");
+
+          // Strip Byte Order Mark (BOM) if present in the text
+          if (text.charCodeAt(0) === 0xFEFF) {
+            text = text.substring(1);
+          }
+          text = text.trim();
+
+          let parsed;
+          try {
+            parsed = JSON.parse(text);
+          } catch (jsonErr) {
+            console.error("[CPanel Error] JSON parsing failed on contents:", text);
+            console.error(jsonErr);
+            alert(`⚠️ Could not parse JSON. Check file encoding or structure.\nDetail: ${jsonErr instanceof Error ? jsonErr.message : String(jsonErr)}`);
+            return;
+          }
+
+          if (parsed && typeof parsed === "object" && parsed.rooms && parsed.gallery && parsed.testimonials) {
+            try {
+              localStorage.setItem('hotel_orchid_rooms', JSON.stringify(parsed.rooms));
+              localStorage.setItem('hotel_orchid_gallery', JSON.stringify(parsed.gallery));
+              localStorage.setItem('hotel_orchid_testimonials', JSON.stringify(parsed.testimonials));
+              
+              if (parsed.activities) {
+                localStorage.setItem('hotel_orchid_activities', JSON.stringify(parsed.activities));
+              }
+              if (parsed.heroImage) {
+                localStorage.setItem('hotel_orchid_hero_image', parsed.heroImage);
+              }
+              if (parsed.logoImage) {
+                localStorage.setItem('hotel_orchid_logo_image', parsed.logoImage);
+              }
+              
+              showNotification("Database configuration imported successfully!");
+              setTimeout(() => {
+                window.location.reload(); // Force refresh to re-initialize dynamic states
+              }, 1200);
+            } catch (storageErr) {
+              console.error("[CPanel Error] LocalStorage quota exceeded:", storageErr);
+              alert(`⚠️ Failed to restore configuration to browser memory.\nThis usually happens when image files configured inside the JSON are excessively large.\nError: ${storageErr instanceof Error ? storageErr.message : String(storageErr)}`);
+            }
+          } else {
+            console.error("[CPanel Error] Decoded JSON structure is missing fields:", parsed);
+            alert("⚠️ Invalid file structure. The uploaded JSON must contain 'rooms', 'gallery', and 'testimonials' keys.");
+          }
+        } catch (generalErr) {
+          console.error("[CPanel Error] Unexpected import error:", generalErr);
+          alert(`⚠️ An unexpected error occurred while restoring: ${generalErr instanceof Error ? generalErr.message : String(generalErr)}`);
         }
       };
       reader.readAsText(file);
