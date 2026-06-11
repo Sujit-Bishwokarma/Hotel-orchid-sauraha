@@ -1766,9 +1766,9 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
 
                   {/* 4 Achievements row customization */}
                   <div className="pt-6 border-t border-stone-850">
-                    <span className="block text-xs font-mono uppercase text-coral-400 mb-4 font-bold">Historical Achievements Timeline Slider Cards (1 Row, 4 Cards)</span>
+                    <span className="block text-xs font-mono uppercase text-coral-400 mb-4 font-bold">Historical Achievements Timeline Slider Cards</span>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
                       {(ownerInfo.achievements || []).map((ach, achIdx) => (
                         <div key={ach.id} className="bg-stone-900/60 p-3 border border-stone-800 rounded-sm space-y-3 flex flex-col justify-between">
                           <div className="space-y-3">

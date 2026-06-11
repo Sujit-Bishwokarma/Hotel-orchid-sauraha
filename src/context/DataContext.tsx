@@ -1,6 +1,17 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { Room, Testimonial, Activity, OwnerInfo } from '../types';
 import { HOTEL_INFO, ROOMS_DATA, GALLERY_SLIDES, TESTIMONIALS, ACTIVITIES_DATA, DEFAULT_OWNER_INFO } from '../data';
+import dynamicConfig from '../hotel_orchid_dynamic_config.json';
+
+const bConfig = (dynamicConfig as any) || {};
+const INITIAL_ROOMS = (bConfig && bConfig.rooms) ? bConfig.rooms : ROOMS_DATA;
+const INITIAL_GALLERY = (bConfig && bConfig.gallery) ? bConfig.gallery : GALLERY_SLIDES;
+const INITIAL_TESTIMONIALS = (bConfig && bConfig.testimonials) ? bConfig.testimonials : TESTIMONIALS;
+const INITIAL_HERO = (bConfig && bConfig.heroImage) ? bConfig.heroImage : HOTEL_INFO.images.hero;
+const INITIAL_LOGO = (bConfig && bConfig.logoImage) ? bConfig.logoImage : HOTEL_INFO.images.logo;
+const INITIAL_ACTIVITIES = (bConfig && bConfig.activities) ? bConfig.activities : ACTIVITIES_DATA;
+const INITIAL_OWNER = (bConfig && bConfig.ownerInfo) ? bConfig.ownerInfo : DEFAULT_OWNER_INFO;
+const configSignature = bConfig ? String(JSON.stringify(bConfig).length) : 'default';
 
 export interface GallerySlide {
   id: string;
@@ -170,15 +181,54 @@ const safeSetItem = (key: string, value: string) => {
 const DataContext = createContext<DataContextType | undefined>(undefined);
 
 export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const isInitialRooms = useRef(true);
+  const isInitialGallery = useRef(true);
+  const isInitialTestimonials = useRef(true);
+  const isInitialHero = useRef(true);
+  const isInitialLogo = useRef(true);
+  const isInitialActivities = useRef(true);
+  const isInitialOwner = useRef(true);
+
   const [rooms, setRooms] = useState<Room[]>(() => {
+    const activeSignature = localStorage.getItem('hotel_orchid_loaded_config_signature');
+    if (activeSignature !== configSignature) {
+      return INITIAL_ROOMS.map((item: any) => {
+        const cloned = { ...item };
+        const ams = cloned.amenities ? [...cloned.amenities] : [];
+        const hasWifi = ams.some((a: string) => {
+          const l = a.toLowerCase();
+          return l === 'wi-fi' || l === 'wifi' || l.includes('wi-fi') || l.includes('wifi');
+        });
+        if (!hasWifi) {
+          ams.push("Free Wi-Fi");
+        } else {
+          const idx = ams.findIndex((a: string) => {
+            const l = a.toLowerCase();
+            return l === 'wi-fi' || l === 'wifi';
+          });
+          if (idx !== -1) {
+            ams[idx] = "Free Wi-Fi";
+          }
+        }
+
+        const hasShower = ams.some((a: string) => {
+          const l = a.toLowerCase();
+          return l.includes('shower') || l.includes('hot and cold');
+        });
+        if (!hasShower) {
+          ams.push("Hot and cold shower 24/7");
+        }
+
+        cloned.amenities = ams;
+        return cleanObjectPaths(cloned);
+      });
+    }
     const saved = localStorage.getItem('hotel_orchid_rooms');
-    let parsed = saved ? JSON.parse(saved) : ROOMS_DATA;
-    // Backport "Free Wi-Fi" and "Hot and cold shower 24/7" to all rooms
+    let parsed = saved ? JSON.parse(saved) : INITIAL_ROOMS;
     parsed = parsed.map((item: any) => {
       const cloned = { ...item };
       const ams = cloned.amenities ? [...cloned.amenities] : [];
       
-      // Ensure "Free Wi-Fi" is present and normalized
       const hasWifi = ams.some((a: string) => {
         const l = a.toLowerCase();
         return l === 'wi-fi' || l === 'wifi' || l.includes('wi-fi') || l.includes('wifi');
@@ -186,7 +236,6 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (!hasWifi) {
         ams.push("Free Wi-Fi");
       } else {
-        // change existing simplified wifi to "Free Wi-Fi"
         const idx = ams.findIndex((a: string) => {
           const l = a.toLowerCase();
           return l === 'wi-fi' || l === 'wifi';
@@ -196,7 +245,6 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       }
 
-      // Ensure "Hot and cold shower 24/7" is present
       const hasShower = ams.some((a: string) => {
         const l = a.toLowerCase();
         return l.includes('shower') || l.includes('hot and cold');
@@ -212,44 +260,68 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   });
 
   const [gallery, setGallery] = useState<GallerySlide[]>(() => {
+    const activeSignature = localStorage.getItem('hotel_orchid_loaded_config_signature');
+    if (activeSignature !== configSignature) {
+      return INITIAL_GALLERY.map((item: any) => cleanObjectPaths(item));
+    }
     const saved = localStorage.getItem('hotel_orchid_gallery');
-    const parsed = saved ? JSON.parse(saved) : GALLERY_SLIDES;
+    const parsed = saved ? JSON.parse(saved) : INITIAL_GALLERY;
     return parsed.map((item: any) => cleanObjectPaths(item));
   });
 
   const [testimonials, setTestimonials] = useState<Testimonial[]>(() => {
+    const activeSignature = localStorage.getItem('hotel_orchid_loaded_config_signature');
+    if (activeSignature !== configSignature) {
+      return INITIAL_TESTIMONIALS.map((item: any) => cleanObjectPaths(item));
+    }
     const saved = localStorage.getItem('hotel_orchid_testimonials');
-    const parsed = saved ? JSON.parse(saved) : TESTIMONIALS;
+    const parsed = saved ? JSON.parse(saved) : INITIAL_TESTIMONIALS;
     return parsed.map((item: any) => cleanObjectPaths(item));
   });
 
   const [heroImage, setHeroImage] = useState<string>(() => {
+    const activeSignature = localStorage.getItem('hotel_orchid_loaded_config_signature');
+    if (activeSignature !== configSignature) {
+      return cleanPath(INITIAL_HERO, HOTEL_INFO.images.hero);
+    }
     const saved = localStorage.getItem('hotel_orchid_hero_image');
-    return cleanPath(saved || '', HOTEL_INFO.images.hero);
+    return cleanPath(saved || '', INITIAL_HERO);
   });
 
   const [logoImage, setLogoImage] = useState<string>(() => {
+    const activeSignature = localStorage.getItem('hotel_orchid_loaded_config_signature');
+    if (activeSignature !== configSignature) {
+      return cleanPath(INITIAL_LOGO, HOTEL_INFO.images.logo);
+    }
     const saved = localStorage.getItem('hotel_orchid_logo_image');
     if (saved && saved.includes('brand_logo')) {
       return HOTEL_INFO.images.logo;
     }
-    return cleanPath(saved || '', HOTEL_INFO.images.logo);
+    return cleanPath(saved || '', INITIAL_LOGO);
   });
 
   const [activities, setActivities] = useState<Activity[]>(() => {
+    const activeSignature = localStorage.getItem('hotel_orchid_loaded_config_signature');
+    if (activeSignature !== configSignature) {
+      return INITIAL_ACTIVITIES.map((item: any) => cleanObjectPaths(item));
+    }
     const saved = localStorage.getItem('hotel_orchid_activities');
-    const parsed = saved ? JSON.parse(saved) : ACTIVITIES_DATA;
+    const parsed = saved ? JSON.parse(saved) : INITIAL_ACTIVITIES;
     return parsed.map((item: any) => cleanObjectPaths(item));
   });
 
   const [ownerInfo, setOwnerInfo] = useState<OwnerInfo>(() => {
+    const activeSignature = localStorage.getItem('hotel_orchid_loaded_config_signature');
+    if (activeSignature !== configSignature) {
+      return INITIAL_OWNER;
+    }
     const saved = localStorage.getItem('hotel_orchid_owner_info');
-    let parsed = DEFAULT_OWNER_INFO;
+    let parsed = INITIAL_OWNER;
     if (saved) {
       try {
         const loaded = JSON.parse(saved);
         if (loaded && typeof loaded === 'object' && loaded.name) {
-          const defaultAchs = DEFAULT_OWNER_INFO.achievements || [];
+          const defaultAchs = INITIAL_OWNER.achievements || [];
           const loadedAchs = loaded.achievements || [];
           
           let mergedAchs = loadedAchs.map((ach: any) => {
@@ -261,7 +333,6 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
             };
           });
 
-          // Ensure all default achievements are present if missing
           defaultAchs.forEach(defAch => {
             if (!mergedAchs.some((a: any) => a.id === defAch.id)) {
               mergedAchs.push(defAch);
@@ -269,7 +340,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
           });
 
           parsed = {
-            ...DEFAULT_OWNER_INFO,
+            ...INITIAL_OWNER,
             ...loaded,
             achievements: mergedAchs
           };
@@ -281,92 +352,95 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Sync with LocalStorage
   useEffect(() => {
+    if (isInitialRooms.current) {
+      isInitialRooms.current = false;
+      return;
+    }
     safeSetItem('hotel_orchid_rooms', JSON.stringify(rooms));
   }, [rooms]);
 
   useEffect(() => {
+    if (isInitialGallery.current) {
+      isInitialGallery.current = false;
+      return;
+    }
     safeSetItem('hotel_orchid_gallery', JSON.stringify(gallery));
   }, [gallery]);
 
   useEffect(() => {
+    if (isInitialTestimonials.current) {
+      isInitialTestimonials.current = false;
+      return;
+    }
     safeSetItem('hotel_orchid_testimonials', JSON.stringify(testimonials));
   }, [testimonials]);
 
   useEffect(() => {
+    if (isInitialHero.current) {
+      isInitialHero.current = false;
+      return;
+    }
     safeSetItem('hotel_orchid_hero_image', heroImage);
   }, [heroImage]);
 
   useEffect(() => {
+    if (isInitialLogo.current) {
+      isInitialLogo.current = false;
+      return;
+    }
     safeSetItem('hotel_orchid_logo_image', logoImage);
   }, [logoImage]);
 
   useEffect(() => {
+    if (isInitialActivities.current) {
+      isInitialActivities.current = false;
+      return;
+    }
     safeSetItem('hotel_orchid_activities', JSON.stringify(activities));
   }, [activities]);
 
   useEffect(() => {
+    if (isInitialOwner.current) {
+      isInitialOwner.current = false;
+      return;
+    }
     safeSetItem('hotel_orchid_owner_info', JSON.stringify(ownerInfo));
   }, [ownerInfo]);
 
-  // Dynamically fetch published config file from server / public directory on first load
+  // Save the signature to confirm we have synced the configuration
   useEffect(() => {
-    const fetchPublishedConfig = async () => {
-      try {
-        const response = await fetch('/hotel_orchid_dynamic_config.json');
-        if (response.ok) {
-          const parsed = await response.json();
-          if (parsed && typeof parsed === 'object' && parsed.rooms && parsed.gallery && parsed.testimonials) {
-            console.log('[CPanel Sync] Found live server configuration file. Applying updates globally...');
+    // Try to fetch custom layout from public folder dynamic configuration
+    fetch('/hotel_orchid_dynamic_config.json')
+      .then(res => {
+        if (res.ok) return res.json();
+        throw new Error('No public config file on root');
+      })
+      .then(fetchedConfig => {
+        if (fetchedConfig && typeof fetchedConfig === 'object') {
+          console.log("[DataContext] Fetched public root config:", fetchedConfig);
+          
+          const fetchedSignature = String(JSON.stringify(fetchedConfig).length);
+          const activeSignature = localStorage.getItem('hotel_orchid_loaded_config_signature');
+          
+          if (activeSignature !== fetchedSignature) {
+            console.log("[DataContext] Dynamic mismatch on fetched config. Resetting state values from config.json...");
             
-            // Check if user is the admin actively working on draft updates in their cPanel module
-            const isAuthorizedAdmin = localStorage.getItem('hotel_orchid_admin_authorized') === 'true';
+            if (fetchedConfig.rooms) setRooms(fetchedConfig.rooms);
+            if (fetchedConfig.gallery) setGallery(fetchedConfig.gallery);
+            if (fetchedConfig.testimonials) setTestimonials(fetchedConfig.testimonials);
+            if (fetchedConfig.heroImage) setHeroImage(fetchedConfig.heroImage);
+            if (fetchedConfig.logoImage) setLogoImage(fetchedConfig.logoImage);
+            if (fetchedConfig.activities) setActivities(fetchedConfig.activities);
+            if (fetchedConfig.ownerInfo) setOwnerInfo(cleanObjectPaths(fetchedConfig.ownerInfo));
             
-            // If the local user is a regular visitor (or has empty storage), apply server truth
-            if (!isAuthorizedAdmin) {
-              const optRooms = await compressArrayImages(parsed.rooms.map((item: any) => cleanObjectPaths(item)));
-              const optGallery = await compressArrayImages(parsed.gallery.map((item: any) => cleanObjectPaths(item)));
-              const optTestimonials = await compressArrayImages(parsed.testimonials.map((item: any) => cleanObjectPaths(item)));
-
-              setRooms(optRooms);
-              setGallery(optGallery);
-              setTestimonials(optTestimonials);
-
-              if (parsed.activities) {
-                const optActivities = await compressArrayImages(parsed.activities.map((item: any) => cleanObjectPaths(item)));
-                setActivities(optActivities);
-              }
-              if (parsed.heroImage) {
-                const optHero = await compressImage(parsed.heroImage, 1000, 1000, 0.65);
-                setHeroImage(cleanPath(optHero, HOTEL_INFO.images.hero));
-              }
-              if (parsed.logoImage) {
-                const optLogo = await compressImage(parsed.logoImage, 300, 300, 0.65);
-                setLogoImage(cleanPath(optLogo, HOTEL_INFO.images.logo));
-              }
-              if (parsed.ownerInfo) {
-                const optPhoto = await compressImage(parsed.ownerInfo.photo, 600, 600, 0.65);
-                const optAchievements = await Promise.all(
-                  parsed.ownerInfo.achievements.map(async (ach: any) => {
-                    const optAchImg = await compressImage(ach.image, 400, 400, 0.65);
-                    return { ...ach, image: optAchImg };
-                  })
-                );
-                setOwnerInfo({
-                  ...parsed.ownerInfo,
-                  photo: optPhoto,
-                  achievements: optAchievements
-                });
-              }
-            }
+            localStorage.setItem('hotel_orchid_loaded_config_signature', fetchedSignature);
           }
         }
-      } catch (err) {
-        // Silent catch: file simply doesn't exist yet in the hosted location
-        console.log('[CPanel Sync] Dynamic configuration file not found in public directory. Falling back to default bundle.');
-      }
-    };
-    
-    fetchPublishedConfig();
+      })
+      .catch(err => {
+        console.log("[DataContext] Using bundled configuration:", err.message);
+        localStorage.setItem('hotel_orchid_loaded_config_signature', configSignature);
+      });
   }, []);
 
   // Action methods
@@ -450,13 +524,30 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const resetToDefault = () => {
     if (window.confirm('Are you sure you want to reset all modifications to default values? This will override all updates.')) {
-      setRooms(ROOMS_DATA);
-      setGallery(GALLERY_SLIDES);
-      setTestimonials(TESTIMONIALS);
-      setHeroImage(HOTEL_INFO.images.hero);
-      setLogoImage(HOTEL_INFO.images.logo);
-      setActivities(ACTIVITIES_DATA);
-      setOwnerInfo(DEFAULT_OWNER_INFO);
+      isInitialRooms.current = true;
+      isInitialGallery.current = true;
+      isInitialTestimonials.current = true;
+      isInitialHero.current = true;
+      isInitialLogo.current = true;
+      isInitialActivities.current = true;
+      isInitialOwner.current = true;
+
+      localStorage.removeItem('hotel_orchid_rooms');
+      localStorage.removeItem('hotel_orchid_gallery');
+      localStorage.removeItem('hotel_orchid_testimonials');
+      localStorage.removeItem('hotel_orchid_hero_image');
+      localStorage.removeItem('hotel_orchid_logo_image');
+      localStorage.removeItem('hotel_orchid_activities');
+      localStorage.removeItem('hotel_orchid_owner_info');
+
+      setRooms(INITIAL_ROOMS);
+      setGallery(INITIAL_GALLERY);
+      setTestimonials(INITIAL_TESTIMONIALS);
+      setHeroImage(INITIAL_HERO);
+      setLogoImage(INITIAL_LOGO);
+      setActivities(INITIAL_ACTIVITIES);
+      setOwnerInfo(INITIAL_OWNER);
+      localStorage.setItem('hotel_orchid_loaded_config_signature', configSignature);
     }
   };
 
