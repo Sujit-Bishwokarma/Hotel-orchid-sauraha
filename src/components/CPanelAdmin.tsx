@@ -681,37 +681,49 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                  <div className="bg-stone-950 p-6 rounded-sm border border-stone-850 flex items-center justify-between">
+                  <button
+                    onClick={() => setActiveTab('rooms')}
+                    className="bg-stone-950 p-6 rounded-sm border border-stone-850 flex items-center justify-between text-left hover:border-coral-500/50 hover:bg-stone-900 transition-all cursor-pointer group w-full"
+                  >
                     <div className="space-y-1">
-                      <span className="block text-[10px] font-mono uppercase text-stone-400">Active Habitations</span>
+                      <span className="block text-[10px] font-mono uppercase text-stone-400 group-hover:text-coral-400 transition-colors">Active Habitations</span>
                       <span className="text-3xl font-serif font-bold text-sand-50">{rooms.length} Rooms</span>
                     </div>
-                    <Bed size={32} className="text-coral-500 opacity-60" />
-                  </div>
+                    <Bed size={32} className="text-coral-500 opacity-60 group-hover:opacity-100 transition-opacity" />
+                  </button>
 
-                  <div className="bg-stone-950 p-6 rounded-sm border border-stone-850 flex items-center justify-between">
+                  <button
+                    onClick={() => setActiveTab('gallery')}
+                    className="bg-stone-950 p-6 rounded-sm border border-stone-850 flex items-center justify-between text-left hover:border-coral-500/50 hover:bg-stone-900 transition-all cursor-pointer group w-full"
+                  >
                     <div className="space-y-1">
-                      <span className="block text-[10px] font-mono uppercase text-stone-400">Gallery Items</span>
+                      <span className="block text-[10px] font-mono uppercase text-stone-400 group-hover:text-coral-400 transition-colors">Gallery Items</span>
                       <span className="text-3xl font-serif font-bold text-sand-50">{gallery.length} Photos</span>
                     </div>
-                    <Images size={32} className="text-coral-500 opacity-60" />
-                  </div>
+                    <Images size={32} className="text-coral-500 opacity-60 group-hover:opacity-100 transition-opacity" />
+                  </button>
 
-                  <div className="bg-stone-950 p-6 rounded-sm border border-stone-850 flex items-center justify-between">
+                  <button
+                    onClick={() => setActiveTab('reviews')}
+                    className="bg-stone-950 p-6 rounded-sm border border-stone-850 flex items-center justify-between text-left hover:border-coral-500/50 hover:bg-stone-900 transition-all cursor-pointer group w-full"
+                  >
                     <div className="space-y-1">
-                      <span className="block text-[10px] font-mono uppercase text-stone-400">Active Testimonials</span>
+                      <span className="block text-[10px] font-mono uppercase text-stone-400 group-hover:text-coral-400 transition-colors">Active Testimonials</span>
                       <span className="text-3xl font-serif font-bold text-sand-50">{testimonials.length} Reviews</span>
                     </div>
-                    <MessageSquare size={32} className="text-coral-500 opacity-60" />
-                  </div>
+                    <MessageSquare size={32} className="text-coral-500 opacity-60 group-hover:opacity-100 transition-opacity" />
+                  </button>
 
-                  <div className="bg-stone-950 p-6 rounded-sm border border-stone-850 flex items-center justify-between">
+                  <button
+                    onClick={() => setActiveTab('activities')}
+                    className="bg-stone-950 p-6 rounded-sm border border-stone-850 flex items-center justify-between text-left hover:border-coral-500/50 hover:bg-stone-900 transition-all cursor-pointer group w-full"
+                  >
                     <div className="space-y-1">
-                      <span className="block text-[10px] font-mono uppercase text-stone-400">Chitwan Activities</span>
+                      <span className="block text-[10px] font-mono uppercase text-stone-400 group-hover:text-coral-400 transition-colors">Chitwan Activities</span>
                       <span className="text-3xl font-serif font-bold text-sand-50">{activities.length} Active</span>
                     </div>
-                    <Compass size={32} className="text-coral-500 opacity-60" />
-                  </div>
+                    <Compass size={32} className="text-coral-500 opacity-60 group-hover:opacity-100 transition-opacity" />
+                  </button>
                 </div>
 
                 {/* Hero Background Customizer */}
