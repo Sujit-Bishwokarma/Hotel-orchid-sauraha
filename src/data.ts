@@ -64,7 +64,9 @@ export const ROOMS_DATA: Room[] = [
       "Premium Orthopedic Mattress",
       "24/7 Fire & Security Surveillance",
       "Solid Teakwood Sound-Dampened Doors",
-      "Double Glazed Noise-Reducing Windows"
+      "Double Glazed Noise-Reducing Windows",
+      "Free Wi-Fi",
+      "Hot and cold shower 24/7"
     ],
     bedType: "1 Queen Size Bed",
     size: "26 m²"
@@ -81,7 +83,9 @@ export const ROOMS_DATA: Room[] = [
       "Double Premium Orthopedic Mattresses",
       "24/7 Fire & Security Surveillance",
       "Solid Teakwood Sound-Dampened Doors",
-      "Enhanced Safe & Privacy Guard Systemed Balcony"
+      "Enhanced Safe & Privacy Guard Systemed Balcony",
+      "Free Wi-Fi",
+      "Hot and cold shower 24/7"
     ],
     bedType: "1 Double Bed & 1 Single Bed",
     size: "38 m²"
@@ -230,6 +234,13 @@ export const DEFAULT_OWNER_INFO: OwnerInfo = {
       title: "Regional Hotel Association Nepal, Chitwan",
       role: "Active Member",
       image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=300"
+    },
+    {
+      id: "ach-5",
+      period: "2082 to Now",
+      title: "Sauraha Community Development & Youth Education",
+      role: "Advisor & Primary Sponsor",
+      image: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&q=80&w=300"
     }
   ]
 };

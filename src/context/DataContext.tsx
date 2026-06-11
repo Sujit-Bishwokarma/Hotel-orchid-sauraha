@@ -172,8 +172,43 @@ const DataContext = createContext<DataContextType | undefined>(undefined);
 export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [rooms, setRooms] = useState<Room[]>(() => {
     const saved = localStorage.getItem('hotel_orchid_rooms');
-    const parsed = saved ? JSON.parse(saved) : ROOMS_DATA;
-    return parsed.map((item: any) => cleanObjectPaths(item));
+    let parsed = saved ? JSON.parse(saved) : ROOMS_DATA;
+    // Backport "Free Wi-Fi" and "Hot and cold shower 24/7" to all rooms
+    parsed = parsed.map((item: any) => {
+      const cloned = { ...item };
+      const ams = cloned.amenities ? [...cloned.amenities] : [];
+      
+      // Ensure "Free Wi-Fi" is present and normalized
+      const hasWifi = ams.some((a: string) => {
+        const l = a.toLowerCase();
+        return l === 'wi-fi' || l === 'wifi' || l.includes('wi-fi') || l.includes('wifi');
+      });
+      if (!hasWifi) {
+        ams.push("Free Wi-Fi");
+      } else {
+        // change existing simplified wifi to "Free Wi-Fi"
+        const idx = ams.findIndex((a: string) => {
+          const l = a.toLowerCase();
+          return l === 'wi-fi' || l === 'wifi';
+        });
+        if (idx !== -1) {
+          ams[idx] = "Free Wi-Fi";
+        }
+      }
+
+      // Ensure "Hot and cold shower 24/7" is present
+      const hasShower = ams.some((a: string) => {
+        const l = a.toLowerCase();
+        return l.includes('shower') || l.includes('hot and cold');
+      });
+      if (!hasShower) {
+        ams.push("Hot and cold shower 24/7");
+      }
+
+      cloned.amenities = ams;
+      return cleanObjectPaths(cloned);
+    });
+    return parsed;
   });
 
   const [gallery, setGallery] = useState<GallerySlide[]>(() => {
@@ -209,13 +244,39 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const [ownerInfo, setOwnerInfo] = useState<OwnerInfo>(() => {
     const saved = localStorage.getItem('hotel_orchid_owner_info');
+    let parsed = DEFAULT_OWNER_INFO;
     if (saved) {
       try {
-        const parsed = JSON.parse(saved);
-        if (parsed && typeof parsed === 'object' && parsed.name) return parsed;
+        const loaded = JSON.parse(saved);
+        if (loaded && typeof loaded === 'object' && loaded.name) {
+          const defaultAchs = DEFAULT_OWNER_INFO.achievements || [];
+          const loadedAchs = loaded.achievements || [];
+          
+          let mergedAchs = loadedAchs.map((ach: any) => {
+            const defAch = defaultAchs.find(d => d.id === ach.id);
+            const isBrokenImage = !ach.image || ach.image.length < 15 || ach.image.includes('/src/') || ach.image.includes('../') || ach.image.includes('undefined');
+            return {
+              ...ach,
+              image: isBrokenImage ? (defAch ? defAch.image : "") : ach.image
+            };
+          });
+
+          // Ensure all default achievements are present if missing
+          defaultAchs.forEach(defAch => {
+            if (!mergedAchs.some((a: any) => a.id === defAch.id)) {
+              mergedAchs.push(defAch);
+            }
+          });
+
+          parsed = {
+            ...DEFAULT_OWNER_INFO,
+            ...loaded,
+            achievements: mergedAchs
+          };
+        }
       } catch {}
     }
-    return DEFAULT_OWNER_INFO;
+    return parsed;
   });
 
   // Sync with LocalStorage

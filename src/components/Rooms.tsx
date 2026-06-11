@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { ShieldCheck, User, Users, Minimize, Bed, Sparkles, CheckCircle2 } from 'lucide-react';
+import { ShieldCheck, Minimize, Bed, Sparkles, CheckCircle2 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useData } from '../context/DataContext';
 
@@ -62,10 +62,6 @@ export default function Rooms({ onBookRoom }: RoomsProps) {
                       <Sparkles className="w-3 h-3" />
                       <span>{room.capacity === 2 ? 'Couple Choice' : 'Premium Gold'}</span>
                     </span>
-                    <span className="text-sand-100 font-mono text-xs sm:text-sm bg-ocean-950/40 backdrop-blur-sm px-3 py-1 rounded-sm flex items-center gap-1.5 border border-sand-300/10">
-                      {room.capacity === 2 ? <User size={14} /> : <Users size={14} />}
-                      <span>{room.capacity} Guests</span>
-                    </span>
                   </div>
                 </div>
 
@@ -121,7 +117,10 @@ export default function Rooms({ onBookRoom }: RoomsProps) {
                             lower.includes('door') ||
                             lower.includes('window') ||
                             lower.includes('air conditioning') ||
-                            lower.includes('heating')
+                            lower.includes('heating') ||
+                            lower.includes('shower') ||
+                            lower.includes('wifi') ||
+                            lower.includes('wi-fi')
                           );
                         })
                         .map((amenity, idx) => (

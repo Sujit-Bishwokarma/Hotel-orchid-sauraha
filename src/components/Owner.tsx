@@ -174,19 +174,18 @@ export default function Owner() {
               }}
               animate={{ x: `-${currentIndex * (100 / ownerInfo.achievements.length)}%` }}
               transition={{ type: "spring", stiffness: 280, damping: 30 }}
-              className="flex gap-6 cursor-grab active:cursor-grabbing select-none"
+              className="flex gap-0 cursor-grab active:cursor-grabbing select-none"
               style={{
-                width: `${(ownerInfo.achievements.length / itemsPerPage) * 100}%`,
+                width: `${Math.max(1, ownerInfo.achievements.length / itemsPerPage) * 100}%`,
               }}
             >
               {ownerInfo.achievements.map((ach) => (
                 <div
                   key={ach.id}
                   style={{ width: `${100 / ownerInfo.achievements.length}%` }}
-                  className="px-1 shrink-0"
+                  className="px-3 shrink-0"
                 >
                   <div className="bg-white rounded-2xl shadow-sm border border-sand-200/60 p-5 hover:border-coral-400/50 hover:shadow-md transition-all duration-300 flex flex-col h-full group"
-                    style={{ contentVisibility: 'auto' }}
                   >
                     {/* Year Badge */}
                     <div className="text-xs font-sans font-bold text-coral-600 tracking-wider mb-3 flex justify-between items-center">
@@ -197,7 +196,7 @@ export default function Owner() {
                     </div>
 
                     {/* Box Image inside */}
-                    <div className="aspect-[4/3] rounded-xl overflow-hidden mb-4 bg-sand-110 relative border border-sand-100">
+                    <div className="aspect-[4/3] rounded-xl overflow-hidden mb-4 bg-sand-100 relative border border-sand-100">
                       <img
                         src={ach.image}
                         alt={ach.title}

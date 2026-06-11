@@ -126,13 +126,6 @@ export default function BookingForm({ isOpen, onClose, preSelectedRoomId }: Book
                 /* Regular booking entry fields */
                 <form id="orchid-booking-inner-form" onSubmit={handleSubmit} className="space-y-6 text-left">
                   
-                  <div className="bg-coral-50 border border-coral-200/50 p-4 rounded-sm flex items-start gap-3">
-                    <Sparkles className="w-5 h-5 text-coral-500 mt-0.5 flex-shrink-0 animate-pulse" />
-                    <p className="font-sans text-xs text-coral-900 leading-relaxed">
-                      Namaste! You are direct-booking with <strong>Hotel Orchid Sauraha</strong>. No prepayment is required today. Pay during check-in.
-                    </p>
-                  </div>
-
                   {/* 2-Column fields */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     
@@ -200,25 +193,6 @@ export default function BookingForm({ isOpen, onClose, preSelectedRoomId }: Book
                       />
                     </div>
 
-                    {/* Room Type Dropdown */}
-                    <div className="space-y-1">
-                      <label htmlFor="book-roomtype" className="block text-[11px] font-mono text-sand-700 uppercase tracking-wider">
-                        Room Sanctum *
-                      </label>
-                      <select
-                        id="book-roomtype"
-                        value={formData.roomType}
-                        onChange={(e) => setFormData({ ...formData, roomType: e.target.value })}
-                        className="w-full px-4 py-2.5 bg-sand-50 border border-sand-300 focus:border-coral-500 rounded-none text-ocean-950 focus:outline-none transition-all font-sans text-sm"
-                      >
-                        {ROOMS_DATA.map((room) => (
-                          <option key={room.id} value={room.id}>
-                            {room.name} ({room.basePriceNPR.toLocaleString()} NPR /night)
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
                     {/* Guest Count */}
                     <div className="space-y-1">
                       <label htmlFor="book-guests" className="block text-[11px] font-mono text-sand-700 uppercase tracking-wider">
@@ -227,7 +201,7 @@ export default function BookingForm({ isOpen, onClose, preSelectedRoomId }: Book
                       <select
                         id="book-guests"
                         value={formData.guests}
-                        onChange={(e) => setFormData({ ...prev => ({ ...prev, guests: parseInt(e.target.value) }) })}
+                        onChange={(e) => setFormData((prev) => ({ ...prev, guests: parseInt(e.target.value) }))}
                         className="w-full px-4 py-2.5 bg-sand-50 border border-sand-300 focus:border-coral-500 rounded-none text-ocean-950 focus:outline-none transition-all font-sans text-sm"
                       >
                         {[1, 2, 3, 4].map((num) => (
@@ -240,34 +214,19 @@ export default function BookingForm({ isOpen, onClose, preSelectedRoomId }: Book
 
                   </div>
 
-                  {/* Real-time calculated Invoice Details section */}
-                  <div className="bg-sand-100 border border-sand-300 p-6 rounded-sm space-y-4">
-                    <div className="flex items-center justify-between border-b border-sand-300/60 pb-2">
-                      <span className="font-serif font-bold text-ocean-950 text-base">Booking Estimation Ledger</span>
-                      <span className="font-mono text-xs text-sand-600 uppercase tracking-wider">Direct Stay Policy</span>
-                    </div>
-
-                    <div className="space-y-2 font-sans text-xs sm:text-sm text-sand-800">
-                      <div className="flex justify-between">
-                        <span>Sanctum Sanctuary:</span>
-                        <span className="font-semibold text-ocean-950">{activeRoom.name}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Base Night Rate:</span>
-                        <span className="font-semibold text-ocean-950">{activeRoom.basePriceNPR.toLocaleString()} NPR</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Duration Duration:</span>
-                        <span className="font-semibold text-ocean-950">{nightsCount} {nightsCount === 1 ? 'Night' : 'Nights'}</span>
-                      </div>
-                    </div>
-
-                    <div className="border-t border-sand-300 pt-3 flex justify-between items-baseline">
-                      <span className="font-mono text-[10px] uppercase font-bold text-sand-700">Total Net Booking NPR</span>
-                      <span className="font-serif text-2xl font-bold text-coral-600">
-                        NPR {totalPriceNPR.toLocaleString()}
-                      </span>
-                    </div>
+                  {/* Optional message / special requests description box */}
+                  <div className="space-y-1">
+                    <label htmlFor="book-special-requests" className="block text-[11px] font-mono text-sand-700 uppercase tracking-wider">
+                      Additional Message / Special Notes (Optional)
+                    </label>
+                    <textarea
+                      id="book-special-requests"
+                      rows={3}
+                      value={formData.specialRequests}
+                      onChange={(e) => setFormData({ ...formData, specialRequests: e.target.value })}
+                      className="w-full px-4 py-2.5 bg-sand-50 border border-sand-300 focus:border-coral-500 rounded-none text-ocean-950 placeholder-sand-400 focus:outline-none transition-all font-sans text-sm resize-none"
+                      placeholder="e.g., flight arrival details, pickup requests, bed preference, etc."
+                    />
                   </div>
 
                   {/* Action submit */}
