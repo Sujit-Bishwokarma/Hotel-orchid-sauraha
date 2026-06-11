@@ -510,24 +510,32 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
       >
         
         {/* Header - cPanel Branding */}
-        <div className="bg-stone-950 border-b border-stone-800 px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="h-10 w-10 rounded-sm bg-coral-500 flex items-center justify-center text-sand-50 shadow-md">
-              <Settings size={22} className="animate-spin-slow" />
-            </div>
-            <div>
-              <div className="flex items-center space-x-2">
-                <h1 className="font-serif text-lg font-bold tracking-wider text-sand-50 flex items-center gap-1.5">
-                  ORCHID <span className="bg-coral-500/10 text-coral-400 border border-coral-500/20 px-2 py-0.5 text-[10px] uppercase font-mono font-bold tracking-widest rounded-sm">cPanel v4.2</span>
-                </h1>
+        <div className="bg-stone-950 border-b border-stone-800 px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 shrink-0">
+          <div className="flex items-center space-x-2.5 sm:space-x-3 w-full sm:w-auto justify-between sm:justify-start">
+            <div className="flex items-center space-x-2.5 sm:space-x-3 min-w-0">
+              <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-sm bg-coral-500 flex items-center justify-center text-sand-50 shadow-md shrink-0">
+                <Settings size={18} className="animate-spin-slow sm:size-[22px]" />
               </div>
-              <p className="text-[10px] sm:text-xs font-mono text-stone-400">
-                Dynamic Admin Controls • Bisup Hosting Cloud Invariant
-              </p>
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <h1 className="font-serif text-sm sm:text-lg font-bold tracking-wider text-sand-50 whitespace-nowrap overflow-hidden text-ellipsis">
+                    ORCHID
+                  </h1>
+                  <span className="bg-coral-500/10 text-coral-400 border border-coral-500/20 px-1.5 py-0.5 text-[8px] sm:text-[10px] uppercase font-mono font-bold tracking-widest rounded-sm whitespace-nowrap shrink-0">
+                    cPanel v4.2
+                  </span>
+                </div>
+                <p className="text-[9px] sm:text-xs font-mono text-stone-400 whitespace-nowrap overflow-hidden text-ellipsis max-w-[180px] sm:max-w-none">
+                  Dynamic Admin Controls • Bisup Hosting Cloud Invariant
+                </p>
+              </div>
             </div>
+            
+            {/* Show an elegant visual indicator for mobile to balance space */}
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse sm:hidden" title="Connected" />
           </div>
 
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2 sm:space-x-3 w-full sm:w-auto justify-end">
             {onSignOut && (
               <button
                 onClick={() => {
@@ -535,27 +543,29 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
                     onSignOut();
                   }
                 }}
-                className="px-3 py-1.5 bg-red-950/40 hover:bg-red-900/60 text-red-100 hover:text-white text-xs font-mono rounded-sm flex items-center gap-1.5 transition-colors border border-red-900/50"
+                className="px-2.5 py-1 sm:px-3 sm:py-1.5 bg-red-950/40 hover:bg-red-900/60 text-red-100 hover:text-white text-[10px] sm:text-xs font-mono rounded-sm flex items-center gap-1 sm:gap-1.5 transition-colors border border-red-900/50 whitespace-nowrap"
                 title="Sign out of Admin Session and hide cPanel console shortcut buttons"
               >
-                <Lock size={13} className="text-red-400" />
-                <span>Lock Console</span>
+                <Lock size={11} className="text-red-400 sm:size-[13px]" />
+                <span className="hidden sm:inline">Lock Console</span>
+                <span className="inline sm:hidden">Lock</span>
               </button>
             )}
             <button
                onClick={resetToDefault}
-              className="px-3 py-1.5 bg-stone-800 hover:bg-stone-700 text-stone-300 text-xs font-mono rounded-sm flex items-center gap-1.5 transition-colors border border-stone-700"
+              className="px-2.5 py-1 sm:px-3 sm:py-1.5 bg-stone-800 hover:bg-stone-700 text-stone-300 text-[10px] sm:text-xs font-mono rounded-sm flex items-center gap-1 sm:gap-1.5 transition-colors border border-stone-700 whitespace-nowrap"
               title="Reset all content to original default package"
             >
-              <RotateCcw size={13} />
+              <RotateCcw size={11} className="sm:size-[13px]" />
               <span className="hidden sm:inline">Reset Defaults</span>
+              <span className="inline sm:hidden">Reset</span>
             </button>
             <button
-              onClick={onClose}
-              className="p-2 text-stone-400 hover:text-stone-100 hover:bg-stone-850 transition-colors focus:outline-none rounded-full"
+               onClick={onClose}
+              className="p-1 sm:p-2 text-stone-400 hover:text-stone-100 hover:bg-stone-850 transition-colors focus:outline-none rounded-full shrink-0"
               aria-label="Close Portal"
             >
-              <X size={20} />
+              <X size={16} className="sm:size-[20px]" />
             </button>
           </div>
         </div>
