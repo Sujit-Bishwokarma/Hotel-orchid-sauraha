@@ -911,7 +911,7 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
             {/* ROOMS TAB */}
             {activeTab === 'rooms' && (
               <div className="space-y-6">
-                <div className="flex items-center justify-between text-left">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-left">
                   <div className="space-y-1">
                     <h2 className="font-serif text-xl sm:text-2xl font-bold text-sand-50">Room Prices and Photos</h2>
                     <p className="text-xs sm:text-sm text-stone-400">Update the name, description, rate per night, size, and photo for each sanctuary.</p>
@@ -920,7 +920,7 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
                   {!isAddingRoom && !editingRoomId && (
                     <button
                       onClick={handleAddRoomClick}
-                      className="px-4 py-2 bg-coral-500 hover:bg-coral-600 text-sand-50 text-xs font-mono font-bold uppercase tracking-wider rounded-sm flex items-center gap-1.5 transition-colors"
+                      className="px-4 py-2 bg-coral-500 hover:bg-coral-600 text-sand-50 text-xs font-mono font-bold uppercase tracking-wider rounded-sm flex items-center gap-1.5 transition-colors shrink-0 whitespace-nowrap self-start sm:self-center"
                     >
                       <Plus size={14} />
                       <span>New Room</span>
@@ -1193,7 +1193,7 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
             {/* GALLERY TAB */}
             {activeTab === 'gallery' && (
               <div className="space-y-6 text-left">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-left">
                   <div className="space-y-1">
                     <h2 className="font-serif text-xl sm:text-2xl font-bold text-sand-50">Gallery Photographs</h2>
                     <p className="text-xs sm:text-sm text-stone-400">Add, edit, or remove photos displayed in the auto-crossfade swiper slider.</p>
@@ -1205,7 +1205,7 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
                         setIsAddingGallery(true);
                         setGalleryForm({ image: '', title: '', caption: '' });
                       }}
-                      className="px-4 py-2 bg-coral-500 hover:bg-coral-600 text-sand-50 text-xs font-mono font-bold uppercase tracking-wider rounded-sm flex items-center gap-1.5"
+                      className="px-4 py-2 bg-coral-500 hover:bg-coral-600 text-sand-50 text-xs font-mono font-bold uppercase tracking-wider rounded-sm flex items-center gap-1.5 shrink-0 whitespace-nowrap self-start sm:self-center"
                     >
                       <Plus size={14} />
                       <span>New Photo</span>
@@ -1346,7 +1346,7 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
             {/* REVIEWS TAB */}
             {activeTab === 'reviews' && (
               <div className="space-y-6 text-left">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-left">
                   <div className="space-y-1">
                     <h2 className="font-serif text-xl sm:text-2xl font-bold text-sand-50">Customer Reviews</h2>
                     <p className="text-xs sm:text-sm text-stone-400">Manage real guest feedback, edit ratings, or insert new recommendations manually.</p>
@@ -1358,7 +1358,7 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
                         setIsAddingReview(true);
                         setReviewForm({ author: '', location: '', rating: 5, content: '' });
                       }}
-                      className="px-4 py-2 bg-coral-500 hover:bg-coral-600 text-sand-50 text-xs font-mono font-bold uppercase tracking-wider rounded-sm flex items-center gap-1.5"
+                      className="px-4 py-2 bg-coral-500 hover:bg-coral-600 text-sand-50 text-xs font-mono font-bold uppercase tracking-wider rounded-sm flex items-center gap-1.5 shrink-0 whitespace-nowrap self-start sm:self-center"
                     >
                       <Plus size={14} />
                       <span>Add Review</span>
@@ -1502,7 +1502,7 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
                   {!isAddingActivity && !editingActivityId && (
                     <button
                       onClick={handleAddActivityClick}
-                      className="px-4 py-2 bg-coral-500 hover:bg-coral-600 text-sand-50 font-mono text-xs uppercase tracking-wider rounded-sm flex items-center justify-center gap-2 self-start transition-colors cursor-pointer"
+                      className="px-4 py-2 bg-coral-500 hover:bg-coral-600 text-sand-50 font-mono text-xs uppercase tracking-wider rounded-sm flex items-center justify-center gap-2 self-start transition-colors cursor-pointer shrink-0 whitespace-nowrap"
                     >
                       <Plus size={14} />
                       <span>Add Activity</span>
