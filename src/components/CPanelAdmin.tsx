@@ -498,7 +498,7 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-0 sm:p-4 bg-ocean-950/80 backdrop-blur-md overflow-hidden">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center pt-16 pb-4 px-2 sm:p-4 bg-ocean-950/80 backdrop-blur-md overflow-hidden">
       
       {/* Container holding the admin controls */}
       <motion.div 
@@ -506,36 +506,31 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
         initial={{ opacity: 0, scale: 0.95, y: 15 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 15 }}
-        className="w-full h-full sm:h-[85vh] sm:max-w-6xl bg-stone-900 text-stone-100 flex flex-col rounded-none sm:rounded-md shadow-2xl border border-stone-800 overflow-hidden"
+        className="w-full h-full sm:h-[85vh] sm:max-w-6xl bg-stone-900 text-stone-100 flex flex-col rounded-md shadow-2xl border border-stone-800 overflow-hidden"
       >
         
         {/* Header - cPanel Branding */}
-        <div className="bg-stone-950 border-b border-stone-800 px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 shrink-0">
-          <div className="flex items-center space-x-2.5 sm:space-x-3 w-full sm:w-auto justify-between sm:justify-start">
-            <div className="flex items-center space-x-2.5 sm:space-x-3 min-w-0">
-              <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-sm bg-coral-500 flex items-center justify-center text-sand-50 shadow-md shrink-0">
-                <Settings size={18} className="animate-spin-slow sm:size-[22px]" />
-              </div>
-              <div className="min-w-0">
-                <div className="flex items-center gap-1.5 sm:gap-2">
-                  <h1 className="font-serif text-sm sm:text-lg font-bold tracking-wider text-sand-50 whitespace-nowrap overflow-hidden text-ellipsis">
-                    ORCHID
-                  </h1>
-                  <span className="bg-coral-500/10 text-coral-400 border border-coral-500/20 px-1.5 py-0.5 text-[8px] sm:text-[10px] uppercase font-mono font-bold tracking-widest rounded-sm whitespace-nowrap shrink-0">
-                    cPanel v4.2
-                  </span>
-                </div>
-                <p className="text-[9px] sm:text-xs font-mono text-stone-400 whitespace-nowrap overflow-hidden text-ellipsis max-w-[180px] sm:max-w-none">
-                  Dynamic Admin Controls • Bisup Hosting Cloud Invariant
-                </p>
-              </div>
+        <div className="bg-stone-950 border-b border-stone-800 px-3 sm:px-6 py-2.5 sm:py-4 flex items-center justify-between gap-2 sm:gap-4 shrink-0">
+          <div className="flex items-center space-x-2 sm:space-x-3 min-w-0">
+            <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-sm bg-coral-500 flex items-center justify-center text-sand-50 shadow-md shrink-0">
+              <Settings size={16} className="animate-spin-slow sm:size-[22px]" />
             </div>
-            
-            {/* Show an elegant visual indicator for mobile to balance space */}
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse sm:hidden" title="Connected" />
+            <div className="min-w-0">
+              <div className="flex items-center gap-1 sm:gap-2">
+                <h1 className="font-serif text-sm sm:text-lg font-bold tracking-wider text-sand-50 whitespace-nowrap">
+                  ORCHID
+                </h1>
+                <span className="bg-coral-500/10 text-coral-400 border border-coral-500/20 px-1 py-0.5 text-[8px] sm:text-[10px] uppercase font-mono font-bold tracking-widest rounded-sm whitespace-nowrap shrink-0">
+                  cPanel v4.2
+                </span>
+              </div>
+              <p className="text-[8px] sm:text-xs font-mono text-stone-400 whitespace-nowrap overflow-hidden text-ellipsis hidden xs:block">
+                Dynamic Admin Controls
+              </p>
+            </div>
           </div>
 
-          <div className="flex items-center space-x-2 sm:space-x-3 w-full sm:w-auto justify-end">
+          <div className="flex items-center space-x-1.5 sm:space-x-3 shrink-0">
             {onSignOut && (
               <button
                 onClick={() => {
@@ -543,25 +538,25 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
                     onSignOut();
                   }
                 }}
-                className="px-2.5 py-1 sm:px-3 sm:py-1.5 bg-red-950/40 hover:bg-red-900/60 text-red-100 hover:text-white text-[10px] sm:text-xs font-mono rounded-sm flex items-center gap-1 sm:gap-1.5 transition-colors border border-red-900/50 whitespace-nowrap"
+                className="px-2 py-1.5 sm:px-3 sm:py-1.5 bg-red-950/40 hover:bg-red-900/60 text-red-100 hover:text-white text-[9px] sm:text-xs font-mono rounded-sm flex items-center gap-1 transition-colors border border-red-900/50 whitespace-nowrap"
                 title="Sign out of Admin Session and hide cPanel console shortcut buttons"
               >
-                <Lock size={11} className="text-red-400 sm:size-[13px]" />
-                <span className="hidden sm:inline">Lock Console</span>
-                <span className="inline sm:hidden">Lock</span>
+                <Lock size={10} className="text-red-400 sm:size-[13px]" />
+                <span className="hidden xs:inline">Lock Console</span>
+                <span className="inline xs:hidden">Lock</span>
               </button>
             )}
             <button
-               onClick={resetToDefault}
-              className="px-2.5 py-1 sm:px-3 sm:py-1.5 bg-stone-800 hover:bg-stone-700 text-stone-300 text-[10px] sm:text-xs font-mono rounded-sm flex items-center gap-1 sm:gap-1.5 transition-colors border border-stone-700 whitespace-nowrap"
+              onClick={resetToDefault}
+              className="px-2 py-1.5 sm:px-3 sm:py-1.5 bg-stone-800 hover:bg-stone-700 text-stone-300 text-[9px] sm:text-xs font-mono rounded-sm flex items-center gap-1 transition-colors border border-stone-700 whitespace-nowrap"
               title="Reset all content to original default package"
             >
-              <RotateCcw size={11} className="sm:size-[13px]" />
-              <span className="hidden sm:inline">Reset Defaults</span>
-              <span className="inline sm:hidden">Reset</span>
+              <RotateCcw size={10} className="sm:size-[13px]" />
+              <span className="hidden xs:inline">Reset Defaults</span>
+              <span className="inline xs:hidden">Reset</span>
             </button>
             <button
-               onClick={onClose}
+              onClick={onClose}
               className="p-1 sm:p-2 text-stone-400 hover:text-stone-100 hover:bg-stone-850 transition-colors focus:outline-none rounded-full shrink-0"
               aria-label="Close Portal"
             >
@@ -577,7 +572,7 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              className="bg-emerald-800 text-emerald-100 px-6 py-2.5 text-xs font-mono font-semibold flex items-center space-x-2 shadow-inner"
+              className="bg-emerald-800 text-emerald-100 px-6 py-2.5 text-xs font-mono font-semibold flex items-center space-x-2 shadow-inner shrink-0"
             >
               <Check size={14} />
               <span>{successMessage}</span>
@@ -589,89 +584,89 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
         <div className="flex-grow flex flex-col md:flex-row overflow-hidden">
           
           {/* Left Navigation Rails */}
-          <div className="w-full md:w-64 bg-stone-950 border-b md:border-b-0 md:border-r border-stone-850 flex flex-row md:flex-col overflow-x-auto md:overflow-x-visible no-scrollbar">
+          <div className="w-full md:w-64 bg-stone-950 border-b md:border-b-0 md:border-r border-stone-850 flex flex-row md:flex-col overflow-x-auto md:overflow-x-visible no-scrollbar shrink-0">
             
             <button
               onClick={() => { setActiveTab('dashboard'); }}
-              className={`flex-shrink-0 flex items-center space-x-3 px-6 py-4 text-xs tracking-wider uppercase font-mono border-b md:border-b-0 md:border-r-4 transition-all w-auto md:w-full text-left font-bold ${
+              className={`flex-shrink-0 flex items-center space-x-2 px-4 py-2.5 sm:px-6 sm:py-4 text-xs tracking-wider uppercase font-mono border-b md:border-b-0 md:border-r-4 transition-all w-auto md:w-full text-left font-bold ${
                 activeTab === 'dashboard'
                   ? 'bg-stone-900 border-coral-500 text-coral-400'
                   : 'border-transparent text-stone-400 hover:text-stone-100 hover:bg-stone-900/40'
               }`}
             >
-              <LayoutGrid size={16} />
+              <LayoutGrid size={15} />
               <span>Overview</span>
             </button>
 
             <button
               onClick={() => { setActiveTab('rooms'); }}
-              className={`flex-shrink-0 flex items-center space-x-3 px-6 py-4 text-xs tracking-wider uppercase font-mono border-b md:border-b-0 md:border-r-4 transition-all w-auto md:w-full text-left font-bold ${
+              className={`flex-shrink-0 flex items-center space-x-2 px-4 py-2.5 sm:px-6 sm:py-4 text-xs tracking-wider uppercase font-mono border-b md:border-b-0 md:border-r-4 transition-all w-auto md:w-full text-left font-bold ${
                 activeTab === 'rooms'
                   ? 'bg-stone-900 border-coral-500 text-coral-400'
                   : 'border-transparent text-stone-400 hover:text-stone-100 hover:bg-stone-900/40'
               }`}
             >
-              <Bed size={16} />
+              <Bed size={15} />
               <span>Room Control</span>
             </button>
 
             <button
               onClick={() => { setActiveTab('gallery'); }}
-              className={`flex-shrink-0 flex items-center space-x-3 px-6 py-4 text-xs tracking-wider uppercase font-mono border-b md:border-b-0 md:border-r-4 transition-all w-auto md:w-full text-left font-bold ${
+              className={`flex-shrink-0 flex items-center space-x-2 px-4 py-2.5 sm:px-6 sm:py-4 text-xs tracking-wider uppercase font-mono border-b md:border-b-0 md:border-r-4 transition-all w-auto md:w-full text-left font-bold ${
                 activeTab === 'gallery'
                   ? 'bg-stone-900 border-coral-500 text-coral-400'
                   : 'border-transparent text-stone-400 hover:text-stone-100 hover:bg-stone-900/40'
               }`}
             >
-              <Images size={16} />
+              <Images size={15} />
               <span>Gallery Control</span>
             </button>
 
             <button
               onClick={() => { setActiveTab('reviews'); }}
-              className={`flex-shrink-0 flex items-center space-x-3 px-6 py-4 text-xs tracking-wider uppercase font-mono border-b md:border-b-0 md:border-r-4 transition-all w-auto md:w-full text-left font-bold ${
+              className={`flex-shrink-0 flex items-center space-x-2 px-4 py-2.5 sm:px-6 sm:py-4 text-xs tracking-wider uppercase font-mono border-b md:border-b-0 md:border-r-4 transition-all w-auto md:w-full text-left font-bold ${
                 activeTab === 'reviews'
                   ? 'bg-stone-900 border-coral-500 text-coral-400'
                   : 'border-transparent text-stone-400 hover:text-stone-100 hover:bg-stone-900/40'
               }`}
             >
-              <MessageSquare size={16} />
+              <MessageSquare size={15} />
               <span>Guest Reviews</span>
             </button>
 
             <button
               onClick={() => { setActiveTab('activities'); }}
-              className={`flex-shrink-0 flex items-center space-x-3 px-6 py-4 text-xs tracking-wider uppercase font-mono border-b md:border-b-0 md:border-r-4 transition-all w-auto md:w-full text-left font-bold ${
+              className={`flex-shrink-0 flex items-center space-x-2 px-4 py-2.5 sm:px-6 sm:py-4 text-xs tracking-wider uppercase font-mono border-b md:border-b-0 md:border-r-4 transition-all w-auto md:w-full text-left font-bold ${
                 activeTab === 'activities'
                   ? 'bg-stone-900 border-coral-500 text-coral-400'
                   : 'border-transparent text-stone-400 hover:text-stone-100 hover:bg-stone-900/40'
               }`}
             >
-              <Compass size={16} />
+              <Compass size={15} />
               <span>Activities Control</span>
             </button>
 
             <button
               onClick={() => { setActiveTab('owner'); }}
-              className={`flex-shrink-0 flex items-center space-x-3 px-6 py-4 text-xs tracking-wider uppercase font-mono border-b md:border-b-0 md:border-r-4 transition-all w-auto md:w-full text-left font-bold ${
+              className={`flex-shrink-0 flex items-center space-x-2 px-4 py-2.5 sm:px-6 sm:py-4 text-xs tracking-wider uppercase font-mono border-b md:border-b-0 md:border-r-4 transition-all w-auto md:w-full text-left font-bold ${
                 activeTab === 'owner'
                   ? 'bg-stone-900 border-coral-500 text-coral-400'
                   : 'border-transparent text-stone-400 hover:text-stone-100 hover:bg-stone-900/40'
               }`}
             >
-              <Award size={16} className="text-coral-400" />
+              <Award size={15} className="text-coral-400" />
               <span>Meet Our Owner</span>
             </button>
 
             <button
               onClick={() => { setActiveTab('cpanel-info'); }}
-              className={`flex-shrink-0 flex items-center space-x-3 px-6 py-4 text-xs tracking-wider uppercase font-mono border-b md:border-b-0 md:border-r-4 transition-all w-auto md:w-full text-left font-bold ${
+              className={`flex-shrink-0 flex items-center space-x-2 px-4 py-2.5 sm:px-6 sm:py-4 text-xs tracking-wider uppercase font-mono border-b md:border-b-0 md:border-r-4 transition-all w-auto md:w-full text-left font-bold ${
                 activeTab === 'cpanel-info'
                   ? 'bg-stone-900 border-coral-500 text-coral-400'
                   : 'border-transparent text-stone-400 hover:text-stone-100 hover:bg-stone-900/40'
               }`}
             >
-              <HelpCircle size={16} />
+              <HelpCircle size={15} />
               <span>Hosting Sync</span>
             </button>
 
