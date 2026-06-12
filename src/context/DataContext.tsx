@@ -410,7 +410,14 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Save the signature to confirm we have synced the configuration
   useEffect(() => {
     // Try to fetch custom layout from public folder dynamic configuration
-    fetch('/hotel_orchid_dynamic_config.json')
+    fetch(`/hotel_orchid_dynamic_config.json?v=${Date.now()}`, {
+      cache: 'no-store',
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      }
+    })
       .then(res => {
         if (res.ok) return res.json();
         throw new Error('No public config file on root');
