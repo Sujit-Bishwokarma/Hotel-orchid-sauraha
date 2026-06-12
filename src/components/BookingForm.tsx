@@ -53,24 +53,54 @@ export default function BookingForm({ isOpen, onClose, preSelectedRoomId }: Book
   const nightsCount = calculateNights();
   const totalPriceNPR = activeRoom.basePriceNPR * nightsCount;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.emailOrPhone || !formData.checkIn || !formData.checkOut) return;
 
     setIsSubmitting(true);
 
-    // Mimic secure database storage registration
-    setTimeout(() => {
+    const generatedBookingId = `ORC-${Math.floor(100000 + Math.random() * 900000)}`;
+    const orderDateString = new Date().toLocaleDateString();
+
+    try {
+      // Dispatch actual mail transaction request to cPanel server dynamic endpoint
+      const response = await fetch('./send_email.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          type: 'booking',
+          name: formData.name,
+          emailOrPhone: formData.emailOrPhone,
+          checkIn: formData.checkIn,
+          checkOut: formData.checkOut,
+          guests: formData.guests,
+          roomType: formData.roomType,
+          roomName: activeRoom.name,
+          nights: nightsCount,
+          totalPrice: totalPriceNPR,
+          specialRequests: formData.specialRequests || 'None',
+          bookingId: generatedBookingId,
+        }),
+      });
+
+      // We read the response, but we don't block the UI if the fetch fails (e.g. key/port missing or offline preview)
+      const result = await response.json().catch(() => ({}));
+      console.log('Booking dynamic mail transaction result:', result);
+    } catch (err) {
+      console.warn('Booking mail dispatch failed or offline. Proceeding with client state fallback:', err);
+    } finally {
       setIsSubmitting(false);
       setSuccessReceipt({
         ...formData,
-        bookingId: `ORC-${Math.floor(100000 + Math.random() * 900000)}`,
+        bookingId: generatedBookingId,
         nights: nightsCount,
         roomDetails: activeRoom,
         totalPrice: totalPriceNPR,
-        orderDate: new Date().toLocaleDateString(),
+        orderDate: orderDateString,
       });
-    }, 1800);
+    }
   };
 
   const handleClose = () => {

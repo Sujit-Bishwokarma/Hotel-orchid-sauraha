@@ -1,10 +1,10 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   X, LayoutGrid, Bed, Images, MessageSquare, 
   Settings, RotateCcw, Plus, Trash2, Edit2, 
   Upload, Check, ShieldAlert, Download, Save, 
   HelpCircle, Star, Sparkles, MapPin, DollarSign, Lock,
-  Compass, Award
+  Compass, Award, ClipboardList
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useData } from '../context/DataContext';
@@ -16,7 +16,7 @@ interface CPanelAdminProps {
   onSignOut?: () => void;
 }
 
-type TabType = 'dashboard' | 'rooms' | 'gallery' | 'reviews' | 'activities' | 'owner' | 'cpanel-info';
+type TabType = 'dashboard' | 'rooms' | 'gallery' | 'reviews' | 'activities' | 'owner' | 'cpanel-info' | 'bookings';
 
 export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminProps) {
   const {
@@ -45,8 +45,14 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
     resetToDefault
   } = useData();
 
-  const [activeTab, setActiveTab] = useState<TabType>('dashboard');
+  const [activeTab, setActiveTab ] = useState<TabType>('dashboard');
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  // Dynamic Captured Bookers/Contacts Logging state
+  const [trackedBookings, setTrackedBookings] = useState<any[]>([]);
+  const [trackedContacts, setTrackedContacts] = useState<any[]>([]);
+  const [isLoadingTracked, setIsLoadingTracked] = useState<boolean>(false);
+  const [bookingsSubTab, setBookingsSubTab] = useState<'bookings' | 'contacts'>('bookings');
 
   // Edit Room State
   const [editingRoomId, setEditingRoomId] = useState<string | null>(null);
@@ -135,6 +141,80 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
   const showNotification = (msg: string) => {
     setSuccessMessage(msg);
     setTimeout(() => setSuccessMessage(null), 3000);
+  };
+
+  const fetchTrackedLogs = async () => {
+    setIsLoadingTracked(true);
+    try {
+      const bRes = await fetch('./send_email.php?action=get_bookings');
+      const bData = await bRes.json();
+      if (Array.isArray(bData)) {
+        setTrackedBookings(bData);
+      }
+    } catch (err) {
+      console.warn("Failed fetching tracked bookings:", err);
+    }
+
+    try {
+      const cRes = await fetch('./send_email.php?action=get_contacts');
+      const cData = await cRes.json();
+      if (Array.isArray(cData)) {
+        setTrackedContacts(cData);
+      }
+    } catch (err) {
+      console.warn("Failed fetching tracked contacts:", err);
+    }
+    setIsLoadingTracked(false);
+  };
+
+  useEffect(() => {
+    if (activeTab === 'bookings') {
+      fetchTrackedLogs();
+    }
+  }, [activeTab]);
+
+  const handleClearTrackedBookings = async () => {
+    if (!window.confirm("Are you absolutely sure you want to clear the captured bookings log? This action is irreversible on your server.")) {
+      return;
+    }
+    try {
+      const res = await fetch('./send_email.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ action: 'clear_bookings' })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setTrackedBookings([]);
+        showNotification("All captured bookings have been cleared.");
+      }
+    } catch (err) {
+      alert("Failed to clear bookings log. Make sure your server is online.");
+    }
+  };
+
+  const handleClearTrackedContacts = async () => {
+    if (!window.confirm("Are you absolutely sure you want to clear the captured contacts log? This action is irreversible on your server.")) {
+      return;
+    }
+    try {
+      const res = await fetch('./send_email.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ action: 'clear_contacts' })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setTrackedContacts([]);
+        showNotification("All captured guest messages have been cleared.");
+      }
+    } catch (err) {
+      alert("Failed to clear guest messages. Make sure your server is online.");
+    }
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, callback: (url: string) => void) => {
@@ -656,6 +736,18 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
             >
               <Award size={15} className="text-coral-400" />
               <span>Meet Our Owner</span>
+            </button>
+
+            <button
+              onClick={() => { setActiveTab('bookings'); }}
+              className={`flex-shrink-0 flex items-center space-x-2 px-4 py-2.5 sm:px-6 sm:py-4 text-xs tracking-wider uppercase font-mono border-b md:border-b-0 md:border-r-4 transition-all w-auto md:w-full text-left font-bold ${
+                activeTab === 'bookings'
+                  ? 'bg-stone-900 border-coral-500 text-coral-400'
+                  : 'border-transparent text-stone-400 hover:text-stone-100 hover:bg-stone-900/40'
+              }`}
+            >
+              <ClipboardList size={15} className="text-amber-500" />
+              <span>Tracked Booker</span>
             </button>
 
             <button
@@ -1974,6 +2066,201 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
                     </ol>
                   </div>
                 </div>
+              </div>
+            )}
+
+            {activeTab === 'bookings' && (
+              <div className="space-y-6 animate-fadeIn">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-stone-800 pb-5">
+                  <div>
+                    <h2 className="font-serif text-2xl font-bold text-sand-50">cPanel Tracked Booker</h2>
+                    <p className="text-xs text-stone-400 font-sans mt-1">
+                      Directly view visitor reservations and contact form entries captured in real-time inside your domestic cPanel workspace. Handles all database and mailing operations seamlessly.
+                    </p>
+                  </div>
+                  <button
+                    onClick={fetchTrackedLogs}
+                    className="px-4 py-2 bg-stone-800 hover:bg-stone-750 border border-stone-700 text-stone-100 text-xs font-mono rounded-sm transition-all focus:outline-none flex items-center justify-center gap-1.5 shrink-0 animate-bounce"
+                  >
+                    <RotateCcw size={14} className={isLoadingTracked ? 'animate-spin' : ''} />
+                    <span>Refresh Logs</span>
+                  </button>
+                </div>
+
+                {/* Sub-tabs Selection for Bookings vs Contacts */}
+                <div className="flex space-x-3 border-b border-stone-850 p-1 bg-stone-950/40 rounded-sm">
+                  <button
+                    onClick={() => setBookingsSubTab('bookings')}
+                    className={`px-4 py-2 text-xs font-mono uppercase tracking-wider rounded-sm transition-all focus:outline-none ${
+                      bookingsSubTab === 'bookings'
+                        ? 'bg-amber-600 text-white font-bold'
+                        : 'text-stone-400 hover:text-stone-100 hover:bg-stone-900/50'
+                    }`}
+                  >
+                    Captured Bookings ({trackedBookings.length})
+                  </button>
+                  <button
+                    onClick={() => setBookingsSubTab('contacts')}
+                    className={`px-4 py-2 text-xs font-mono uppercase tracking-wider rounded-sm transition-all focus:outline-none ${
+                      bookingsSubTab === 'contacts'
+                        ? 'bg-amber-600 text-white font-bold'
+                        : 'text-stone-400 hover:text-stone-100 hover:bg-stone-900/50'
+                    }`}
+                  >
+                    Visitor Messages ({trackedContacts.length})
+                  </button>
+                </div>
+
+                <AnimatePresence mode="wait">
+                  {bookingsSubTab === 'bookings' ? (
+                    <motion.div
+                      key="bookings-log"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="space-y-4"
+                    >
+                      <div className="flex justify-between items-center bg-stone-950/60 p-4 rounded-sm border border-stone-850">
+                        <span className="text-xs text-stone-450">
+                          These records are written to a lightweight file <code className="bg-stone-900 px-1 py-0.5 rounded text-coral-400">bookings_log.json</code> inside the cPanel document folder.
+                        </span>
+                        {trackedBookings.length > 0 && (
+                          <button
+                            onClick={handleClearTrackedBookings}
+                            className="px-3 py-1.5 bg-red-950 hover:bg-red-900 border border-red-800 text-red-200 text-xs font-mono rounded-sm transition-all flex items-center gap-1"
+                          >
+                            <Trash2 size={13} />
+                            <span>Clear Bookings</span>
+                          </button>
+                        )}
+                      </div>
+
+                      {isLoadingTracked ? (
+                        <div className="text-center py-20 text-xs text-stone-400">
+                          <RotateCcw size={28} className="animate-spin mx-auto mb-3 text-amber-500" />
+                          <span>Fetching booker logs from cPanel...</span>
+                        </div>
+                      ) : trackedBookings.length === 0 ? (
+                        <div className="bg-stone-950/40 border border-dashed border-stone-800 rounded-sm p-16 text-center text-stone-400">
+                          <ClipboardList size={36} className="mx-auto mb-3 text-stone-600" />
+                          <h4 className="font-serif text-sm font-bold text-stone-300">No Bookings Captured Yet</h4>
+                          <p className="text-xs text-stone-500 mt-1 max-w-sm mx-auto">
+                            When visitors complete the reservation form on this website, their transactions are tracked right here in real time. Try submitting a self-booking as a test!
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-1 gap-4">
+                          {trackedBookings.map((b, idx) => (
+                            <div key={b.bookingId || idx} className="bg-stone-950 border border-stone-850 p-6 rounded-sm relative hover:border-amber-500/40 transition-colors">
+                              <span className="absolute top-4 right-4 text-[10px] font-mono text-stone-500 bg-stone-900 px-2 py-1 rounded-sm border border-stone-800">
+                                {b.timestamp || 'Just now'}
+                              </span>
+
+                              <div className="flex items-center gap-2 mb-4">
+                                <span className="px-2 py-0.5 bg-amber-500/15 border border-amber-500/30 text-amber-400 font-mono text-[11px] font-bold rounded-sm uppercase tracking-wider">
+                                  ID: {b.bookingId}
+                                </span>
+                                <span className="text-xs text-stone-450">&bull;</span>
+                                <span className="text-xs text-stone-300 font-semibold">{b.roomName}</span>
+                              </div>
+
+                              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 pb-4 border-b border-stone-900 text-xs text-stone-350">
+                                <div>
+                                  <span className="block text-[10px] font-mono text-stone-500 uppercase tracking-wider mb-0.5">Guest Name</span>
+                                  <span className="text-sand-100 font-bold">{b.name}</span>
+                                </div>
+                                <div>
+                                  <span className="block text-[10px] font-mono text-stone-500 uppercase tracking-wider mb-0.5">Contact Detail</span>
+                                  <span className="text-sand-100 break-all">{b.emailOrPhone}</span>
+                                </div>
+                                <div>
+                                  <span className="block text-[10px] font-mono text-stone-500 uppercase tracking-wider mb-0.5">Check In / Out</span>
+                                  <span className="text-sand-100">{b.checkIn} &rarr; {b.checkOut} ({b.nights || 1} Nights)</span>
+                                </div>
+                                <div>
+                                  <span className="block text-[10px] font-mono text-stone-500 uppercase tracking-wider mb-0.5">Receipt Total</span>
+                                  <span className="text-coral-400 font-bold font-mono">NPR {typeof b.totalPrice === 'number' ? b.totalPrice.toLocaleString() : b.totalPrice}</span>
+                                </div>
+                              </div>
+
+                              {b.specialRequests && b.specialRequests !== 'None' && (
+                                <div className="mt-4 pt-1">
+                                  <span className="block text-[10px] font-mono text-stone-500 uppercase tracking-wider mb-1">Special Requirements</span>
+                                  <p className="text-xs text-stone-400 italic bg-stone-900/50 p-2.5 rounded-sm border border-stone-800">
+                                    "{b.specialRequests}"
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="contacts-log"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="space-y-4"
+                    >
+                      <div className="flex justify-between items-center bg-stone-950/60 p-4 rounded-sm border border-stone-850">
+                        <span className="text-xs text-stone-450">
+                          These messages are parsed and saved to <code className="bg-stone-900 px-1 py-0.5 rounded text-coral-400">contacts_log.json</code>.
+                        </span>
+                        {trackedContacts.length > 0 && (
+                          <button
+                            onClick={handleClearTrackedContacts}
+                            className="px-3 py-1.5 bg-red-950 hover:bg-red-900 border border-red-800 text-red-200 text-xs font-mono rounded-sm transition-all flex items-center gap-1"
+                          >
+                            <Trash2 size={13} />
+                            <span>Clear Messages</span>
+                          </button>
+                        )}
+                      </div>
+
+                      {isLoadingTracked ? (
+                        <div className="text-center py-20 text-xs text-stone-400">
+                          <RotateCcw size={28} className="animate-spin mx-auto mb-3 text-amber-500" />
+                          <span>Fetching messages from server...</span>
+                        </div>
+                      ) : trackedContacts.length === 0 ? (
+                        <div className="bg-stone-950/40 border border-dashed border-stone-800 rounded-sm p-16 text-center text-stone-400">
+                          <MessageSquare size={36} className="mx-auto mb-3 text-stone-600" />
+                          <h4 className="font-serif text-sm font-bold text-stone-300">No Guest Messages Logged</h4>
+                          <p className="text-xs text-stone-500 mt-1 max-w-sm mx-auto">
+                            When users fill the "Drop Us A Line" form on the Contacts page, their message content is archived here automatically on your host storage!
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-1 gap-4">
+                          {trackedContacts.map((c, idx) => (
+                            <div key={idx} className="bg-stone-950 border border-stone-850 p-6 rounded-sm relative hover:border-amber-500/40 transition-colors">
+                              <span className="absolute top-4 right-4 text-[10px] font-mono text-stone-500 bg-stone-900 px-2 py-1 rounded-sm border border-stone-800">
+                                {c.timestamp || 'Just now'}
+                              </span>
+
+                              <div className="mb-4">
+                                <h4 className="text-xs font-mono text-stone-500 uppercase tracking-widest mb-1">Sender Profile</h4>
+                                <div className="text-sm font-serif font-bold text-sand-50">{c.name}</div>
+                                <div className="text-xs text-coral-400 mt-0.5">
+                                  <a href={`mailto:${c.email}`} className="underline hover:text-coral-300">{c.email}</a>
+                                </div>
+                              </div>
+
+                              <div>
+                                <h4 className="text-xs font-mono text-stone-500 uppercase tracking-widest mb-1.5">Message Copy</h4>
+                                <p className="text-xs text-stone-400 bg-stone-900/70 p-3 rounded-sm border border-stone-800 whitespace-pre-wrap leading-relaxed">
+                                  {c.message}
+                                </p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             )}
 
