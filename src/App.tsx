@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+// Added configuration patch to handle direct real-time email transactions 
+// to info@hotelorchidchitwan.com for self-bookings and guest messages.
 import { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
