@@ -11,7 +11,17 @@ const INITIAL_HERO = (bConfig && bConfig.heroImage) ? bConfig.heroImage : HOTEL_
 const INITIAL_LOGO = (bConfig && bConfig.logoImage) ? bConfig.logoImage : HOTEL_INFO.images.logo;
 const INITIAL_ACTIVITIES = (bConfig && bConfig.activities) ? bConfig.activities : ACTIVITIES_DATA;
 const INITIAL_OWNER = (bConfig && bConfig.ownerInfo) ? bConfig.ownerInfo : DEFAULT_OWNER_INFO;
-const configSignature = bConfig ? String(JSON.stringify(bConfig).length) : 'default';
+// Fast 32-bit integer string hash helper to detect any character-level change instantly
+const getHash = (str: string): string => {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash << 5) - hash + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return String(hash);
+};
+
+const configSignature = bConfig ? getHash(JSON.stringify(bConfig)) : 'default';
 
 export interface GallerySlide {
   id: string;
@@ -190,39 +200,6 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const isInitialOwner = useRef(true);
 
   const [rooms, setRooms] = useState<Room[]>(() => {
-    const activeSignature = localStorage.getItem('hotel_orchid_loaded_config_signature');
-    if (activeSignature !== configSignature) {
-      return INITIAL_ROOMS.map((item: any) => {
-        const cloned = { ...item };
-        const ams = cloned.amenities ? [...cloned.amenities] : [];
-        const hasWifi = ams.some((a: string) => {
-          const l = a.toLowerCase();
-          return l === 'wi-fi' || l === 'wifi' || l.includes('wi-fi') || l.includes('wifi');
-        });
-        if (!hasWifi) {
-          ams.push("Free Wi-Fi");
-        } else {
-          const idx = ams.findIndex((a: string) => {
-            const l = a.toLowerCase();
-            return l === 'wi-fi' || l === 'wifi';
-          });
-          if (idx !== -1) {
-            ams[idx] = "Free Wi-Fi";
-          }
-        }
-
-        const hasShower = ams.some((a: string) => {
-          const l = a.toLowerCase();
-          return l.includes('shower') || l.includes('hot and cold');
-        });
-        if (!hasShower) {
-          ams.push("Hot and cold shower 24/7");
-        }
-
-        cloned.amenities = ams;
-        return cleanObjectPaths(cloned);
-      });
-    }
     const saved = localStorage.getItem('hotel_orchid_rooms');
     let parsed = saved ? JSON.parse(saved) : INITIAL_ROOMS;
     parsed = parsed.map((item: any) => {
@@ -260,39 +237,23 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   });
 
   const [gallery, setGallery] = useState<GallerySlide[]>(() => {
-    const activeSignature = localStorage.getItem('hotel_orchid_loaded_config_signature');
-    if (activeSignature !== configSignature) {
-      return INITIAL_GALLERY.map((item: any) => cleanObjectPaths(item));
-    }
     const saved = localStorage.getItem('hotel_orchid_gallery');
     const parsed = saved ? JSON.parse(saved) : INITIAL_GALLERY;
     return parsed.map((item: any) => cleanObjectPaths(item));
   });
 
   const [testimonials, setTestimonials] = useState<Testimonial[]>(() => {
-    const activeSignature = localStorage.getItem('hotel_orchid_loaded_config_signature');
-    if (activeSignature !== configSignature) {
-      return INITIAL_TESTIMONIALS.map((item: any) => cleanObjectPaths(item));
-    }
     const saved = localStorage.getItem('hotel_orchid_testimonials');
     const parsed = saved ? JSON.parse(saved) : INITIAL_TESTIMONIALS;
     return parsed.map((item: any) => cleanObjectPaths(item));
   });
 
   const [heroImage, setHeroImage] = useState<string>(() => {
-    const activeSignature = localStorage.getItem('hotel_orchid_loaded_config_signature');
-    if (activeSignature !== configSignature) {
-      return cleanPath(INITIAL_HERO, HOTEL_INFO.images.hero);
-    }
     const saved = localStorage.getItem('hotel_orchid_hero_image');
     return cleanPath(saved || '', INITIAL_HERO);
   });
 
   const [logoImage, setLogoImage] = useState<string>(() => {
-    const activeSignature = localStorage.getItem('hotel_orchid_loaded_config_signature');
-    if (activeSignature !== configSignature) {
-      return cleanPath(INITIAL_LOGO, HOTEL_INFO.images.logo);
-    }
     const saved = localStorage.getItem('hotel_orchid_logo_image');
     if (saved && saved.includes('brand_logo')) {
       return HOTEL_INFO.images.logo;
@@ -301,20 +262,12 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   });
 
   const [activities, setActivities] = useState<Activity[]>(() => {
-    const activeSignature = localStorage.getItem('hotel_orchid_loaded_config_signature');
-    if (activeSignature !== configSignature) {
-      return INITIAL_ACTIVITIES.map((item: any) => cleanObjectPaths(item));
-    }
     const saved = localStorage.getItem('hotel_orchid_activities');
     const parsed = saved ? JSON.parse(saved) : INITIAL_ACTIVITIES;
     return parsed.map((item: any) => cleanObjectPaths(item));
   });
 
   const [ownerInfo, setOwnerInfo] = useState<OwnerInfo>(() => {
-    const activeSignature = localStorage.getItem('hotel_orchid_loaded_config_signature');
-    if (activeSignature !== configSignature) {
-      return INITIAL_OWNER;
-    }
     const saved = localStorage.getItem('hotel_orchid_owner_info');
     let parsed = INITIAL_OWNER;
     if (saved) {
@@ -409,8 +362,8 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Save the signature to confirm we have synced the configuration
   useEffect(() => {
-    // Try to fetch custom layout from public folder dynamic configuration
-    fetch(`/hotel_orchid_dynamic_config.json?v=${Date.now()}`, {
+    // Try to fetch custom layout from public folder dynamic configuration (relative path for sub-directory hosting compatibility)
+    fetch(`./hotel_orchid_dynamic_config.json?v=${Date.now()}`, {
       cache: 'no-store',
       headers: {
         'Cache-Control': 'no-cache, no-store, must-revalidate',
@@ -426,7 +379,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (fetchedConfig && typeof fetchedConfig === 'object') {
           console.log("[DataContext] Fetched public root config:", fetchedConfig);
           
-          const fetchedSignature = String(JSON.stringify(fetchedConfig).length);
+          const fetchedSignature = getHash(JSON.stringify(fetchedConfig));
           const activeSignature = localStorage.getItem('hotel_orchid_loaded_config_signature');
           
           if (activeSignature !== fetchedSignature) {
