@@ -106,7 +106,7 @@ export default function Hero({ onOpenBooking }: HeroProps) {
             </div>
             <div className="flex flex-col items-center space-y-1">
               <Compass className="w-4 h-4 text-coral-400 mb-1" />
-              <span>Free Transfers</span>
+              <span>Paid Transfers</span>
             </div>
           </div>
         </motion.div>

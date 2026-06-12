@@ -206,6 +206,9 @@ export const DEFAULT_OWNER_INFO: OwnerInfo = {
   role: "Founder & Passionate Owner",
   photo: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&q=80&w=600",
   description: "Jit Bahadur Tamang (lovingly known as Jitu) is the devoted founder of Hotel Orchid, and a prominent champion of Sauraha's wildlife and community welfare. For decades, Jitu has served at the absolute forefront of nature preservation and eco-conscious tourism in Chitwan. His hands-on leadership as former president of several prestigious conservation associations has pioneered standards of safari operations, wildlife rescue guidance,-and sustainable livelihood practices for local families.",
+  facebookUrl: "https://facebook.com",
+  instagramUrl: "https://instagram.com",
+  twitterUrl: "https://twitter.com",
   achievements: [
     {
       id: "ach-1",

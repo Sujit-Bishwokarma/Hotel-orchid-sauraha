@@ -8,6 +8,7 @@ import { X, Calendar, UserCheck, CreditCard, Send, ShieldAlert, Sparkles, Check 
 import { motion, AnimatePresence } from 'motion/react';
 import { ROOMS_DATA, HOTEL_INFO } from '../data';
 import { BookingDetails } from '../types';
+import { useData } from '../context/DataContext';
 
 interface BookingFormProps {
   isOpen: boolean;
@@ -16,6 +17,7 @@ interface BookingFormProps {
 }
 
 export default function BookingForm({ isOpen, onClose, preSelectedRoomId }: BookingFormProps) {
+  const { rooms } = useData();
   const [formData, setFormData] = useState<BookingDetails>({
     name: '',
     emailOrPhone: '',
@@ -37,7 +39,7 @@ export default function BookingForm({ isOpen, onClose, preSelectedRoomId }: Book
   }, [preSelectedRoomId, isOpen]);
 
   // Pricing Helpers
-  const activeRoom = ROOMS_DATA.find((r) => r.id === formData.roomType) || ROOMS_DATA[0];
+  const activeRoom = rooms.find((r) => r.id === formData.roomType) || rooms[0] || ROOMS_DATA[0];
 
   const calculateNights = () => {
     if (!formData.checkIn || !formData.checkOut) return 1;
@@ -191,6 +193,25 @@ export default function BookingForm({ isOpen, onClose, preSelectedRoomId }: Book
                         onChange={(e) => setFormData({ ...formData, checkOut: e.target.value })}
                         className="w-full px-4 py-2.5 bg-sand-50 border border-sand-300 focus:border-coral-500 rounded-none text-ocean-950 focus:outline-none transition-all font-sans text-sm"
                       />
+                    </div>
+
+                    {/* Room Type selection */}
+                    <div className="space-y-1 text-left font-sans">
+                      <label htmlFor="book-room" className="block text-[11px] font-mono text-sand-700 uppercase tracking-wider">
+                        Select Room or Suite *
+                      </label>
+                      <select
+                        id="book-room"
+                        value={formData.roomType}
+                        onChange={(e) => setFormData((prev) => ({ ...prev, roomType: e.target.value }))}
+                        className="w-full px-4 py-2.5 bg-sand-50 border border-sand-300 focus:border-coral-500 rounded-none text-ocean-950 focus:outline-none transition-all font-sans text-sm cursor-pointer"
+                      >
+                        {rooms.map((room) => (
+                          <option key={room.id} value={room.id}>
+                            {room.name} (NPR {room.basePriceNPR.toLocaleString()} / night)
+                          </option>
+                        ))}
+                      </select>
                     </div>
 
                     {/* Guest Count */}

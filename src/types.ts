@@ -63,4 +63,7 @@ export interface OwnerInfo {
   photo: string;
   description: string;
   achievements: OwnerAchievement[];
+  facebookUrl?: string;
+  instagramUrl?: string;
+  twitterUrl?: string;
 }

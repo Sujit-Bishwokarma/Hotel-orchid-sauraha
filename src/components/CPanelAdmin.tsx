@@ -1714,6 +1714,39 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
                             className="w-full bg-stone-900 border border-stone-750 p-2 text-xs text-stone-100 rounded-sm focus:outline-none focus:border-coral-500 font-sans"
                           />
                         </div>
+
+                        <div>
+                          <label className="block text-stone-400 text-[10px] font-mono uppercase mb-1">Facebook URL</label>
+                          <input 
+                            type="text"
+                            value={ownerInfo.facebookUrl || ''}
+                            onChange={(e) => updateOwnerInfo({ facebookUrl: e.target.value })}
+                            placeholder="https://facebook.com/orhid_sauraha"
+                            className="w-full bg-stone-900 border border-stone-750 p-2 text-xs text-stone-100 rounded-sm focus:outline-none focus:border-coral-500 font-sans"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-stone-400 text-[10px] font-mono uppercase mb-1">Instagram URL</label>
+                          <input 
+                            type="text"
+                            value={ownerInfo.instagramUrl || ''}
+                            onChange={(e) => updateOwnerInfo({ instagramUrl: e.target.value })}
+                            placeholder="https://instagram.com/orchid_sauraha"
+                            className="w-full bg-stone-900 border border-stone-750 p-2 text-xs text-stone-100 rounded-sm focus:outline-none focus:border-coral-500 font-sans"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-stone-400 text-[10px] font-mono uppercase mb-1">Twitter / X URL</label>
+                          <input 
+                            type="text"
+                            value={ownerInfo.twitterUrl || ''}
+                            onChange={(e) => updateOwnerInfo({ twitterUrl: e.target.value })}
+                            placeholder="https://twitter.com/orchid_sauraha"
+                            className="w-full bg-stone-900 border border-stone-750 p-2 text-xs text-stone-100 rounded-sm focus:outline-none focus:border-coral-500 font-sans"
+                          />
+                        </div>
                       </div>
                     </div>
 

@@ -7,8 +7,10 @@ import React, { useState } from 'react';
 import { Phone, Mail, MapPin, Send, MessageSquareCode, Facebook, Instagram, Twitter, Check, MessageCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { HOTEL_INFO } from '../data';
+import { useData } from '../context/DataContext';
 
 export default function Contact() {
+  const { ownerInfo } = useData();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -127,13 +129,13 @@ export default function Contact() {
               <div className="pt-6 border-t border-sand-300 space-y-3">
                 <span className="block font-mono text-[10px] text-sand-650 uppercase tracking-widest">Social Channels</span>
                 <div className="flex space-x-3">
-                  <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-sand-50 hover:bg-coral-500 text-ocean-950 hover:text-sand-50 rounded-sm border border-sand-300 flex items-center justify-center transition-all">
+                  <a href={ownerInfo.facebookUrl || "https://facebook.com"} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-sand-50 hover:bg-coral-500 text-ocean-950 hover:text-sand-50 rounded-sm border border-sand-300 flex items-center justify-center transition-all">
                     <Facebook size={16} />
                   </a>
-                  <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-sand-50 hover:bg-coral-500 text-ocean-950 hover:text-sand-50 rounded-sm border border-sand-300 flex items-center justify-center transition-all">
+                  <a href={ownerInfo.instagramUrl || "https://instagram.com"} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-sand-50 hover:bg-coral-500 text-ocean-950 hover:text-sand-50 rounded-sm border border-sand-300 flex items-center justify-center transition-all">
                     <Instagram size={16} />
                   </a>
-                  <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-sand-50 hover:bg-coral-500 text-ocean-950 hover:text-sand-50 rounded-sm border border-sand-300 flex items-center justify-center transition-all">
+                  <a href={ownerInfo.twitterUrl || "https://twitter.com"} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-sand-50 hover:bg-coral-500 text-ocean-950 hover:text-sand-50 rounded-sm border border-sand-300 flex items-center justify-center transition-all">
                     <Twitter size={16} />
                   </a>
                 </div>
