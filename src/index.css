@@ -15,17 +15,17 @@
   --color-ocean-100: #c1ebfc;
   --color-ocean-50: #f0faff;
 
-  /* Sandy Beige Tones */
-  --color-sand-900: #2b2721;
-  --color-sand-800: #4a4338;
-  --color-sand-700: #6d6252;
-  --color-sand-600: #938571;
-  --color-sand-500: #b8a992;
-  --color-sand-400: #d6cab5;
-  --color-sand-300: #e7dfd0;
-  --color-sand-200: #f1ebd8;
-  --color-sand-100: #f7f4ea;
-  --color-sand-50: #fcfbfa;
+  /* Sandy Beige Tones (Cleaned of warm beige/tan tint to be crisp white and neutral slate-grays) */
+  --color-sand-900: #0f172a;
+  --color-sand-800: #1e293b;
+  --color-sand-700: #334155;
+  --color-sand-600: #475569;
+  --color-sand-500: #64748b;
+  --color-sand-400: #94a3b8;
+  --color-sand-300: #cbd5e1;
+  --color-sand-200: #e2e8f0;
+  --color-sand-100: #f1f5f9;
+  --color-sand-50: #ffffff;
 
   /* Coral Accents (Now Redefined to Vivid Green for elegant theme-wide injection) */
   --color-coral-900: #14532d;
