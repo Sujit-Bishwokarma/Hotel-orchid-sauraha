@@ -66,4 +66,6 @@ export interface OwnerInfo {
   facebookUrl?: string;
   instagramUrl?: string;
   twitterUrl?: string;
+  tripadvisorUrl?: string;
+  youtubeUrl?: string;
 }

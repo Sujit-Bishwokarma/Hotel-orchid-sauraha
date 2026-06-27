@@ -4,7 +4,7 @@
  */
 
 import React, { useState } from 'react';
-import { Phone, Mail, MapPin, Send, MessageSquareCode, Facebook, Instagram, Twitter, Check, MessageCircle } from 'lucide-react';
+import { Phone, Mail, MapPin, Send, MessageSquareCode, Facebook, Instagram, Twitter, Check, MessageCircle, Youtube, Compass } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { HOTEL_INFO } from '../data';
 import { useData } from '../context/DataContext';
@@ -147,16 +147,26 @@ export default function Contact() {
               {/* Social Channels */}
               <div className="pt-6 border-t border-sand-300 space-y-3">
                 <span className="block font-mono text-[10px] text-sand-650 uppercase tracking-widest">Social Channels</span>
-                <div className="flex space-x-3">
-                  <a href={ownerInfo.facebookUrl || "https://facebook.com"} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-sand-50 hover:bg-coral-500 text-ocean-950 hover:text-sand-50 rounded-sm border border-sand-300 flex items-center justify-center transition-all">
+                <div className="flex flex-wrap gap-2">
+                  <a href={ownerInfo.facebookUrl || "https://facebook.com"} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-sand-50 hover:bg-coral-500 text-ocean-950 hover:text-sand-50 rounded-sm border border-sand-300 flex items-center justify-center transition-all" title="Facebook Page">
                     <Facebook size={16} />
                   </a>
-                  <a href={ownerInfo.instagramUrl || "https://instagram.com"} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-sand-50 hover:bg-coral-500 text-ocean-950 hover:text-sand-50 rounded-sm border border-sand-300 flex items-center justify-center transition-all">
+                  <a href={ownerInfo.instagramUrl || "https://instagram.com"} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-sand-50 hover:bg-coral-500 text-ocean-950 hover:text-sand-50 rounded-sm border border-sand-300 flex items-center justify-center transition-all" title="Instagram Profile">
                     <Instagram size={16} />
                   </a>
-                  <a href={ownerInfo.twitterUrl || "https://twitter.com"} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-sand-50 hover:bg-coral-500 text-ocean-950 hover:text-sand-50 rounded-sm border border-sand-300 flex items-center justify-center transition-all">
+                  <a href={ownerInfo.twitterUrl || "https://twitter.com"} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-sand-50 hover:bg-coral-500 text-ocean-950 hover:text-sand-50 rounded-sm border border-sand-300 flex items-center justify-center transition-all" title="Twitter / X Profile">
                     <Twitter size={16} />
                   </a>
+                  {ownerInfo.tripadvisorUrl && (
+                    <a href={ownerInfo.tripadvisorUrl} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-sand-50 hover:bg-coral-500 text-ocean-950 hover:text-sand-50 rounded-sm border border-sand-300 flex items-center justify-center transition-all" title="TripAdvisor Profile">
+                      <Compass size={16} />
+                    </a>
+                  )}
+                  {ownerInfo.youtubeUrl && (
+                    <a href={ownerInfo.youtubeUrl} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-sand-50 hover:bg-coral-500 text-ocean-950 hover:text-sand-50 rounded-sm border border-sand-300 flex items-center justify-center transition-all" title="YouTube Channel">
+                      <Youtube size={16} />
+                    </a>
+                  )}
                 </div>
               </div>
 
@@ -166,7 +176,7 @@ export default function Contact() {
             <div className="border border-sand-300 rounded-sm overflow-hidden h-64 shadow-md bg-sand-200">
               <iframe
                 title="Hotel Orchid Location Map"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14144.597793135084!2d84.484251101934!3d27.57342674381716!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3994ef7fcbba9435%3A0xe6bfbfa529e3fc14!2sSauraha%2C%20Ratnanagar%2044200%2C%20Nepal!5e0!3m2!1sen!2snp!4v1780650000000!5m2!1sen!2snp"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3536.1287140810334!2d84.49392211181825!3d27.5756087761567!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3994ef5ed189db8f%3A0xe76fc932f170cf84!2sHotel%20Orchid%20Sauraha!5e0!3m2!1sen!2snp!4v1719400000000!5m2!1sen!2snp"
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}

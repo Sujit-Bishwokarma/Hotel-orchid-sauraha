@@ -28,14 +28,14 @@ export default function Amenities() {
         {/* Section Title */}
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
           <span className="font-mono text-xs text-coral-500 uppercase tracking-[0.2em] font-semibold block">
-            Guest Conveniences
+            Our Services
           </span>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-ocean-950 tracking-tight">
-            Curated Services & Amenities
+            Services & Amenities
           </h2>
           <div className="w-12 h-1 bg-coral-500 mx-auto" />
           <p className="font-sans text-sm sm:text-base text-sand-700 leading-relaxed max-w-xl mx-auto">
-            Enjoy carefully planned resort services designed to make your Nepal jungle adventure completely relaxing and memorable.
+            We offer simple and useful services to make your stay in Sauraha comfortable and relaxing.
           </p>
         </div>
 

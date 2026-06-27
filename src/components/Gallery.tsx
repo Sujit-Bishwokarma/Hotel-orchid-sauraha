@@ -52,46 +52,38 @@ export default function Gallery() {
             Visual Gallery
           </span>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-ocean-950 tracking-tight">
-            Snapshot Of Paradise
+            Photo Gallery
           </h2>
           <div className="w-12 h-1 bg-coral-500 mx-auto" />
         </div>
 
-        {/* Dynamic Slide Container */}
-        <div id="gallery-slider" className="relative max-w-5xl mx-auto aspect-[16/9] md:aspect-[16/8] overflow-hidden rounded-sm bg-ocean-950 border border-sand-300 shadow-2xl group">
+        {/* Dynamic Slide Container with ambient blurred background and object-contain */}
+        <div id="gallery-slider" className="relative max-w-4xl mx-auto h-[260px] sm:h-[360px] md:h-[450px] lg:h-[480px] overflow-hidden rounded-sm bg-ocean-950 border border-sand-300 shadow-2xl group">
           
           {/* Active Image (with beautiful smooth crossfade animations) */}
           <AnimatePresence mode="wait">
             <motion.div
               key={safeIndex}
-              initial={{ opacity: 0, scale: 1.02 }}
+              initial={{ opacity: 0, scale: 1.01 }}
               animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.98 }}
+              exit={{ opacity: 0, scale: 0.99 }}
               transition={{ duration: 0.6 }}
               className="absolute inset-0 w-full h-full"
             >
+              {/* Blurred Ambient Backdrop - completely replaces ugly dark empty borders */}
+              <img
+                src={activeSlide.image}
+                alt=""
+                referrerPolicy="no-referrer"
+                className="absolute inset-0 w-full h-full object-cover blur-3xl opacity-45 scale-110 pointer-events-none select-none"
+              />
+              {/* Sharp Front Image */}
               <img
                 src={activeSlide.image}
                 alt={activeSlide.title}
                 referrerPolicy="no-referrer"
-                className="w-full h-full object-cover"
+                className="relative z-10 w-full h-full object-contain mx-auto"
               />
-              {/* Text gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-ocean-950/90 via-ocean-950/30 to-transparent" />
-              
-              {/* Slide text details */}
-              <div className="absolute bottom-6 left-6 right-6 sm:bottom-12 sm:left-12 sm:right-12 text-left space-y-2 z-10">
-                <span className="font-mono text-[10px] sm:text-xs text-coral-400 uppercase tracking-[0.2em] font-bold flex items-center gap-1.5">
-                  <Camera size={12} />
-                  <span>Slide {gallery.length > 0 ? safeIndex + 1 : 0} of {gallery.length}</span>
-                </span>
-                <h3 className="font-serif text-xl sm:text-3xl font-bold text-sand-50 tracking-tight">
-                  {activeSlide.title}
-                </h3>
-                <p className="font-sans text-xs sm:text-sm text-sand-200/90 max-w-2xl leading-relaxed">
-                  {activeSlide.caption}
-                </p>
-              </div>
             </motion.div>
           </AnimatePresence>
 

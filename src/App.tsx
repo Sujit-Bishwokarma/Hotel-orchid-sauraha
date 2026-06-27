@@ -20,7 +20,95 @@ import Footer from './components/Footer';
 import BookingForm from './components/BookingForm';
 import WhatsAppButton from './components/WhatsAppButton';
 import CPanelAdmin from './components/CPanelAdmin';
-import { DataProvider } from './context/DataContext';
+import { DataProvider, useData } from './context/DataContext';
+
+// Dynamic search-engine structured data and descriptive header SEO generator.
+// This component dynamically synchronizes Google Search and other search spiders with the actual live rates
+// configured in the database/cPanel. By injecting a real-time 'application/ld+json' schema block and updating
+// the meta description tags in the HTML header, Google can crawl and display the correct rates (e.g., NPR 2,000 instead of 20,000).
+function SEOManager() {
+  const { rooms, heroImage } = useData();
+
+  useEffect(() => {
+    if (!rooms || rooms.length === 0) return;
+    
+    // Calculate actual active room prices
+    const prices = rooms.map(r => r.basePriceNPR).filter(p => !isNaN(p) && p > 0);
+    const minPrice = prices.length > 0 ? Math.min(...prices) : 2000;
+    const maxPrice = prices.length > 0 ? Math.max(...prices) : 2500;
+
+    // Create official Google Structured JSON-LD representation of Hotel Orchid Sauraha
+    const schemaJSON = {
+      "@context": "https://schema.org",
+      "@type": "Hotel",
+      "name": "Hotel Orchid Sauraha",
+      "description": "Discover the charm of Chitwan at Hotel Orchid Sauraha, where elegant comfort meets natural beauty. Peaceful garden suites and safari hospitality near Rapti river.",
+      "image": heroImage || "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=1920",
+      "telephone": "+977-9855080337",
+      "email": "info@hotelorchidchitwan.com",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Sauraha",
+        "addressLocality": "Chitwan",
+        "addressRegion": "Ratnanagar",
+        "postalCode": "44200",
+        "addressCountry": "NP"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": "27.5796",
+        "longitude": "84.4947"
+      },
+      "url": window.location.origin,
+      "priceRange": `NPR ${minPrice.toLocaleString()} - NPR ${maxPrice.toLocaleString()}`,
+      "containsPlace": rooms.map(room => ({
+        "@type": "HotelRoom",
+        "name": room.name,
+        "description": room.description,
+        "occupancy": {
+          "@type": "QuantitativeValue",
+          "value": room.capacity
+        },
+        "offers": {
+          "@type": "Offer",
+          "price": room.basePriceNPR,
+          "priceCurrency": "NPR",
+          "priceSpecification": {
+            "@type": "UnitPriceSpecification",
+            "price": room.basePriceNPR,
+            "priceCurrency": "NPR",
+            "unitText": "NIGHT"
+          }
+        }
+      }))
+    };
+
+    // Inject snippet securely into index header
+    let scriptTag = document.getElementById('hotel-orchid-schema') as HTMLScriptElement;
+    if (!scriptTag) {
+      scriptTag = document.createElement('script');
+      scriptTag.id = 'hotel-orchid-schema';
+      scriptTag.type = 'application/ld+json';
+      document.head.appendChild(scriptTag);
+    }
+    scriptTag.text = JSON.stringify(schemaJSON, null, 2);
+
+    // Update index.html meta description so that Google picks up the exact updated room rate
+    let metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) {
+      metaDesc.setAttribute("content", `Welcome to Hotel Orchid Sauraha. Book comfortable rooms from NPR ${minPrice.toLocaleString()} per night. Contact +977-9855080337 or WhatsApp. Free WiFi, Air Conditioning, Hot/Cold Shower.`);
+    }
+    
+    // Synchronize Open Graph descriptions for consistent social lookups
+    let ogDesc = document.querySelector('meta[property="og:description"]');
+    if (ogDesc) {
+      ogDesc.setAttribute("content", `Welcome to Hotel Orchid Sauraha. Book comfortable rooms from NPR ${minPrice.toLocaleString()} per night. Free WiFi, Air Conditioning, and guided safaris.`);
+    }
+
+  }, [rooms, heroImage]);
+
+  return null;
+}
 
 export default function App() {
   const [isBookingOpen, setIsBookingOpen] = useState(false);
@@ -66,6 +154,7 @@ export default function App() {
 
   return (
     <DataProvider>
+      <SEOManager />
       <div id="hotel-orchid-application-root" className="bg-sand-50 min-h-screen text-ocean-950 flex flex-col font-sans selection:bg-coral-500 selection:text-sand-50">
         
         {/* Sticky Header with scrolling callbacks */}

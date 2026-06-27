@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { ShieldCheck, Minimize, Bed, Sparkles, CheckCircle2 } from 'lucide-react';
+import { ShieldCheck, Minimize, Bed, CheckCircle2 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useData } from '../context/DataContext';
 
@@ -27,11 +27,11 @@ export default function Rooms({ onBookRoom }: RoomsProps) {
             Rooms & Suites
           </span>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-ocean-950 tracking-tight">
-            Sophisticated Nature Sanctuaries
+            Our Cozy Rooms
           </h2>
           <div className="w-12 h-1 bg-coral-500 mx-auto" />
           <p className="font-sans text-sm sm:text-base text-sand-700 leading-relaxed max-w-2xl mx-auto">
-            Experience absolute tranquility in our boutique habitats, strictly secure and tailored for couples and traveling groups. All materials source sustainable timber elements from Sauraha.
+            Enjoy a relaxing and peaceful stay in our clean, comfortable rooms designed for couples and families.
           </p>
         </div>
 
@@ -56,13 +56,6 @@ export default function Rooms({ onBookRoom }: RoomsProps) {
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                   />
-                  {/* High contrast gradient overlay for clean view */}
-                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ocean-950/80 via-ocean-950/20 to-transparent p-6 flex items-end justify-between">
-                    <span className="inline-flex items-center space-x-1.5 bg-coral-500 text-sand-50 text-[10px] sm:text-xs font-mono font-bold uppercase py-1 px-3.5 tracking-wider rounded-sm shadow-md">
-                      <Sparkles className="w-3 h-3" />
-                      <span>{room.capacity === 2 ? 'Couple Choice' : 'Premium Gold'}</span>
-                    </span>
-                  </div>
                 </div>
 
                 {/* Content info */}

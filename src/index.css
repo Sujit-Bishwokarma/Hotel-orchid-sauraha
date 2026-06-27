@@ -27,17 +27,17 @@
   --color-sand-100: #f7f4ea;
   --color-sand-50: #fcfbfa;
 
-  /* Coral Accents */
-  --color-coral-900: #5c1f10;
-  --color-coral-800: #802f1c;
-  --color-coral-700: #ab412b;
-  --color-coral-600: #ca4e35;
-  --color-coral-500: #eb6044;
-  --color-coral-400: #f2826d;
-  --color-coral-300: #f7a494;
-  --color-coral-200: #fac7be;
-  --color-coral-100: #fce8e4;
-  --color-coral-50: #fef5f3;
+  /* Coral Accents (Now Redefined to Vivid Green for elegant theme-wide injection) */
+  --color-coral-900: #14532d;
+  --color-coral-800: #166534;
+  --color-coral-700: #15803d;
+  --color-coral-600: #16a34a;
+  --color-coral-500: #22c55e;
+  --color-coral-400: #4ade80;
+  --color-coral-300: #86efac;
+  --color-coral-200: #bbf7d0;
+  --color-coral-100: #dcfce7;
+  --color-coral-50: #f0fdf4;
 
   /* Semantic Map */
   --color-primary: var(--color-ocean-800);
@@ -73,10 +73,10 @@ html {
 /* Pulsing subtle glow for interactive highlights */
 @keyframes coralGlow {
   0%, 100% {
-    box-shadow: 0 0 12px rgba(235, 96, 68, 0.4);
+    box-shadow: 0 0 12px rgba(34, 197, 94, 0.4);
   }
   50% {
-    box-shadow: 0 0 22px rgba(235, 96, 68, 0.8);
+    box-shadow: 0 0 22px rgba(34, 197, 94, 0.8);
   }
 }
 

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { ShieldCheck, ArrowUp, Mail, Phone, Heart, Settings, MessageCircle } from 'lucide-react';
+import { ArrowUp, Mail, Phone, Heart, Settings, MessageCircle } from 'lucide-react';
 import { HOTEL_INFO } from '../data';
 
 interface FooterProps {
@@ -35,12 +35,8 @@ export default function Footer({ onOpenAdmin }: FooterProps) {
               {HOTEL_INFO.name.toUpperCase()}
             </span>
             <p className="text-xs sm:text-sm text-sand-300 leading-relaxed max-w-sm">
-              Your serene haven adjacent to the majestic Chitwan National Park. Unwind in secure, natural elegance, guided by Nepali hospitality warmth.
+              Discover peaceful boutique hospitality at Hotel Orchid Sauraha. Centered near Chitwan National Park, we offer elegant comfort and memorable wildlife safari experiences in Sauraha, Nepal.
             </p>
-            <div className="flex items-center space-x-2 text-[11px] font-mono uppercase text-coral-400">
-              <ShieldCheck size={14} />
-              <span>Verified Boutique Sanctuary</span>
-            </div>
           </div>
 
           {/* Useful Links navigation links */}
@@ -125,10 +121,11 @@ export default function Footer({ onOpenAdmin }: FooterProps) {
                 <span>cPanel Admin</span>
               </button>
             )}
-            <div className="text-xs text-sand-400 flex items-center space-x-1 font-sans">
-              <span>Made with</span>
-              <Heart size={10} className="text-coral-500 fill-coral-500 animate-pulse" />
-              <span>in Chitwan, Nepal</span>
+            <div className="text-xs text-sand-400 flex flex-col items-center sm:items-end font-sans">
+              <div className="flex items-center flex-wrap justify-center sm:justify-end gap-1">
+                <span>made by <span className="text-sand-100 font-medium">crafora labs</span> with love, bharatpur Chitwan</span>
+                <span className="text-[8.5px] text-sand-500 font-mono tracking-tight font-light">9802971617</span>
+              </div>
             </div>
 
             <button

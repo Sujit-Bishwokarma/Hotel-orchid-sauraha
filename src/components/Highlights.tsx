@@ -17,7 +17,7 @@ const IconMap: Record<string, React.ComponentType<{ className?: string; size?: n
 
 export default function Highlights() {
   return (
-    <section id="highlights-section" className="py-24 bg-sand-50 relative overflow-hidden">
+    <section id="highlights-section" className="py-20 bg-sand-50 relative overflow-hidden">
       {/* Decorative background orchid element */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-coral-100/10 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-ocean-100/10 rounded-full blur-[100px] pointer-events-none" />
@@ -25,18 +25,24 @@ export default function Highlights() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Intro Grid: Split content left layout description, right title */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-end mb-16">
-          <div className="lg:col-span-5 space-y-4">
-            <span className="font-mono text-xs text-coral-500 uppercase tracking-[0.2em] font-semibold block">
-              Hotel Highlights
-            </span>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start mb-12">
+          <div className="lg:col-span-6 space-y-4">
+            <div className="flex flex-wrap items-center gap-2.5">
+              <span className="font-mono text-xs text-coral-500 uppercase tracking-[0.2em] font-semibold block">
+                Hotel Highlights
+              </span>
+              <span className="inline-flex items-center gap-1.5 text-[11px] font-sans font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200/60 px-3 py-1 rounded-full shadow-xs">
+                <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
+                100% Direct Booking Trust
+              </span>
+            </div>
             <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-ocean-950 tracking-tight leading-tight">
               An Orchid of Peace <br />
               <span className="italic font-normal text-coral-600 font-serif">In Sauraha</span>
             </h2>
           </div>
-          <div className="lg:col-span-7">
-            <p className="font-sans text-sm sm:text-base text-sand-700 leading-relaxed border-l-2 border-coral-400 pl-6 lg:pl-8">
+          <div className="lg:col-span-6 lg:pt-6">
+            <p className="font-sans text-sm sm:text-base text-sand-700 leading-relaxed border-l-2 border-coral-400 pl-6">
               {HOTEL_INFO.about}
             </p>
           </div>
@@ -46,6 +52,38 @@ export default function Highlights() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {HOTEL_HIGHLIGHTS.map((h, idx) => {
             const IconComponent = IconMap[h.icon] || MapPin;
+            
+            // Premium, modern color palette configurations
+            const cardStyles = [
+              {
+                iconBg: "bg-emerald-50 text-emerald-700 border-emerald-100",
+                badgeText: "Nearby",
+                badgeBg: "bg-emerald-50 text-emerald-700 border-emerald-100",
+                hoverBorder: "hover:border-emerald-300 hover:shadow-emerald-100/40",
+                hoverBg: "group-hover:bg-emerald-50/10"
+              },
+              {
+                iconBg: "bg-amber-50 text-amber-700 border-amber-100",
+                badgeText: "Caring",
+                badgeBg: "bg-amber-50 text-amber-700 border-amber-100",
+                hoverBorder: "hover:border-amber-300 hover:shadow-amber-100/40",
+                hoverBg: "group-hover:bg-amber-50/10"
+              },
+              {
+                iconBg: "bg-coral-50 text-coral-700 border-coral-100",
+                badgeText: "Outdoors",
+                badgeBg: "bg-coral-50 text-coral-700 border-coral-100",
+                hoverBorder: "hover:border-coral-300 hover:shadow-coral-100/40",
+                hoverBg: "group-hover:bg-coral-50/10"
+              }
+            ][idx] || {
+              iconBg: "bg-sand-100 text-sand-800 border-sand-200",
+              badgeText: "Feature",
+              badgeBg: "bg-sand-100 text-sand-700 border-sand-200",
+              hoverBorder: "hover:border-sand-400",
+              hoverBg: "group-hover:bg-sand-50/10"
+            };
+
             return (
               <motion.div
                 key={h.id}
@@ -54,47 +92,32 @@ export default function Highlights() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-100px' }}
                 transition={{ duration: 0.5, delay: idx * 0.15 }}
-                whileHover={{ y: -8 }}
-                className="bg-sand-50/50 backdrop-blur-sm border border-sand-300 p-8 sm:p-10 rounded-sm relative group overflow-hidden shadow-sm hover:shadow-md transition-all"
+                whileHover={{ y: -6, scale: 1.01 }}
+                className={`bg-white/90 backdrop-blur-xs border border-sand-200/80 p-8 sm:p-10 rounded-3xl relative group overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 ${cardStyles.hoverBorder} ${cardStyles.hoverBg}`}
               >
-                {/* Accent coral line top card */}
-                <span className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-ocean-800 to-coral-450 opacity-0 group-hover:opacity-100 transition-all duration-300" />
-                
-                {/* Floating highlight index */}
-                <span className="absolute top-6 right-8 font-mono text-xs font-semibold text-sand-300 group-hover:text-coral-300 transition-colors">
-                  0{idx + 1}
-                </span>
-
-                <div className="w-12 h-12 bg-ocean-800 text-sand-50 rounded-sm flex items-center justify-center mb-6 group-hover:bg-coral-500 group-hover:scale-110 transition-all duration-300">
-                  <IconComponent className="w-6 h-6" />
+                {/* Modern subtle top indicator tag */}
+                <div className="flex items-center justify-between mb-8">
+                  <div className={`w-12 h-12 ${cardStyles.iconBg} border rounded-2xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110`}>
+                    <IconComponent className="w-5 h-5" />
+                  </div>
+                  <span className={`text-[10px] font-mono font-bold uppercase tracking-widest px-3 py-1 rounded-full border ${cardStyles.badgeBg}`}>
+                    {cardStyles.badgeText}
+                  </span>
                 </div>
 
-                <h3 className="font-serif text-xl font-bold text-ocean-950 mb-3 group-hover:text-ocean-800 transition-colors">
+                <h3 className="font-serif text-xl font-bold text-ocean-950 mb-3 group-hover:text-coral-600 transition-colors">
                   {h.title}
                 </h3>
 
-                <p className="font-sans text-sm text-sand-700 leading-relaxed">
+                <p className="font-sans text-sm text-sand-600 leading-relaxed">
                   {h.description}
                 </p>
+                
+                {/* Clean minimalist design element instead of noisy background lines */}
+                <div className="absolute bottom-0 right-0 w-16 h-16 bg-gradient-to-br from-transparent to-sand-150/40 rounded-tl-full pointer-events-none" />
               </motion.div>
             );
           })}
-        </div>
-
-        {/* Trust Badges Bar */}
-        <div className="mt-16 pt-12 border-t border-sand-300 flex flex-wrap items-center justify-center gap-x-12 gap-y-6 text-sand-600">
-          <div className="flex items-center space-x-3 text-xs sm:text-sm font-sans">
-            <CheckCircle className="text-coral-500 w-5 h-5 flex-shrink-0" />
-            <span className="font-semibold text-ocean-950">100% Direct Bookings Trust</span>
-          </div>
-          <div className="flex items-center space-x-3 text-xs sm:text-sm font-sans border-x border-sand-300 px-0 md:px-12">
-            <Shield className="text-coral-500 w-5 h-5 flex-shrink-0" />
-            <span className="font-semibold text-ocean-950">Guaranteed Secure Booking</span>
-          </div>
-          <div className="flex items-center space-x-3 text-xs sm:text-sm font-sans">
-            <CheckCircle className="text-coral-500 w-5 h-5 flex-shrink-0" />
-            <span className="font-semibold text-ocean-950">All Inclusive Amenities</span>
-          </div>
         </div>
 
       </div>

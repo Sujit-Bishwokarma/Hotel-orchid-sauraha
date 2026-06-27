@@ -75,7 +75,7 @@ export default function Hero({ onOpenBooking }: HeroProps) {
 
           {/* Description */}
           <p id="hero-subtitle" className="max-w-2xl mx-auto text-sm sm:text-lg text-sand-200/90 font-sans leading-relaxed">
-            Discover a sanctuary where polished hospitality, modern security, and natural wonder merge. Rest quietly in luxury comfort next to the rich ecosystems of Chitwan.
+            Welcome to a peaceful place where friendly service, great safety, and beautiful nature come together. Enjoy a quiet and comfortable stay right next to Chitwan's amazing wildlife.
           </p>
 
           {/* Large Central Action CTA Area */}
@@ -98,7 +98,7 @@ export default function Hero({ onOpenBooking }: HeroProps) {
           <div className="pt-10 grid grid-cols-3 gap-2 sm:gap-6 max-w-2xl mx-auto text-sand-300 font-mono text-[9px] sm:text-[11px] uppercase tracking-widest border-t border-sand-300/10">
             <div className="flex flex-col items-center space-y-1">
               <Award className="w-4 h-4 text-coral-400 mb-1" />
-              <span>Premium Rooms</span>
+              <span>Comfortable Rooms</span>
             </div>
             <div className="flex flex-col items-center space-y-1 border-x border-sand-300/10">
               <ShieldCheck className="w-4 h-4 text-coral-400 mb-1" />

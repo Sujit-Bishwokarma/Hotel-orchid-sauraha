@@ -20,7 +20,7 @@ export const HOTEL_INFO = {
   address: "Ratnanagar 44200, Sauraha, Chitwan, Nepal",
   phone: "985-5080337",
   email: "hotelorchid2017@gmail.com",
-  about: "Discover the charm of Chitwan at Hotel Orchid Sauraha, where elegant comfort meets natural beauty. Enjoy spacious rooms, attentive hospitality, and a prime location close to the region's most popular attractions, creating the perfect base for your unforgettable Nepal adventure.",
+  about: "We are a simple, nature-friendly hotel in Sauraha offering clean, comfortable rooms and friendly local service close to Chitwan National Park.",
   images: {
     hero: heroImg,
     logo: logoImg,
@@ -34,19 +34,19 @@ export const HOTEL_HIGHLIGHTS = [
   {
     id: "h1",
     title: "Prime Sauraha Location",
-    description: "Nestled quietly just minutes walking from the Sauraha Rapti riverbank, beautiful tourist streets, and Chitwan National Park main entrance.",
+    description: "Our hotel is located near the national park.",
     icon: "MapPin"
   },
   {
     id: "h2",
     title: "Attentive Hospitality",
-    description: "Our dedicated local team treats you like family, ensuring customized itinerary suggestions and professional care around the clock.",
+    description: "Our friendly local staff is always here to help you feel at home and easily plan your daily tours.",
     icon: "Heart"
   },
   {
     id: "h3",
-    title: "Eco-Luxe Comfort",
-    description: "Immerse in nature without sacrificing comfort. Our architectural design blends high-end solid woodwork with cooling ventilation systems.",
+    title: "Wildlife Adventure",
+    description: "We can easily arrange exciting jungle walks, peaceful canoe rides, and elephant safaris for you right from the hotel.",
     icon: "Leaf"
   }
 ];
@@ -104,29 +104,29 @@ export const KEY_AMENITIES: AmenityItem[] = [
 export const FREE_AMENITIES: AmenityItem[] = [
   {
     id: "pk",
-    name: "Free Secure Parking",
-    description: "Spacious on-site secure parking for motorbikes and private tourist coaches.",
+    name: "Free Parking",
+    description: "Free and safe parking space for your motorbikes and cars.",
     iconName: "Car",
     isFree: true
   },
   {
     id: "bf",
-    name: "Warm Savory Breakfast",
-    description: "Chef-curated warm buffet and custom ordered Nepalese hot breakfast options each morning.",
+    name: "Warm Breakfast",
+    description: "Delicious warm breakfast served fresh every morning.",
     iconName: "Coffee",
     isFree: false
   },
   {
     id: "wf",
-    name: "High-Speed Wi-Fi",
-    description: "Blazing fast fiber internet coverage available both inside rooms and in public gardens.",
+    name: "Free Fast Wi-Fi",
+    description: "Free fast internet in all rooms and the garden.",
     iconName: "Wifi",
     isFree: true
   },
   {
     id: "ap",
-    name: "Airport Transfer Service",
-    description: "Convenient pickup and drop-off assistance from Bharatpur Airport or Sauraha Tourist Bus Park.",
+    name: "Airport & Bus Pickup",
+    description: "Easy pickup and drop-off service from the airport or bus station.",
     iconName: "Plane",
     isFree: false
   }
@@ -209,6 +209,8 @@ export const DEFAULT_OWNER_INFO: OwnerInfo = {
   facebookUrl: "https://facebook.com",
   instagramUrl: "https://instagram.com",
   twitterUrl: "https://twitter.com",
+  tripadvisorUrl: "https://tripadvisor.com",
+  youtubeUrl: "https://youtube.com",
   achievements: [
     {
       id: "ach-1",

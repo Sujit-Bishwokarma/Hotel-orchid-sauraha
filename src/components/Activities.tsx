@@ -67,11 +67,11 @@ export default function Activities() {
             Chitwan Wildlife & Culture
           </span>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-ocean-950 tracking-tight">
-            Curated Local Activities
+            Local Activities
           </h2>
           <div className="w-12 h-1 bg-coral-500 mx-auto" />
           <p className="font-sans text-sm text-sand-800 leading-relaxed max-w-lg mx-auto">
-            Immerse yourself in Orchid Adventure experiences. We map complete customized itineraries from Nepal's most treasured National Park wildlife tours to unique tribal shows.
+            We can help you arrange exciting jungle safaris and unique cultural experiences during your stay.
           </p>
         </div>
 
@@ -79,47 +79,36 @@ export default function Activities() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-stretch">
           
           {/* LEFT PANEL: Elegant Photo Slider with Animation (Manageable via cpanel) */}
-          <div className="lg:col-span-7 flex flex-col justify-between">
-            <div className="space-y-4 mb-4">
-              <span className="font-mono text-[10px] text-coral-500 uppercase tracking-widest font-bold block">
-                ✦ Highlight Slide Showcase
-              </span>
-              <h3 className="font-serif text-xl sm:text-2xl font-bold text-ocean-950 tracking-tight">
-                Atmospheric Expedition Visuals
-              </h3>
-            </div>
-
+          <div className="lg:col-span-8 flex flex-col justify-between">
             <div 
               id="activities-photo-slider" 
-              className="relative w-full aspect-[16/10] md:aspect-[16/9] lg:h-[420px] overflow-hidden rounded-sm bg-ocean-950 border border-sand-300/40 shadow-xl group"
+              className="relative w-full aspect-[16/10] md:aspect-[16/9] h-[260px] sm:h-[340px] md:h-[400px] lg:h-[450px] overflow-hidden rounded-sm bg-ocean-950 border border-sand-300/40 shadow-xl group"
             >
               <AnimatePresence mode="wait">
                 <motion.div
-                  key={safeIndex}
-                  initial={{ opacity: 0, scale: 1.01 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.99 }}
-                  transition={{ duration: 0.5 }}
-                  className="absolute inset-0 w-full h-full"
+                   key={safeIndex}
+                   initial={{ opacity: 0, scale: 1.01 }}
+                   animate={{ opacity: 1, scale: 1 }}
+                   exit={{ opacity: 0, scale: 0.99 }}
+                   transition={{ duration: 0.5 }}
+                   className="absolute inset-0 w-full h-full"
                 >
+                  {/* Blurred Ambient Backdrop - completely replaces black empty space */}
+                  <img
+                    src={activeActivity?.image}
+                    alt=""
+                    referrerPolicy="no-referrer"
+                    className="absolute inset-0 w-full h-full object-cover blur-3xl opacity-40 scale-110 pointer-events-none select-none"
+                  />
+                  {/* Sharp Front Image */}
                   <img
                     src={activeActivity?.image}
                     alt={activeActivity?.name}
                     referrerPolicy="no-referrer"
-                    className="w-full h-full object-cover"
+                    className="relative z-10 w-full h-full object-contain mx-auto"
                   />
                   {/* Premium contrast gradient overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-ocean-950/80 via-ocean-950/20 to-transparent" />
-                  
-                  {/* Floating caption on the active slide */}
-                  <div className="absolute bottom-6 left-6 right-6 text-left z-10">
-                    <span className="font-mono text-[9px] text-coral-300 uppercase tracking-widest font-bold">
-                      Slide {activities.length > 0 ? safeIndex + 1 : 0} of {activities.length}
-                    </span>
-                    <h4 className="font-serif text-lg sm:text-xl font-bold text-sand-50 mt-1">
-                      {activeActivity?.name}
-                    </h4>
-                  </div>
+                  <div className="absolute inset-0 z-15 bg-gradient-to-t from-ocean-950/20 via-transparent to-transparent pointer-events-none" />
                 </motion.div>
               </AnimatePresence>
 
@@ -164,7 +153,7 @@ export default function Activities() {
           </div>
 
           {/* RIGHT PANEL: Interactive Cards Grid detailing descriptions */}
-          <div className="lg:col-span-5 flex flex-col justify-between space-y-6">
+          <div className="lg:col-span-4 flex flex-col justify-between space-y-6">
             <div className="space-y-4">
               <span className="font-mono text-[10px] text-coral-500 uppercase tracking-widest font-bold block">
                 ✦ Adventure Itineraries
@@ -174,7 +163,7 @@ export default function Activities() {
               </h3>
             </div>
 
-            <div className="space-y-4 overflow-y-auto max-h-[460px] pr-2 scrollbar-thin">
+            <div className="space-y-4 overflow-y-auto max-h-[450px] pr-2 no-scrollbar">
               {activities.map((act, index) => {
                 const isActive = index === safeIndex;
                 return (
@@ -218,14 +207,7 @@ export default function Activities() {
               })}
             </div>
 
-            {/* In-house assist notice card */}
-            <div className="p-4 bg-white border border-sand-300/30 rounded-sm flex items-start gap-3 shadow-sm bg-gradient-to-r from-coral-500/5 to-transparent">
-              <Info className="w-5 h-5 text-coral-500 mt-0.5 flex-shrink-0" />
-              <div className="text-left space-y-1">
-                <p className="font-serif font-bold text-xs text-ocean-950">Interested in coordinating all these adventures?</p>
-                <p className="font-sans text-[11px] text-sand-700">We offer specialized packaged bookings at no extra commission. Contact our front deck or talk with us instantly on WhatsApp and we will align the full schedule.</p>
-              </div>
-            </div>
+            {/* Right side alignment element */}
 
           </div>
 
