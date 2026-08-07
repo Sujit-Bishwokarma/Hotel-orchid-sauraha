@@ -110,17 +110,6 @@ export default function Footer({ onOpenAdmin }: FooterProps) {
           </div>
 
           <div className="flex items-center space-x-6">
-            {onOpenAdmin && (
-              <button
-                id="footer-cpanel-portal-toggle"
-                onClick={onOpenAdmin}
-                className="text-xs text-sand-400 hover:text-coral-400 font-mono flex items-center gap-1.5 cursor-pointer transition-colors bg-ocean-900 px-2.5 py-1 rounded-sm border border-ocean-800"
-                title="Manage Room Prices, Gallery Photos, and Live Guest Reviews"
-              >
-                <Settings size={12} className="text-coral-500" />
-                <span>cPanel Admin</span>
-              </button>
-            )}
             <div className="text-xs text-sand-400 flex flex-col items-center sm:items-end font-sans">
               <div className="flex items-center flex-wrap justify-center sm:justify-end gap-1">
                 <span>made by <span className="text-sand-100 font-medium">crafora labs</span> with love, bharatpur Chitwan</span>

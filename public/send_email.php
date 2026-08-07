@@ -81,6 +81,11 @@ if ($action === 'save_config') {
         if ($jsonString) {
             $bytes = file_put_contents($configFile, $jsonString);
             if ($bytes !== false) {
+                // Also write a tiny version file to enable ultra-fast client-side caching checks
+                $versionFile = __DIR__ . '/hotel_orchid_config_version.json';
+                $versionData = ["version" => round(microtime(true) * 1000)];
+                file_put_contents($versionFile, json_encode($versionData));
+                
                 echo json_encode(["success" => true, "message" => "Configuration saved and synced successfully on cPanel hosting!"]);
             } else {
                 echo json_encode(["success" => false, "error" => "Failed to write config file on server. Check file/folder write permissions."]);

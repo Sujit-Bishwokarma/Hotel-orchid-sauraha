@@ -365,10 +365,10 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     safeSetItem('hotel_orchid_owner_info', JSON.stringify(ownerInfo));
   }, [ownerInfo]);
 
-  // Save the signature to confirm we have synced the configuration
+  // Save the signature and config version to confirm we have synced the configuration
   useEffect(() => {
-    // Try to fetch custom layout from public folder dynamic configuration (relative path for sub-directory hosting compatibility)
-    fetch(`./hotel_orchid_dynamic_config.json?v=${Date.now()}`, {
+    // 1. Fetch the tiny 30-byte config version file first
+    fetch(`./hotel_orchid_config_version.json?v=${Date.now()}`, {
       cache: 'no-store',
       headers: {
         'Cache-Control': 'no-cache, no-store, must-revalidate',
@@ -378,34 +378,83 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     })
       .then(res => {
         if (res.ok) return res.json();
-        throw new Error('No public config file on root');
+        throw new Error('No public version file on root');
       })
-      .then(fetchedConfig => {
-        if (fetchedConfig && typeof fetchedConfig === 'object') {
-          console.log("[DataContext] Fetched public root config:", fetchedConfig);
-          setServerConfig(fetchedConfig);
-          
-          const fetchedSignature = getHash(JSON.stringify(fetchedConfig));
-          const activeSignature = localStorage.getItem('hotel_orchid_loaded_config_signature');
-          
-          if (activeSignature !== fetchedSignature) {
-            console.log("[DataContext] Dynamic mismatch on fetched config. Resetting state values from config.json...");
-            
-            if (fetchedConfig.rooms) setRooms(fetchedConfig.rooms);
-            if (fetchedConfig.gallery) setGallery(fetchedConfig.gallery);
-            if (fetchedConfig.testimonials) setTestimonials(fetchedConfig.testimonials);
-            if (fetchedConfig.heroImage) setHeroImage(fetchedConfig.heroImage);
-            if (fetchedConfig.logoImage) setLogoImage(fetchedConfig.logoImage);
-            if (fetchedConfig.activities) setActivities(fetchedConfig.activities);
-            if (fetchedConfig.ownerInfo) setOwnerInfo(cleanObjectPaths(fetchedConfig.ownerInfo));
-            
-            localStorage.setItem('hotel_orchid_loaded_config_signature', fetchedSignature);
-          }
+      .then(versionInfo => {
+        const fetchedVersion = versionInfo && versionInfo.version ? String(versionInfo.version) : '';
+        const activeVersion = localStorage.getItem('hotel_orchid_config_version');
+        const hasCachedRooms = localStorage.getItem('hotel_orchid_rooms');
+
+        // If the version is unchanged and we have local storage data, we can skip fetching the 2.5MB JSON entirely!
+        if (fetchedVersion && activeVersion === fetchedVersion && hasCachedRooms) {
+          console.log("[DataContext] Configuration is up-to-date (Version:", fetchedVersion, "). Skipping 2.5MB dynamic fetch.");
+          return;
         }
+
+        // 2. Fetch the 2.5MB dynamic configuration with the version timestamp to leverage browser caching
+        const fetchUrl = `./hotel_orchid_dynamic_config.json?v=${fetchedVersion || Date.now()}`;
+        return fetch(fetchUrl)
+          .then(res => {
+            if (res.ok) return res.json();
+            throw new Error('Failed to fetch configuration');
+          })
+          .then(fetchedConfig => {
+            if (fetchedConfig && typeof fetchedConfig === 'object') {
+              console.log("[DataContext] Fetched public root config (Version:", fetchedVersion, "):", fetchedConfig);
+              setServerConfig(fetchedConfig);
+              
+              const fetchedSignature = getHash(JSON.stringify(fetchedConfig));
+              const activeSignature = localStorage.getItem('hotel_orchid_loaded_config_signature');
+              
+              if (activeSignature !== fetchedSignature || !hasCachedRooms) {
+                console.log("[DataContext] Dynamic mismatch or empty cache. Resetting state values from config.json...");
+                
+                if (fetchedConfig.rooms) setRooms(fetchedConfig.rooms);
+                if (fetchedConfig.gallery) setGallery(fetchedConfig.gallery);
+                if (fetchedConfig.testimonials) setTestimonials(fetchedConfig.testimonials);
+                if (fetchedConfig.heroImage) setHeroImage(fetchedConfig.heroImage);
+                if (fetchedConfig.logoImage) setLogoImage(fetchedConfig.logoImage);
+                if (fetchedConfig.activities) setActivities(fetchedConfig.activities);
+                if (fetchedConfig.ownerInfo) setOwnerInfo(cleanObjectPaths(fetchedConfig.ownerInfo));
+                
+                localStorage.setItem('hotel_orchid_loaded_config_signature', fetchedSignature);
+              }
+
+              if (fetchedVersion) {
+                localStorage.setItem('hotel_orchid_config_version', fetchedVersion);
+              }
+            }
+          });
       })
       .catch(err => {
-        console.log("[DataContext] Using bundled configuration:", err.message);
-        localStorage.setItem('hotel_orchid_loaded_config_signature', configSignature);
+        console.log("[DataContext] Version check failed, doing standard dynamic fetch:", err.message);
+        
+        // Standard fallback fetch
+        fetch(`./hotel_orchid_dynamic_config.json?v=${Date.now()}`, {
+          cache: 'no-store'
+        })
+          .then(res => {
+            if (res.ok) return res.json();
+            throw new Error('No public config file on root');
+          })
+          .then(fetchedConfig => {
+            if (fetchedConfig && typeof fetchedConfig === 'object') {
+              setServerConfig(fetchedConfig);
+              if (fetchedConfig.rooms) setRooms(fetchedConfig.rooms);
+              if (fetchedConfig.gallery) setGallery(fetchedConfig.gallery);
+              if (fetchedConfig.testimonials) setTestimonials(fetchedConfig.testimonials);
+              if (fetchedConfig.heroImage) setHeroImage(fetchedConfig.heroImage);
+              if (fetchedConfig.logoImage) setLogoImage(fetchedConfig.logoImage);
+              if (fetchedConfig.activities) setActivities(fetchedConfig.activities);
+              if (fetchedConfig.ownerInfo) setOwnerInfo(cleanObjectPaths(fetchedConfig.ownerInfo));
+              
+              localStorage.setItem('hotel_orchid_loaded_config_signature', getHash(JSON.stringify(fetchedConfig)));
+            }
+          })
+          .catch(fallbackErr => {
+            console.log("[DataContext] Using bundled configuration:", fallbackErr.message);
+            localStorage.setItem('hotel_orchid_loaded_config_signature', configSignature);
+          });
       });
   }, []);
 
