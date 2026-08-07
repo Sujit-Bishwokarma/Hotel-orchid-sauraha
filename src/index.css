@@ -58,13 +58,14 @@ html {
 /* Elegant scrollbar styling */
 ::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--color-sand-50);
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-ocean-900);
-  border-radius: 4px;
+  background: rgba(15, 23, 42, 0.15);
+  border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-coral-500);

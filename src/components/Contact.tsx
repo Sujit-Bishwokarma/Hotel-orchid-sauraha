@@ -92,15 +92,20 @@ export default function Contact() {
               <div className="space-y-4 font-sans text-sm">
                 
                 {/* Location */}
-                <div className="flex items-start space-x-4">
-                  <div className="w-10 h-10 bg-sand-100 text-coral-500 rounded-sm flex items-center justify-center flex-shrink-0 border border-sand-300">
+                <a 
+                  href="https://www.google.com/maps/place/Hotel+Orchid/@27.5815349,84.4947477,17z"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-start space-x-4 group/address cursor-pointer hover:bg-sand-50/80 p-2 -m-2 rounded-sm transition-all"
+                >
+                  <div className="w-10 h-10 bg-sand-100 text-coral-500 rounded-sm flex items-center justify-center flex-shrink-0 border border-sand-300 group-hover/address:bg-coral-500 group-hover/address:text-white group-hover/address:border-coral-400 transition-colors">
                     <MapPin size={18} />
                   </div>
                   <div>
-                    <span className="block font-mono text-[10px] text-sand-600 uppercase tracking-widest">Our Address</span>
-                    <span className="font-semibold text-ocean-950">{HOTEL_INFO.address}</span>
+                    <span className="block font-mono text-[10px] text-sand-600 uppercase tracking-widest group-hover/address:text-coral-500 transition-colors font-medium">Our Address</span>
+                    <span className="font-semibold text-ocean-950 group-hover/address:text-coral-600 transition-colors underline decoration-dotted decoration-sand-400">{HOTEL_INFO.address}</span>
                   </div>
-                </div>
+                </a>
 
                 {/* Telephone */}
                 <div className="flex items-start space-x-4">
@@ -176,7 +181,7 @@ export default function Contact() {
             <div className="border border-sand-300 rounded-sm overflow-hidden h-64 shadow-md bg-sand-200">
               <iframe
                 title="Hotel Orchid Location Map"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3536.1287140810334!2d84.49392211181825!3d27.5756087761567!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3994ef5ed189db8f%3A0xe76fc932f170cf84!2sHotel%20Orchid%20Sauraha!5e0!3m2!1sen!2snp!4v1719400000000!5m2!1sen!2snp"
+                src="https://maps.google.com/maps?q=Hotel%20Orchid%20Sauraha&t=&z=16&ie=UTF8&iwloc=&output=embed"
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}

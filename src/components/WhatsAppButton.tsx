@@ -4,9 +4,20 @@
  */
 
 import { useState } from 'react';
-import { MessageCircle, Phone, Send, X, ShieldAlert } from 'lucide-react';
+import { X, ShieldAlert } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { HOTEL_INFO } from '../data';
+
+const WhatsAppIcon = ({ className = "w-6 h-6" }: { className?: string }) => (
+  <svg
+    viewBox="0 0 16 16"
+    className={className}
+    fill="currentColor"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232" />
+  </svg>
+);
 
 export default function WhatsAppButton() {
   const [isOpen, setIsOpen] = useState(false);
@@ -71,12 +82,9 @@ export default function WhatsAppButton() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setIsOpen(false)}
-                className="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-sand-50 text-xs sm:text-sm font-sans font-bold tracking-wider uppercase rounded-sm border border-emerald-400 shadow-md text-center flex items-center justify-center space-x-2 transition-all cursor-pointer"
+                className="w-full py-3 bg-[#25D366] hover:bg-[#20ba5a] text-white text-xs sm:text-sm font-sans font-bold tracking-wider uppercase rounded-sm border border-[#34E073] shadow-md text-center flex items-center justify-center space-x-2 transition-all cursor-pointer"
               >
-                <div className="relative flex items-center justify-center w-5 h-5 select-none pointer-events-none">
-                  <MessageCircle size={18} className="text-white fill-white" />
-                  <Phone size={8} className="absolute text-emerald-500 fill-emerald-500 -translate-y-[0.5px] -translate-x-[0.5px]" />
-                </div>
+                <WhatsAppIcon className="w-5 h-5 text-white" />
                 <span>START WHATSAPP CHAT</span>
               </a>
               <div className="flex items-center justify-center space-x-1 text-[9px] text-sand-500">
@@ -95,23 +103,14 @@ export default function WhatsAppButton() {
         whileHover={{ scale: 1.08 }}
         whileTap={{ scale: 0.92 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="w-14 h-14 bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-sand-50 rounded-full shadow-2xl flex items-center justify-center border border-emerald-400 transition-all cursor-pointer relative group"
+        className="w-14 h-14 bg-[#25D366] hover:bg-[#20ba5a] active:bg-[#1da14e] text-white rounded-full shadow-2xl flex items-center justify-center border border-[#34E073] transition-all cursor-pointer relative group"
         aria-label="Open Chat Help"
       >
-        <div className="relative flex items-center justify-center w-8 h-8 select-none pointer-events-none">
-          {/* Chat bubble body (white fill for true WhatsApp visual) */}
-          <MessageCircle 
-            size={28} 
-            className="text-white fill-white group-hover:rotate-12 transition-transform duration-300" 
-          />
-          {/* Phone handset overlay inside the bubble */}
-          <Phone 
-            size={13} 
-            className="absolute text-emerald-500 fill-emerald-500 group-hover:rotate-12 transition-transform duration-300 -translate-y-[0.5px] -translate-x-[0.5px]" 
-          />
+        <div className="relative flex items-center justify-center w-8 h-8 select-none pointer-events-none text-white">
+          <WhatsAppIcon className="w-8 h-8 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300" />
         </div>
         {/* Pulsing online orbit ring surrounding */}
-        <span className="absolute inset-0 rounded-full border border-emerald-400 animate-ping opacity-60 pointer-events-none" />
+        <span className="absolute inset-0 rounded-full border border-[#25D366] animate-ping opacity-60 pointer-events-none" />
       </motion.button>
     </div>
   );

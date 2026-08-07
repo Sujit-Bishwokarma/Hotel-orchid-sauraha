@@ -41,9 +41,6 @@ export default function Hero({ onOpenBooking }: HeroProps) {
           referrerPolicy="no-referrer"
           className="w-full h-full object-cover"
         />
-        {/* Soft elegant color-graded vignettes for readability */}
-        <div className="absolute inset-0 bg-gradient-to-r from-ocean-950/95 via-ocean-950/70 to-ocean-950/40" />
-        <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-sand-50 via-sand-50/20 to-transparent" />
       </div>
 
       {/* Floating text content */}

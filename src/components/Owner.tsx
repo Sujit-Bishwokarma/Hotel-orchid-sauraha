@@ -1,20 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useData } from '../context/DataContext';
 import { motion } from 'motion/react';
-import { Compass, Shield, Leaf, Hotel, Award, ChevronLeft, ChevronRight } from 'lucide-react';
-
-const getIcon = (id: string) => {
-  switch (id) {
-    case 'ach-1':
-      return <Compass className="w-5 h-5 text-emerald-600" />;
-    case 'ach-2':
-      return <Shield className="w-5 h-5 text-red-600" />;
-    case 'ach-3':
-      return <Leaf className="w-5 h-5 text-emerald-600" />;
-    default:
-      return <Hotel className="w-5 h-5 text-amber-600" />;
-  }
-};
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function Owner() {
   const { ownerInfo } = useData();
@@ -102,8 +89,7 @@ export default function Owner() {
               </div>
               
               {/* Mini Badge Floating */}
-              <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-ocean-950 text-sand-50 text-xs font-sans tracking-wide py-1.5 px-4 rounded-full shadow-lg border border-sand-800 flex items-center gap-1.5 whitespace-nowrap">
-                <Award className="w-3.5 h-3.5 text-coral-400" />
+              <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-ocean-950 text-sand-50 text-[10px] font-mono uppercase tracking-widest py-1.5 px-4 rounded-full shadow-lg border border-sand-800 whitespace-nowrap">
                 <span>Community Leader</span>
               </div>
             </div>
@@ -160,33 +146,19 @@ export default function Owner() {
 
           {/* Carousel Viewport */}
           <div className="overflow-hidden py-4 -my-4 relative">
-            <motion.div
-              drag="x"
-              dragConstraints={{ left: 0, right: 0 }}
-              dragElastic={0.15}
-              onDragEnd={(e, info) => {
-                const threshold = 50;
-                if (info.offset.x < -threshold) {
-                  handleNext();
-                } else if (info.offset.x > threshold) {
-                  handlePrev();
-                }
-              }}
-              animate={{ x: `-${currentIndex * (100 / ownerInfo.achievements.length)}%` }}
-              transition={{ type: "spring", stiffness: 280, damping: 30 }}
-              className="flex gap-0 cursor-grab active:cursor-grabbing select-none"
+            <div
+              className="flex transition-transform duration-500 ease-out"
               style={{
-                width: `${Math.max(1, ownerInfo.achievements.length / itemsPerPage) * 100}%`,
+                transform: `translateX(-${currentIndex * (100 / itemsPerPage)}%)`,
               }}
             >
               {ownerInfo.achievements.map((ach) => (
                 <div
                   key={ach.id}
-                  style={{ width: `${100 / ownerInfo.achievements.length}%` }}
+                  style={{ width: `${100 / itemsPerPage}%` }}
                   className="px-3 shrink-0"
                 >
-                  <div className="bg-white rounded-2xl shadow-sm border border-sand-200/60 p-5 hover:border-coral-400/50 hover:shadow-md transition-all duration-300 flex flex-col h-full group"
-                  >
+                  <div className="bg-white rounded-2xl shadow-sm border border-sand-200/60 p-5 hover:border-coral-400/50 hover:shadow-md transition-all duration-300 flex flex-col h-full group">
                     {/* Year Badge */}
                     <div className="text-xs font-sans font-bold text-coral-600 tracking-wider mb-3 flex justify-between items-center">
                       <span>{ach.period}</span>
@@ -203,9 +175,6 @@ export default function Owner() {
                         referrerPolicy="no-referrer"
                         className="object-cover w-full h-full transition duration-500 group-hover:scale-105 select-none pointer-events-none"
                       />
-                      <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm p-1.5 rounded-lg shadow-sm border border-sand-100">
-                        {getIcon(ach.id)}
-                      </div>
                     </div>
 
                     {/* Text Content */}
@@ -227,7 +196,7 @@ export default function Owner() {
                   </div>
                 </div>
               ))}
-            </motion.div>
+            </div>
           </div>
 
           {/* Dots Indicator Progress */}

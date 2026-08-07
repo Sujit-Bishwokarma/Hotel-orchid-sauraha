@@ -39,41 +39,43 @@ export default function Amenities() {
           </p>
         </div>
 
-        {/* Free Amenities Grid (Strictly Icon Form with text fallback labels) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        {/* Free Amenities Grid (Flat Icon size list - 2 per horizontal row) */}
+        <div className="grid grid-cols-2 gap-x-6 sm:gap-x-12 gap-y-10 sm:gap-y-12 max-w-4xl mx-auto">
           {FREE_AMENITIES.map((item, idx) => {
             const IconComponent = IconMap[item.iconName] || Gift;
             return (
               <motion.div
                 key={item.id}
-                id={`amenity-card-${item.id}`}
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true, margin: '-50px' }}
-                transition={{ duration: 0.5, delay: idx * 0.1 }}
-                whileHover={{ y: -6 }}
-                className="bg-white border border-sand-300 p-8 text-center rounded-sm group shadow-sm hover:shadow-lg transition-all"
+                id={`amenity-item-${item.id}`}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: idx * 0.1 }}
+                className="flex flex-col sm:flex-row items-start space-y-2 sm:space-y-0 sm:space-x-4 group text-left"
               >
-                {/* Micro badge indicator */}
-                <div className="mx-auto w-16 h-16 bg-sand-100 text-ocean-800 rounded-full flex items-center justify-center mb-6 border border-sand-300 group-hover:bg-coral-500 group-hover:text-sand-50 group-hover:border-coral-400 group-hover:rotate-6 transition-all duration-300">
-                  <IconComponent className="w-7 h-7" />
+                {/* Flat Icon size badge, not a large card */}
+                <div className="flex-shrink-0 p-3 bg-white border border-sand-300 text-coral-600 rounded-sm group-hover:bg-coral-600 group-hover:text-white group-hover:border-coral-500 transition-all duration-300 shadow-sm">
+                  <IconComponent className="w-5 h-5 sm:w-6 h-6" />
                 </div>
-
-                <h3 className="font-serif text-lg sm:text-xl font-bold text-ocean-950 mb-2 group-hover:text-coral-600 transition-colors">
-                  {item.name}
-                </h3>
                 
-                <p className="font-sans text-xs sm:text-sm text-sand-600 leading-relaxed">
-                  {item.description}
-                </p>
-                
-                <span className={`inline-block mt-4 text-[10px] sm:text-xs font-mono font-bold uppercase tracking-wider py-1 px-3 border rounded-sm ${
-                  item.isFree 
-                    ? "text-coral-500 bg-coral-50/50 border-coral-200/40" 
-                    : "text-ocean-700 bg-sand-100/60 border-sand-300/40"
-                }`}>
-                  {item.isFree ? "100% Free" : "On-Request / Paid"}
-                </span>
+                <div className="space-y-1">
+                  <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                    <h3 className="font-serif text-sm sm:text-base font-bold text-ocean-950 group-hover:text-coral-600 transition-colors">
+                      {item.name}
+                    </h3>
+                    <span className={`inline-block text-[8px] sm:text-[9px] font-mono font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-sm border ${
+                      item.isFree 
+                        ? "text-coral-600 bg-coral-50/50 border-coral-200/50" 
+                        : "text-ocean-700 bg-sand-100/60 border-sand-300/50"
+                    }`}>
+                      {item.isFree ? "Free" : "On-Request"}
+                    </span>
+                  </div>
+                  
+                  <p className="font-sans text-xs sm:text-sm text-sand-800 leading-relaxed">
+                    {item.description}
+                  </p>
+                </div>
               </motion.div>
             );
           })}

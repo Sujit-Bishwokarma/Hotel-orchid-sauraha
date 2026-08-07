@@ -4,7 +4,7 @@ import {
   Settings, RotateCcw, Plus, Trash2, Edit2, 
   Upload, Check, ShieldAlert, Download, Save, 
   HelpCircle, Star, Sparkles, MapPin, DollarSign, Lock,
-  Compass, Award, ClipboardList
+  Compass, Award, ClipboardList, Cloud
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useData } from '../context/DataContext';
@@ -141,6 +141,51 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
   const showNotification = (msg: string) => {
     setSuccessMessage(msg);
     setTimeout(() => setSuccessMessage(null), 3000);
+  };
+
+  const [isSyncing, setIsSyncing] = useState<boolean>(false);
+  const [syncError, setSyncError] = useState<string | null>(null);
+
+  const handlePushLiveSync = async () => {
+    setIsSyncing(true);
+    setSyncError(null);
+    try {
+      const configPayload = {
+        rooms,
+        gallery,
+        testimonials,
+        heroImage,
+        logoImage,
+        activities,
+        ownerInfo
+      };
+
+      const res = await fetch('./send_email.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          action: 'save_config',
+          type: 'sync',
+          config: configPayload
+        })
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        showNotification("Success! Website configuration has been saved & synced live on your hosting server!");
+      } else {
+        setSyncError(data.error || "Failed to sync config.json to hosting server.");
+        alert("⚠️ Synchronization Error:\n" + (data.error || "Unknown server error. Check folder/file permissions on hosting server."));
+      }
+    } catch (err) {
+      console.error("[CPanel Sync] Error during push-live sync:", err);
+      setSyncError("Network or hosting connection failed.");
+      alert("⚠️ Sync Failed:\nUnable to reach the backend send_email.php script. Ensure your cPanel server is online and running PHP.");
+    } finally {
+      setIsSyncing(false);
+    }
   };
 
   const fetchTrackedLogs = async () => {
@@ -611,6 +656,15 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
           </div>
 
           <div className="flex items-center space-x-1.5 sm:space-x-3 shrink-0">
+            <button
+              onClick={handlePushLiveSync}
+              disabled={isSyncing}
+              className="px-2.5 py-1.5 sm:px-3.5 sm:py-1.5 bg-emerald-600 hover:bg-emerald-500 disabled:bg-emerald-800 disabled:text-stone-400 text-stone-50 text-[10px] sm:text-xs font-mono font-bold rounded-sm flex items-center gap-1.5 transition-all shadow-md border border-emerald-500 hover:border-emerald-400 cursor-pointer"
+              title="Save & Sync all modifications live to your hosting server public_html"
+            >
+              <Cloud size={12} className={isSyncing ? "animate-spin" : "sm:size-[14px] text-emerald-100"} />
+              <span>{isSyncing ? "Syncing..." : "Sync Live"}</span>
+            </button>
             {onSignOut && (
               <button
                 onClick={() => {
@@ -2014,66 +2068,40 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   
-                  {/* Backup Card */}
-                  <div className="bg-stone-950 border border-stone-850 p-6 rounded-sm space-y-4">
-                    <div className="flex items-center space-x-2 text-coral-400">
-                      <Download size={20} />
-                      <h3 className="font-serif font-bold text-md text-sand-50">Backup Dynamic Envelope</h3>
+                  {/* PHP Auto-Sync Card (Full Width) */}
+                  <div className="sm:col-span-2 bg-emerald-950/20 border border-emerald-500/30 p-6 rounded-sm space-y-4">
+                    <div className="flex items-center space-x-2.5 text-emerald-400">
+                      <Cloud size={24} className={isSyncing ? "animate-spin" : "text-emerald-400"} />
+                      <h3 className="font-serif font-bold text-lg text-sand-50">PHP Server Auto-Sync (cPanel Hosting)</h3>
                     </div>
-                    <p className="text-xs text-stone-350 leading-relaxed">
-                      Download the complete content payload (rooms, pricing models, gallery, ratings) as a structured <code>hotel_orchid_dynamic_config.json</code> file. You can back up this layout configuration or host it on your central servers.
+                    <p className="text-xs text-stone-350 leading-relaxed font-sans">
+                      This is the easiest way to keep your website updated! When hosted on a standard Apache PHP shared hosting platform like <strong>Bisup Hosting</strong> or any <strong>cPanel</strong>, you do not need to manually download or replace the JSON file. 
                     </p>
-                    <button
-                      onClick={handleExportDataForcPanel}
-                      className="w-full py-3 bg-stone-900 hover:bg-stone-800 text-stone-100 text-xs font-mono font-bold uppercase tracking-widest rounded-sm border border-stone-800 hover:border-stone-700 transition-all flex items-center justify-center gap-2"
-                    >
-                      <Download size={14} />
-                      <span>Download config.json</span>
-                    </button>
-                  </div>
-
-                  {/* Restore Card */}
-                  <div className="bg-stone-950 border border-stone-850 p-6 rounded-sm space-y-4">
-                    <div className="flex items-center space-x-2 text-amber-500">
-                      <Save size={20} />
-                      <h3 className="font-serif font-bold text-md text-sand-50">Restore Envelope Layout</h3>
-                    </div>
-                    <p className="text-xs text-stone-350 leading-relaxed">
-                      Import a previously exported config database JSON. Uploading a valid config file replaces room photos, prices, reviews, and slides across all page structures immediately.
+                    <p className="text-xs text-stone-400 leading-relaxed font-sans">
+                      Simply edit anything on the website (rooms, reviews, activities, banner images, owner timeline, etc.) and click the button below. Our secure PHP auto-sync system will instantly write the updated configuration directly to <code>public_html/hotel_orchid_dynamic_config.json</code> on your server disk. All future website visitors will instantly load your updated configuration!
                     </p>
                     
-                    <label className="w-full py-3 bg-stone-900 hover:bg-stone-800 text-stone-100 text-xs font-mono font-bold uppercase tracking-widest rounded-sm border border-stone-800 hover:border-stone-700 transition-all flex items-center justify-center gap-2 cursor-pointer">
-                      <Upload size={14} />
-                      <span>Upload config.json</span>
-                      <input
-                        type="file"
-                        className="hidden"
-                        onChange={handleImportDataForcPanel}
-                      />
-                    </label>
-                  </div>
-
-                </div>
-
-                <div className="bg-neutral-850 border border-neutral-800 p-6 rounded-sm space-y-6">
-                  <div>
-                    <h4 className="font-serif font-bold text-coral-400 text-sm mb-2">How to publish your changes on Vercel (Current setup):</h4>
-                    <ol className="list-decimal pl-5 text-xs text-stone-300 space-y-2 leading-relaxed">
-                      <li>Use the Admin panel controls above to visual-edit your rooms, reviews, activities, and layout details in your browser. (The updates will render on your screen instantly).</li>
-                      <li>In the <strong>cPanel Synchronization</strong> tab (this section), click <strong className="text-coral-400">Download config.json</strong> to save your customized configuration file named <code className="bg-stone-900 px-1 py-0.5 rounded text-[11px] text-amber-400">hotel_orchid_dynamic_config.json</code>.</li>
-                      <li>Place this downloaded file inside the <strong className="text-sand-100">/public</strong> folder of your React project code directory (so the final path is <code className="bg-stone-900 px-1 py-0.5 rounded text-[11px] text-amber-400">public/hotel_orchid_dynamic_config.json</code>).</li>
-                      <li>Commit and push the file to your <strong className="text-sand-100">GitHub Repository</strong>.</li>
-                      <li>Vercel will detect the new commit, build the app, and re-deploy. Your new rooms, pricing, ratings, and custom layouts will immediately load live for all visitors worldwide!</li>
-                    </ol>
-                  </div>
-
-                  <div className="border-t border-neutral-800 pt-4">
-                    <h4 className="font-serif font-bold text-amber-500 text-sm mb-2">How it works on Bisup Hosting / cPanel (Future setup):</h4>
-                    <ol className="list-decimal pl-5 text-xs text-stone-305 space-y-2 leading-relaxed">
-                      <li>Upload your static React website bundle (typically inside an archive like <code className="bg-stone-900 px-1 py-0.5 rounded text-[11px] text-amber-400">dist.zip</code>) directly to your cPanel's <strong className="text-sand-100">public_html</strong> directory and extract it there.</li>
-                      <li>To update copy, pictures, or ratings on cPanel, simply access the Admin panel from any machine, click <strong className="text-amber-500">Restore Envelope Layout</strong> to upload your golden layout configuration file, or make changes directly on screen.</li>
-                      <li>For instant automatic synchronization across all visitor browsers without committing code, you can use the File Manager in your Bisup Hosting cPanel dashboard to upload your updated <code className="bg-stone-900 px-1 py-0.5 rounded text-[11px]">hotel_orchid_dynamic_config.json</code> file straight to the root of your public folder.</li>
-                    </ol>
+                    <div className="flex flex-wrap items-center gap-4 pt-2">
+                      <button
+                        onClick={handlePushLiveSync}
+                        disabled={isSyncing}
+                        className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 disabled:bg-emerald-800 disabled:text-stone-400 text-stone-50 text-xs font-mono font-bold uppercase tracking-widest rounded-sm border border-emerald-500 hover:border-emerald-400 transition-all flex items-center gap-2 cursor-pointer shadow-lg"
+                      >
+                        <Cloud size={14} className={isSyncing ? "animate-spin" : ""} />
+                        <span>{isSyncing ? "Syncing Config on Server..." : "Push and Sync Config Live to Server"}</span>
+                      </button>
+                      
+                      {syncError && (
+                        <p className="text-xs text-red-400 font-mono">
+                          ⚠️ {syncError}
+                        </p>
+                      )}
+                      {!syncError && successMessage && (
+                        <p className="text-xs text-emerald-400 font-mono">
+                          ✓ Sync completed successfully!
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>

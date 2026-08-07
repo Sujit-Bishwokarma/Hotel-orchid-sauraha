@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Image as ImageIcon, Camera } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useData } from '../context/DataContext';
 
@@ -41,7 +41,7 @@ export default function Gallery() {
   };
 
   return (
-    <section id="gallery" className="scroll-mt-24 py-24 bg-white relative overflow-hidden">
+    <section id="gallery" className="scroll-mt-24 py-20 bg-white relative overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-sand-300 to-transparent" />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -57,77 +57,71 @@ export default function Gallery() {
           <div className="w-12 h-1 bg-coral-500 mx-auto" />
         </div>
 
-        {/* Dynamic Slide Container with ambient blurred background and object-contain */}
-        <div id="gallery-slider" className="relative max-w-4xl mx-auto h-[260px] sm:h-[360px] md:h-[450px] lg:h-[480px] overflow-hidden rounded-sm bg-ocean-950 border border-sand-300 shadow-2xl group">
+        {/* Responsive, highly optimized aspect ratio container with object-cover and text overlay */}
+        <div id="gallery-slider" className="relative max-w-4xl mx-auto w-full aspect-[4/3] sm:aspect-[16/10] md:aspect-[16/9] overflow-hidden rounded-sm bg-sand-100 border border-sand-300 shadow-xl group">
           
-          {/* Active Image (with beautiful smooth crossfade animations) */}
+          {/* Active Image (with elegant fade transition) */}
           <AnimatePresence mode="wait">
             <motion.div
               key={safeIndex}
-              initial={{ opacity: 0, scale: 1.01 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.99 }}
-              transition={{ duration: 0.6 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.5 }}
               className="absolute inset-0 w-full h-full"
             >
-              {/* Blurred Ambient Backdrop - completely replaces ugly dark empty borders */}
-              <img
-                src={activeSlide.image}
-                alt=""
-                referrerPolicy="no-referrer"
-                className="absolute inset-0 w-full h-full object-cover blur-3xl opacity-45 scale-110 pointer-events-none select-none"
-              />
-              {/* Sharp Front Image */}
               <img
                 src={activeSlide.image}
                 alt={activeSlide.title}
                 referrerPolicy="no-referrer"
-                className="relative z-10 w-full h-full object-contain mx-auto"
+                className="w-full h-full object-cover"
               />
+              
+              {/* Crisp text caption overlay at the bottom */}
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ocean-950/85 via-ocean-950/45 to-transparent p-4 sm:p-6 pt-12 text-white z-10 flex flex-col justify-end">
+                <h3 className="font-serif text-sm sm:text-base md:text-lg font-bold text-white mb-0.5">
+                  {activeSlide.title}
+                </h3>
+                {activeSlide.caption && (
+                  <p className="font-sans text-[11px] sm:text-xs text-sand-200 font-normal opacity-90 max-w-2xl">
+                    {activeSlide.caption}
+                  </p>
+                )}
+              </div>
             </motion.div>
           </AnimatePresence>
 
-          {/* Action Arrow Navigation Overlay (Visible on hover on desktop) */}
+          {/* Action Arrow Navigation Overlay */}
           {gallery.length > 1 && (
             <>
-              <div className="absolute inset-y-0 left-4 sm:left-6 flex items-center z-20">
+              <div className="absolute inset-y-0 left-3 sm:left-4 flex items-center z-20">
                 <button
                   id="gallery-btn-prev"
                   onClick={handlePrev}
-                  className="p-2 sm:p-3 bg-ocean-950/60 hover:bg-coral-500 text-sand-100 hover:text-sand-50 rounded-sm backdrop-blur-md transition-all duration-300 focus:outline-none cursor-pointer"
+                  className="p-1.5 sm:p-2 bg-ocean-950/70 hover:bg-coral-500 text-white rounded-sm backdrop-blur-sm transition-all focus:outline-none cursor-pointer"
                   aria-label="Previous Slide"
                 >
-                  <ChevronLeft size={20} className="sm:w-6 sm:h-6" />
+                  <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
               </div>
 
-              <div className="absolute inset-y-0 right-4 sm:right-6 flex items-center z-20">
+              <div className="absolute inset-y-0 right-3 sm:right-4 flex items-center z-20">
                 <button
                   id="gallery-btn-next"
                   onClick={handleNext}
-                  className="p-2 sm:p-3 bg-ocean-950/60 hover:bg-coral-500 text-sand-100 hover:text-sand-50 rounded-sm backdrop-blur-md transition-all duration-300 focus:outline-none cursor-pointer"
+                  className="p-1.5 sm:p-2 bg-ocean-950/70 hover:bg-coral-500 text-white rounded-sm backdrop-blur-sm transition-all focus:outline-none cursor-pointer"
                   aria-label="Next Slide"
                 >
-                  <ChevronRight size={20} className="sm:w-6 sm:h-6" />
+                  <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
               </div>
             </>
           )}
 
-          {/* Micro Index Bullet Markers Bottom */}
+          {/* Indicators bottom-right */}
           {gallery.length > 1 && (
-            <div className="absolute bottom-6 right-6 sm:bottom-12 sm:right-12 flex space-x-2.5 z-20">
-              {gallery.map((_, idx) => (
-                <button
-                  key={idx}
-                  id={`gallery-bullet-${idx}`}
-                  onClick={() => setCurrentIndex(idx)}
-                  className={`h-2 sm:h-2.5 rounded-full transition-all focus:outline-none cursor-pointer ${
-                    safeIndex === idx ? 'w-8 bg-coral-500' : 'w-2 sm:w-2.5 bg-sand-200/50 hover:bg-sand-100'
-                  }`}
-                  aria-label={`Go to slide ${idx + 1}`}
-                />
-              ))}
+            <div className="absolute top-4 right-4 bg-ocean-950/80 backdrop-blur-sm px-2.5 py-1 text-white text-[10px] sm:text-xs font-mono rounded-sm z-20 border border-sand-300/10">
+              {safeIndex + 1} / {gallery.length}
             </div>
           )}
 

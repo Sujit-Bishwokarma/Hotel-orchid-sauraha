@@ -34,19 +34,19 @@ export const HOTEL_HIGHLIGHTS = [
   {
     id: "h1",
     title: "Prime Sauraha Location",
-    description: "Our hotel is located near the national park.",
+    description: "Nestled in the peaceful, scenic heart of Sauraha, we are just a short walk away from the tranquil Rapti River and the entrance to Chitwan National Park.",
     icon: "MapPin"
   },
   {
     id: "h2",
     title: "Attentive Hospitality",
-    description: "Our friendly local staff is always here to help you feel at home and easily plan your daily tours.",
+    description: "Experience genuine, warm Nepalese hospitality from our dedicated local staff who are always here to make you feel right at home.",
     icon: "Heart"
   },
   {
     id: "h3",
     title: "Wildlife Adventure",
-    description: "We can easily arrange exciting jungle walks, peaceful canoe rides, and elephant safaris for you right from the hotel.",
+    description: "We easily arrange exciting jungle walks, canoe rides, and guided safaris right from our front desk.",
     icon: "Leaf"
   }
 ];
@@ -205,7 +205,7 @@ export const DEFAULT_OWNER_INFO: OwnerInfo = {
   name: "Jit Bahadur Tamang (jitu)",
   role: "Founder & Passionate Owner",
   photo: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&q=80&w=600",
-  description: "Jit Bahadur Tamang (lovingly known as Jitu) is the devoted founder of Hotel Orchid, and a prominent champion of Sauraha's wildlife and community welfare. For decades, Jitu has served at the absolute forefront of nature preservation and eco-conscious tourism in Chitwan. His hands-on leadership as former president of several prestigious conservation associations has pioneered standards of safari operations, wildlife rescue guidance,-and sustainable livelihood practices for local families.",
+  description: "Jit Bahadur Tamang (lovingly known as Jitu) is the founder of Hotel Orchid and a dedicated pioneer in Sauraha's wildlife conservation and community tourism.",
   facebookUrl: "https://facebook.com",
   instagramUrl: "https://instagram.com",
   twitterUrl: "https://twitter.com",

@@ -3,66 +3,43 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Compass, Flame, Footprints, Info, Sparkles } from 'lucide-react';
+import { useState } from 'react';
+import { ArrowUpRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useData } from '../context/DataContext';
 
 export default function Activities() {
   const { activities } = useData();
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  // Auto rotate the photo slider
-  useEffect(() => {
-    if (activities.length <= 1) return;
-    const timer = setInterval(() => {
-      handleNext();
-    }, 7000);
-    return () => clearInterval(timer);
-  }, [currentIndex, activities.length]);
-
-  const safeIndex = currentIndex < activities.length ? currentIndex : 0;
-  
-  const handlePrev = () => {
-    if (activities.length === 0) return;
-    setCurrentIndex((prev) => (prev === 0 ? activities.length - 1 : prev - 1));
-  };
-
-  const handleNext = () => {
-    if (activities.length === 0) return;
-    setCurrentIndex((prev) => (prev === activities.length - 1 ? 0 : prev + 1));
-  };
+  const [activeIndex, setActiveIndex] = useState(0);
 
   if (activities.length === 0) {
-    return null; // Don't show the section if the user cleared all activities
+    return null; // Don't show the section if there are no activities
   }
 
-  const activeActivity = activities[safeIndex];
+  const activeActivity = activities[activeIndex];
 
-  // Map appropriate lifestyle/adventure icons based on activity names
-  const getActivityIcon = (name: string) => {
-    const lowercase = name.toLowerCase();
-    if (lowercase.includes('walk') || lowercase.includes('hike') || lowercase.includes('jungle')) {
-      return <Footprints className="w-5 h-5 text-coral-500" />;
-    }
-    if (lowercase.includes('safari') || lowercase.includes('jeep') || lowercase.includes('car')) {
-      return <Compass className="w-5 h-5 text-coral-500" />;
-    }
-    if (lowercase.includes('tharu') || lowercase.includes('dance') || lowercase.includes('culture') || lowercase.includes('show')) {
-      return <Flame className="w-5 h-5 text-coral-500" />;
-    }
-    return <Sparkles className="w-5 h-5 text-coral-500" />;
+  const handleNext = () => {
+    setActiveIndex((prev) => (prev + 1) % activities.length);
   };
 
+  const handlePrev = () => {
+    setActiveIndex((prev) => (prev - 1 + activities.length) % activities.length);
+  };
+
+  const whatsappText = encodeURIComponent(
+    `Hi, I am interested in booking the ${activeActivity.name} activity during my stay at Hotel Orchid!`
+  );
+  const whatsappUrl = `https://wa.me/9779855080337?text=${whatsappText}`;
+
   return (
-    <section id="activities" className="scroll-mt-24 py-24 bg-sand-50 relative overflow-hidden">
+    <section id="activities" className="scroll-mt-24 py-20 bg-white relative overflow-hidden">
       {/* Visual background separation element */}
       <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-sand-300 to-transparent" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Heading */}
-        <div className="text-center max-w-2xl mx-auto mb-16 space-y-4">
+        <div className="text-center max-w-2xl mx-auto mb-12 space-y-4">
           <span className="font-mono text-xs text-coral-500 uppercase tracking-[0.2em] font-semibold block">
             Chitwan Wildlife & Culture
           </span>
@@ -71,145 +48,116 @@ export default function Activities() {
           </h2>
           <div className="w-12 h-1 bg-coral-500 mx-auto" />
           <p className="font-sans text-sm text-sand-800 leading-relaxed max-w-lg mx-auto">
-            We can help you arrange exciting jungle safaris and unique cultural experiences during your stay.
+            Discover Sauraha's natural beauty and rich Tharu cultural heritage through curated tours.
           </p>
         </div>
 
-        {/* Outer Split Layout Grid: Photo Slider + Information Cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-stretch">
+        {/* Dynamic Interactive Single Box Slider */}
+        <div className="max-w-4xl mx-auto relative px-2">
           
-          {/* LEFT PANEL: Elegant Photo Slider with Animation (Manageable via cpanel) */}
-          <div className="lg:col-span-8 flex flex-col justify-between">
-            <div 
-              id="activities-photo-slider" 
-              className="relative w-full aspect-[16/10] md:aspect-[16/9] h-[260px] sm:h-[340px] md:h-[400px] lg:h-[450px] overflow-hidden rounded-sm bg-ocean-950 border border-sand-300/40 shadow-xl group"
-            >
+          {/* Main Slider Box */}
+          <div className="bg-white border border-sand-300 rounded-sm shadow-xl overflow-hidden min-h-[460px] md:min-h-[380px] flex flex-col md:flex-row items-stretch relative">
+            
+            {/* Image Section (Responsive Width) */}
+            <div className="w-full md:w-1/2 aspect-[4/3] md:aspect-auto relative overflow-hidden bg-ocean-950">
+              <AnimatePresence mode="wait">
+                <motion.img
+                  key={activeActivity.id}
+                  src={activeActivity.image}
+                  alt={activeActivity.name}
+                  referrerPolicy="no-referrer"
+                  initial={{ opacity: 0, scale: 1.05 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 1.05 }}
+                  transition={{ duration: 0.4 }}
+                  className="w-full h-full object-cover absolute inset-0"
+                />
+              </AnimatePresence>
+              <div className="absolute inset-0 bg-ocean-950/10 pointer-events-none" />
+              
+              {/* Overlaid index counter */}
+              <div className="absolute bottom-4 left-4 bg-ocean-950/85 backdrop-blur-sm border border-sand-300/20 text-white font-mono text-xs py-1.5 px-3 rounded-sm z-10 flex items-center space-x-1">
+                <span className="text-coral-400 font-bold">
+                  {String(activeIndex + 1).padStart(2, '0')}
+                </span>
+                <span className="text-sand-400">/</span>
+                <span className="text-sand-300">
+                  {String(activities.length).padStart(2, '0')}
+                </span>
+              </div>
+            </div>
+
+            {/* Content Details Section */}
+            <div className="w-full md:w-1/2 p-6 sm:p-8 flex flex-col justify-between space-y-6 md:space-y-0 relative">
               <AnimatePresence mode="wait">
                 <motion.div
-                   key={safeIndex}
-                   initial={{ opacity: 0, scale: 1.01 }}
-                   animate={{ opacity: 1, scale: 1 }}
-                   exit={{ opacity: 0, scale: 0.99 }}
-                   transition={{ duration: 0.5 }}
-                   className="absolute inset-0 w-full h-full"
+                  key={activeActivity.id}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -12 }}
+                  transition={{ duration: 0.3 }}
+                  className="space-y-4 flex-grow flex flex-col justify-center"
                 >
-                  {/* Blurred Ambient Backdrop - completely replaces black empty space */}
-                  <img
-                    src={activeActivity?.image}
-                    alt=""
-                    referrerPolicy="no-referrer"
-                    className="absolute inset-0 w-full h-full object-cover blur-3xl opacity-40 scale-110 pointer-events-none select-none"
-                  />
-                  {/* Sharp Front Image */}
-                  <img
-                    src={activeActivity?.image}
-                    alt={activeActivity?.name}
-                    referrerPolicy="no-referrer"
-                    className="relative z-10 w-full h-full object-contain mx-auto"
-                  />
-                  {/* Premium contrast gradient overlay */}
-                  <div className="absolute inset-0 z-15 bg-gradient-to-t from-ocean-950/20 via-transparent to-transparent pointer-events-none" />
+                  <div className="flex items-center">
+                    <span className="font-mono text-[10px] uppercase tracking-wider text-sand-600 font-bold bg-sand-100 py-1.5 px-3 rounded-sm">
+                      Curated Tour
+                    </span>
+                  </div>
+
+                  <h3 className="font-serif text-xl sm:text-2xl font-bold text-ocean-950 tracking-tight leading-snug">
+                    {activeActivity.name}
+                  </h3>
+
+                  <p className="font-sans text-xs sm:text-sm text-sand-800 leading-relaxed font-normal min-h-[72px]">
+                    {activeActivity.description}
+                  </p>
+
+                  <div className="pt-3">
+                    <a
+                      href={whatsappUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center space-x-2 text-xs font-mono font-bold uppercase tracking-wider bg-coral-500 hover:bg-coral-600 text-white py-3 px-5 rounded-sm shadow-md hover:shadow-lg transition-all"
+                    >
+                      <span>Inquire & Book</span>
+                      <ArrowUpRight className="w-3.5 h-3.5" />
+                    </a>
+                  </div>
                 </motion.div>
               </AnimatePresence>
 
-              {/* Slider Arrows */}
-              {activities.length > 1 && (
-                <>
+              {/* Progress Tracker (Dot indicators) at the bottom */}
+              <div className="flex items-center justify-center md:justify-start space-x-1.5 pt-4 border-t border-sand-100">
+                {activities.map((_, idx) => (
                   <button
-                    id="activities-btn-prev"
-                    onClick={handlePrev}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 p-2 bg-ocean-950/50 hover:bg-coral-500 text-sand-100 rounded-sm backdrop-blur-sm transition-all duration-200 z-20 cursor-pointer"
-                    aria-label="Previous Slide"
-                  >
-                    <ChevronLeft size={16} />
-                  </button>
-                  <button
-                    id="activities-btn-next"
-                    onClick={handleNext}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 p-2 bg-ocean-950/50 hover:bg-coral-500 text-sand-100 rounded-sm backdrop-blur-sm transition-all duration-200 z-20 cursor-pointer"
-                    aria-label="Next Slide"
-                  >
-                    <ChevronRight size={16} />
-                  </button>
-                </>
-              )}
-
-              {/* Slider Progress Indicator (Dash pill trackers) */}
-              {activities.length > 1 && (
-                <div className="absolute bottom-6 right-6 flex space-x-1.5 z-20">
-                  {activities.map((_, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => setCurrentIndex(idx)}
-                      className={`h-1.5 rounded-full transition-all duration-300 ${
-                        idx === safeIndex ? 'w-6 bg-coral-500' : 'w-1.5 bg-sand-200/40'
-                      }`}
-                      aria-label={`View slide ${idx + 1}`}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* RIGHT PANEL: Interactive Cards Grid detailing descriptions */}
-          <div className="lg:col-span-4 flex flex-col justify-between space-y-6">
-            <div className="space-y-4">
-              <span className="font-mono text-[10px] text-coral-500 uppercase tracking-widest font-bold block">
-                ✦ Adventure Itineraries
-              </span>
-              <h3 className="font-serif text-xl sm:text-2xl font-bold text-ocean-950 tracking-tight">
-                Our Signature Experiences
-              </h3>
-            </div>
-
-            <div className="space-y-4 overflow-y-auto max-h-[450px] pr-2 no-scrollbar">
-              {activities.map((act, index) => {
-                const isActive = index === safeIndex;
-                return (
-                  <div
-                    key={act.id}
-                    id={`activity-card-${act.id}`}
-                    onClick={() => setCurrentIndex(index)}
-                    className={`p-5 rounded-sm border cursor-pointer transition-all duration-300 flex items-start gap-4 ${
-                      isActive 
-                        ? 'bg-white border-coral-400 shadow-md translate-x-1' 
-                        : 'bg-white/60 border-sand-300/40 hover:border-sand-400/80 hover:bg-white'
+                    key={idx}
+                    onClick={() => setActiveIndex(idx)}
+                    className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+                      idx === activeIndex ? "w-6 bg-coral-500" : "w-1.5 bg-sand-300 hover:bg-sand-400"
                     }`}
-                  >
-                    {/* Activity Icon Indicator */}
-                    <div className={`p-2.5 rounded-sm transition-all ${
-                      isActive ? 'bg-coral-50' : 'bg-sand-100'
-                    }`}>
-                      {getActivityIcon(act.name)}
-                    </div>
-
-                    {/* Content */}
-                    <div className="space-y-1 text-left flex-1">
-                      <div className="flex items-center justify-between">
-                        <h4 className={`font-serif text-md font-bold transition-all ${
-                          isActive ? 'text-coral-600' : 'text-ocean-950'
-                        }`}>
-                          {act.name}
-                        </h4>
-                        {isActive && (
-                          <span className="font-mono text-[8px] sm:text-[9px] bg-coral-100 text-coral-700 px-1.5 py-0.5 rounded-sm font-bold uppercase">
-                            Currently showing
-                          </span>
-                        )}
-                      </div>
-                      <p className="font-sans text-xs sm:text-sm text-sand-800 font-normal leading-relaxed">
-                        {act.description}
-                      </p>
-                    </div>
-                  </div>
-                );
-              })}
+                    aria-label={`Go to slide ${idx + 1}`}
+                  />
+                ))}
+              </div>
             </div>
 
-            {/* Right side alignment element */}
-
           </div>
+
+          {/* Absolute Navigation Buttons outside / side-overlaid */}
+          <button
+            onClick={handlePrev}
+            className="absolute left-[-16px] md:left-[-24px] top-1/2 -translate-y-1/2 w-11 h-11 bg-white border border-sand-300 text-ocean-950 hover:text-coral-500 hover:border-coral-400 rounded-full shadow-lg flex items-center justify-center transition-all z-20 cursor-pointer hover:scale-105 active:scale-95"
+            aria-label="Previous Activity"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          <button
+            onClick={handleNext}
+            className="absolute right-[-16px] md:right-[-24px] top-1/2 -translate-y-1/2 w-11 h-11 bg-white border border-sand-300 text-ocean-950 hover:text-coral-500 hover:border-coral-400 rounded-full shadow-lg flex items-center justify-center transition-all z-20 cursor-pointer hover:scale-105 active:scale-95"
+            aria-label="Next Activity"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
 
         </div>
 

@@ -57,6 +57,27 @@ $type = isset($data['type']) ? trim($data['type']) : '';
 $action = isset($data['action']) ? trim($data['action']) : '';
 
 // 3. Admin clear actions (kept for CPanel UI consistency)
+if ($action === 'save_config') {
+    $configData = isset($data['config']) ? $data['config'] : null;
+    if ($configData) {
+        $configFile = __DIR__ . '/hotel_orchid_dynamic_config.json';
+        $jsonString = json_encode($configData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+        if ($jsonString) {
+            $bytes = file_put_contents($configFile, $jsonString);
+            if ($bytes !== false) {
+                echo json_encode(["success" => true, "message" => "Configuration saved and synced successfully on cPanel hosting!"]);
+            } else {
+                echo json_encode(["success" => false, "error" => "Failed to write config file on server. Check file/folder write permissions."]);
+            }
+        } else {
+            echo json_encode(["success" => false, "error" => "Failed to encode config to JSON."]);
+        }
+    } else {
+        echo json_encode(["success" => false, "error" => "No config data provided in the request payload."]);
+    }
+    exit;
+}
+
 if ($action === 'clear_bookings') {
     $logFile = __DIR__ . '/bookings_log.json';
     if (file_exists($logFile)) {
