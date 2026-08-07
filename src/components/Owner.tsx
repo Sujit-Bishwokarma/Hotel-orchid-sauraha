@@ -1,58 +1,45 @@
 import React, { useState, useEffect } from 'react';
 import { useData } from '../context/DataContext';
 import { motion } from 'motion/react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ZoomIn, X } from 'lucide-react';
 
 export default function Owner() {
   const { ownerInfo } = useData();
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [itemsPerPage, setItemsPerPage] = useState(1);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-
-  // Responsive card layouts
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth >= 1024) {
-        setItemsPerPage(4); // 4 cards on screen
-      } else if (window.innerWidth >= 768) {
-        setItemsPerPage(2); // 2 cards on screen
-      } else {
-        setItemsPerPage(1); // 1 card on screen
-      }
-    };
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
 
   const totalAchievements = ownerInfo?.achievements?.length || 0;
-  const maxIndex = Math.max(0, totalAchievements - itemsPerPage);
-
-  // Clamp current index if screen sizes shrink
-  useEffect(() => {
-    if (currentIndex > maxIndex) {
-      setCurrentIndex(maxIndex);
-    }
-  }, [maxIndex, currentIndex]);
 
   const handleNext = () => {
-    setCurrentIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
+    setCurrentIndex((prev) => (prev >= totalAchievements - 1 ? 0 : prev + 1));
     setIsAutoPlaying(false);
   };
 
   const handlePrev = () => {
-    setCurrentIndex((prev) => (prev <= 0 ? maxIndex : prev - 1));
+    setCurrentIndex((prev) => (prev <= 0 ? totalAchievements - 1 : prev - 1));
     setIsAutoPlaying(false);
   };
 
   // Autoplay intervals
   useEffect(() => {
-    if (!isAutoPlaying || maxIndex === 0) return;
+    if (!isAutoPlaying || totalAchievements <= 1) return;
     const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
+      setCurrentIndex((prev) => (prev >= totalAchievements - 1 ? 0 : prev + 1));
     }, 6000);
     return () => clearInterval(timer);
-  }, [isAutoPlaying, maxIndex]);
+  }, [isAutoPlaying, totalAchievements]);
+
+  // Escape key handler for lightbox
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setLightboxImage(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   if (!ownerInfo) return null;
 
@@ -72,14 +59,14 @@ export default function Owner() {
         </div>
 
         {/* Bio Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center mb-20 bg-white p-8 sm:p-12 rounded-3xl shadow-sm border border-sand-200/60">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
           
           {/* Owner Portrait Box */}
-          <div className="lg:col-span-4 flex flex-col items-center">
+          <div className="lg:col-span-4 flex flex-col items-center lg:items-start text-center lg:text-left">
             <div className="relative group">
               {/* Decorative Frame */}
               <div className="absolute -inset-3 bg-gradient-to-tr from-coral-500 to-emerald-600 rounded-2xl opacity-10 blur-md group-hover:opacity-20 transition duration-500" />
-              <div className="relative overflow-hidden rounded-2xl shadow-md border-4 border-sand-50 aspect-square w-64 h-64 sm:w-72 sm:h-72">
+              <div className="relative overflow-hidden rounded-2xl shadow-md border-4 border-white aspect-square w-64 h-64 sm:w-72 sm:h-72">
                 <img
                   src={ownerInfo.photo}
                   alt={ownerInfo.name}
@@ -89,137 +76,184 @@ export default function Owner() {
               </div>
               
               {/* Mini Badge Floating */}
-              <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-ocean-950 text-sand-50 text-[10px] font-mono uppercase tracking-widest py-1.5 px-4 rounded-full shadow-lg border border-sand-800 whitespace-nowrap">
+              <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-ocean-950 text-sand-50 text-[10px] font-mono uppercase tracking-widest py-1.5 px-4 rounded-full shadow-lg border border-sand-850 whitespace-nowrap">
                 <span>Community Leader</span>
               </div>
             </div>
 
-            <div className="text-center mt-8">
+            <div className="mt-8">
               <h3 className="text-2xl font-serif text-ocean-950 font-medium">{ownerInfo.name}</h3>
               <p className="text-sm font-sans text-coral-600 font-medium tracking-wide mt-1">{ownerInfo.role}</p>
             </div>
           </div>
 
           {/* Description biography */}
-          <div className="lg:col-span-8 lg:pl-6">
-            <div className="prose prose-ocean max-w-none text-ocean-800/90 leading-relaxed font-sans text-base space-y-4">
-              <p className="first-letter:text-5xl first-letter:font-serif first-letter:float-left first-letter:mr-3 first-letter:text-coral-600">
+          <div className="lg:col-span-8 lg:pl-6 text-left">
+            <div className="prose prose-ocean max-w-none text-ocean-800/95 leading-relaxed font-sans text-base space-y-6">
+              <p className="first-letter:text-5xl first-letter:font-serif first-letter:float-left first-letter:mr-3 first-letter:text-coral-600 text-justify">
                 {ownerInfo.description}
               </p>
-              <p className="text-sm text-ocean-700 italic border-l-2 border-emerald-500 pl-4 bg-emerald-50/40 py-2.5 rounded-r-lg">
+              <div className="text-sm text-ocean-700 italic border-l-4 border-emerald-500 pl-4 bg-emerald-500/5 py-3 rounded-r-lg">
                 &ldquo;Protecting the ecosystem of Chitwan is not just a duty, it is a legacy we build for the future generation of Nepal. Through sustainable eco-conscious hospitality, we connect our guests with the magnificent pulse of local nature.&rdquo;
-              </p>
-            </div>
-          </div>
+              </div>
 
-        </div>
+              {/* Photo Box Slider with Larger Size & Container fit */}
+              {totalAchievements > 0 && (
+                <div className="relative mt-12 group">
+                  <div className="text-xs font-mono font-bold text-stone-500 uppercase tracking-wider mb-2 flex items-center justify-between">
+                    <span>Credentials & Certificates</span>
+                    <span className="text-[10px] text-stone-400 font-normal normal-case italic">Click certificate to view full resolution</span>
+                  </div>
+                  
+                  {/* Aspect Ratio updated to make the container taller and much larger */}
+                  <div className="relative aspect-[4/3] lg:aspect-[1.4] w-full overflow-hidden rounded-2xl border border-sand-200 shadow-md bg-stone-950 flex items-center justify-center">
+                    {/* Active Image with Contain for absolute clear rendering of certificate documents */}
+                    <img
+                      src={ownerInfo.achievements[currentIndex].image}
+                      alt={ownerInfo.achievements[currentIndex].title}
+                      referrerPolicy="no-referrer"
+                      className="object-contain w-full h-full p-2 sm:p-4 cursor-zoom-in transition-all duration-700 select-none hover:brightness-105"
+                      onClick={() => setLightboxImage(ownerInfo.achievements[currentIndex].image)}
+                    />
 
-        {/* Dynamic Achievements Boxes in Interactive Slider Carousel with touch swipe & physics */}
-        <div className="relative mt-4">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 pb-3 border-b border-sand-200">
-            <h4 className="text-lg font-serif text-ocean-950 flex items-center gap-2">
-              <span>A Distinguished Journey of Public Service</span>
-              <span className="text-xs font-sans text-emerald-600 bg-emerald-50 border border-emerald-100 py-0.5 px-2 rounded-full font-medium">Timeline</span>
-            </h4>
-            
-            {/* Slider Controls */}
-            <div className="flex items-center gap-2 mt-4 sm:mt-0">
-              <button
-                onClick={handlePrev}
-                aria-label="Previous Slide"
-                className="p-2.5 rounded-full border border-sand-300 text-ocean-950 hover:bg-coral-500 hover:border-coral-500 hover:text-white transition-all duration-300 shadow-sm active:scale-95 cursor-pointer bg-white"
-              >
-                <ChevronLeft className="w-5 h-5" />
-              </button>
-              <span className="text-xs font-mono text-ocean-600/80 px-1">
-                {currentIndex + 1} / {maxIndex + 1}
-              </span>
-              <button
-                onClick={handleNext}
-                aria-label="Next Slide"
-                className="p-2.5 rounded-full border border-sand-300 text-ocean-950 hover:bg-coral-500 hover:border-coral-500 hover:text-white transition-all duration-300 shadow-sm active:scale-95 cursor-pointer bg-white"
-              >
-                <ChevronRight className="w-5 h-5" />
-              </button>
-            </div>
-          </div>
+                    {/* Dark gradient overlay at the bottom for readability */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-stone-950/90 via-stone-950/10 to-transparent pointer-events-none" />
 
-          {/* Carousel Viewport */}
-          <div className="overflow-hidden py-4 -my-4 relative">
-            <div
-              className="flex transition-transform duration-500 ease-out"
-              style={{
-                transform: `translateX(-${currentIndex * (100 / itemsPerPage)}%)`,
-              }}
-            >
-              {ownerInfo.achievements.map((ach) => (
-                <div
-                  key={ach.id}
-                  style={{ width: `${100 / itemsPerPage}%` }}
-                  className="px-3 shrink-0"
-                >
-                  <div className="bg-white rounded-2xl shadow-sm border border-sand-200/60 p-5 hover:border-coral-400/50 hover:shadow-md transition-all duration-300 flex flex-col h-full group">
-                    {/* Year Badge */}
-                    <div className="text-xs font-sans font-bold text-coral-600 tracking-wider mb-3 flex justify-between items-center">
-                      <span>{ach.period}</span>
-                      <span className="text-[10px] uppercase tracking-widest font-mono text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-sm">
-                        Nepalese Calendar
-                      </span>
+                    {/* Left & Right Navigation Buttons overlay */}
+                    <div className="absolute inset-x-4 top-1/2 -translate-y-1/2 flex justify-between items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <button
+                        onClick={handlePrev}
+                        aria-label="Previous Photo"
+                        className="p-2.5 rounded-full bg-white/95 hover:bg-white text-stone-900 hover:text-coral-600 transition-all shadow-md active:scale-95 cursor-pointer"
+                      >
+                        <ChevronLeft className="w-5 h-5" />
+                      </button>
+                      <button
+                        onClick={handleNext}
+                        aria-label="Next Photo"
+                        className="p-2.5 rounded-full bg-white/95 hover:bg-white text-stone-900 hover:text-coral-600 transition-all shadow-md active:scale-95 cursor-pointer"
+                      >
+                        <ChevronRight className="w-5 h-5" />
+                      </button>
                     </div>
 
-                    {/* Box Image inside */}
-                    <div className="aspect-[4/3] rounded-xl overflow-hidden mb-4 bg-sand-100 relative border border-sand-100">
-                      <img
-                        src={ach.image}
-                        alt={ach.title}
-                        referrerPolicy="no-referrer"
-                        className="object-cover w-full h-full transition duration-500 group-hover:scale-105 select-none pointer-events-none"
-                      />
+                    {/* Quick zoom icon trigger indicator */}
+                    <div 
+                      className="absolute top-4 left-4 bg-stone-950/80 backdrop-blur-xs text-[10px] font-mono tracking-wider text-sand-200 py-1.5 px-3 rounded-full border border-white/10 flex items-center gap-1.5 cursor-zoom-in hover:bg-stone-900 transition-all"
+                      onClick={() => setLightboxImage(ownerInfo.achievements[currentIndex].image)}
+                    >
+                      <ZoomIn className="w-3.5 h-3.5 text-coral-400" />
+                      <span>Click to Zoom</span>
                     </div>
 
-                    {/* Text Content */}
-                    <div className="flex-grow flex flex-col justify-between">
-                      <div>
-                        <h5 className="text-sm font-sans font-bold text-ocean-950 tracking-tight leading-snug group-hover:text-coral-700 transition duration-200 mb-1">
-                          {ach.title}
-                        </h5>
-                        <p className="text-xs font-sans text-ocean-700 bg-sand-50 border border-sand-100/80 px-2 py-0.5 rounded inline-block font-medium">
-                          {ach.role}
-                        </p>
+                    {/* Caption Overlay */}
+                    <div className="absolute bottom-0 inset-x-0 p-5 sm:p-8 text-white text-left pointer-events-none">
+                      <div className="flex items-center gap-3 mb-1.5">
+                        <span className="text-xs font-mono font-bold bg-coral-500 px-2.5 py-0.5 rounded-sm text-white shadow-sm">
+                          {ownerInfo.achievements[currentIndex].period}
+                        </span>
+                        <span className="text-xs font-medium text-emerald-300 tracking-wider">
+                          {ownerInfo.achievements[currentIndex].role}
+                        </span>
                       </div>
-                      
-                      <div className="border-t border-sand-100 pt-3 mt-3 text-[11px] text-ocean-500 font-sans flex items-center justify-between">
-                        <span>Chitwan Conservation Lead</span>
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                      </div>
+                      <h4 className="text-sm sm:text-base md:text-lg font-serif font-bold tracking-tight text-sand-50 leading-tight">
+                        {ownerInfo.achievements[currentIndex].title}
+                      </h4>
+                    </div>
+
+                    {/* Index Indicator */}
+                    <div className="absolute top-4 right-4 bg-stone-950/80 backdrop-blur-xs text-[10px] font-mono font-bold tracking-widest text-sand-100 py-1.5 px-3 rounded-full border border-white/10">
+                      {currentIndex + 1} / {totalAchievements}
                     </div>
                   </div>
+
+                  {/* Navigation controls underneath for mobile accessibility */}
+                  <div className="flex justify-center items-center gap-4 mt-4">
+                    <button
+                      onClick={handlePrev}
+                      className="p-2 rounded-full border border-sand-300 text-stone-700 bg-white hover:bg-sand-50 active:scale-95 flex items-center justify-center transition-all cursor-pointer"
+                    >
+                      <ChevronLeft className="w-5 h-5" />
+                    </button>
+                    
+                    {/* Dots indicator */}
+                    <div className="flex items-center gap-1.5">
+                      {ownerInfo.achievements.map((_, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => {
+                            setCurrentIndex(idx);
+                            setIsAutoPlaying(false);
+                          }}
+                          className={`h-1.5 rounded-full transition-all duration-300 ${
+                            currentIndex === idx 
+                              ? "w-6 bg-coral-500" 
+                              : "w-1.5 bg-sand-300 hover:bg-sand-400"
+                          }`}
+                          aria-label={`Go to slide ${idx + 1}`}
+                        />
+                      ))}
+                    </div>
+
+                    <button
+                      onClick={handleNext}
+                      className="p-2 rounded-full border border-sand-300 text-stone-700 bg-white hover:bg-sand-50 active:scale-95 flex items-center justify-center transition-all cursor-pointer"
+                    >
+                      <ChevronRight className="w-5 h-5" />
+                    </button>
+                  </div>
+
                 </div>
-              ))}
+              )}
+
             </div>
           </div>
 
-          {/* Dots Indicator Progress */}
-          <div className="flex justify-center items-center gap-1.5 mt-8">
-            {Array.from({ length: maxIndex + 1 }).map((_, dotIdx) => (
-              <button
-                key={dotIdx}
-                onClick={() => {
-                  setCurrentIndex(dotIdx);
-                  setIsAutoPlaying(false);
-                }}
-                className={`h-2 rounded-full transition-all duration-300 border focus:outline-none ${
-                  currentIndex === dotIdx 
-                    ? "w-8 bg-coral-500 border-coral-500" 
-                    : "w-2 bg-sand-300 border-transparent hover:bg-sand-400"
-                }`}
-                aria-label={`Go to slide page ${dotIdx + 1}`}
-              />
-            ))}
-          </div>
         </div>
 
       </div>
+
+      {/* Fully Interactive Zoom Lightbox Overlay */}
+      {lightboxImage && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 p-4 sm:p-6 md:p-8 backdrop-blur-md transition-opacity duration-300 cursor-zoom-out"
+          onClick={() => setLightboxImage(null)}
+        >
+          {/* Close button on high z-index */}
+          <button 
+            className="absolute top-4 right-4 text-white hover:text-coral-400 bg-stone-900/80 border border-white/10 p-2 rounded-full transition-all shadow-md cursor-pointer z-50"
+            onClick={(e) => {
+              e.stopPropagation();
+              setLightboxImage(null);
+            }}
+          >
+            <X className="w-6 h-6" />
+          </button>
+
+          {/* Full-width Modal Frame */}
+          <div 
+            className="relative max-w-5xl max-h-[90vh] w-full flex flex-col items-center justify-center pointer-events-none"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img 
+              src={lightboxImage} 
+              alt="Certificate Fullscreen" 
+              referrerPolicy="no-referrer"
+              className="max-w-full max-h-[82vh] object-contain rounded-lg shadow-2xl border border-white/10 pointer-events-auto cursor-default select-none"
+            />
+            {currentIndex !== undefined && ownerInfo.achievements[currentIndex] && (
+              <div className="bg-stone-900/90 border border-white/5 py-3 px-6 rounded-full mt-4 text-center pointer-events-auto">
+                <p className="text-sand-100 font-serif text-sm font-bold tracking-tight">
+                  {ownerInfo.achievements[currentIndex].title}
+                </p>
+                <p className="text-stone-400 font-sans text-xs tracking-wider mt-0.5">
+                  {ownerInfo.achievements[currentIndex].role} ({ownerInfo.achievements[currentIndex].period})
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </section>
   );
 }

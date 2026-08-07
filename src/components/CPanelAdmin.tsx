@@ -4,11 +4,47 @@ import {
   Settings, RotateCcw, Plus, Trash2, Edit2, 
   Upload, Check, ShieldAlert, Download, Save, 
   HelpCircle, Star, Sparkles, MapPin, DollarSign, Lock,
-  Compass, Award, ClipboardList, Cloud
+  Compass, Award, ClipboardList, Cloud,
+  Wifi, Wind, Utensils, Tv, Coffee, Wine, Bath, Leaf, Snowflake
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useData } from '../context/DataContext';
 import { Room } from '../types';
+
+const PRESET_AMENITIES_OPTIONS = [
+  { name: 'Wi-Fi', iconName: 'Wifi' },
+  { name: 'Air Conditioning', iconName: 'Wind' },
+  { name: 'Room Service', iconName: 'Utensils' },
+  { name: 'Flat-screen TV', iconName: 'Tv' },
+  { name: 'Hot Water', iconName: 'Snowflake' },
+  { name: 'Private Balcony', iconName: 'Compass' },
+  { name: 'Coffee Maker', iconName: 'Coffee' },
+  { name: 'Mini Bar', iconName: 'Wine' },
+  { name: 'In-room Safe', iconName: 'Lock' },
+  { name: 'Lush Garden View', iconName: 'Leaf' },
+  { name: 'Attached Bathroom', iconName: 'Bath' },
+  { name: 'Ceiling Fan', iconName: 'RotateCcw' },
+  { name: 'King Bed', iconName: 'Bed' },
+];
+
+const getAmenityIcon = (iconName: string) => {
+  switch (iconName) {
+    case 'Wifi': return <Wifi className="w-3.5 h-3.5 mr-1" />;
+    case 'Wind': return <Wind className="w-3.5 h-3.5 mr-1" />;
+    case 'Utensils': return <Utensils className="w-3.5 h-3.5 mr-1" />;
+    case 'Tv': return <Tv className="w-3.5 h-3.5 mr-1" />;
+    case 'Coffee': return <Coffee className="w-3.5 h-3.5 mr-1" />;
+    case 'Wine': return <Wine className="w-3.5 h-3.5 mr-1" />;
+    case 'Lock': return <Lock className="w-3.5 h-3.5 mr-1" />;
+    case 'Bath': return <Bath className="w-3.5 h-3.5 mr-1" />;
+    case 'Leaf': return <Leaf className="w-3.5 h-3.5 mr-1" />;
+    case 'Snowflake': return <Snowflake className="w-3.5 h-3.5 mr-1" />;
+    case 'Bed': return <Bed className="w-3.5 h-3.5 mr-1" />;
+    case 'Compass': return <Compass className="w-3.5 h-3.5 mr-1" />;
+    case 'RotateCcw': return <RotateCcw className="w-3.5 h-3.5 mr-1" />;
+    default: return <Sparkles className="w-3.5 h-3.5 mr-1" />;
+  }
+};
 
 interface CPanelAdminProps {
   isOpen: boolean;
@@ -16,7 +52,7 @@ interface CPanelAdminProps {
   onSignOut?: () => void;
 }
 
-type TabType = 'dashboard' | 'rooms' | 'gallery' | 'reviews' | 'activities' | 'owner' | 'cpanel-info';
+type TabType = 'dashboard' | 'rooms' | 'gallery' | 'reviews' | 'activities' | 'owner';
 
 export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminProps) {
   const {
@@ -42,7 +78,9 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
     updateActivity,
     deleteActivity,
     updateOwnerInfo,
-    resetToDefault
+    resetToDefault,
+    serverConfig,
+    setServerConfig
   } = useData();
 
   const [activeTab, setActiveTab ] = useState<TabType>('dashboard');
@@ -150,15 +188,45 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
     setIsSyncing(true);
     setSyncError(null);
     try {
-      const configPayload = {
-        rooms,
-        gallery,
-        testimonials,
-        heroImage,
-        logoImage,
-        activities,
-        ownerInfo
-      };
+      const configPayload: Record<string, any> = {};
+      const changedSections: string[] = [];
+
+      // Check each section individually and only add to payload if it has been modified
+      if (JSON.stringify(rooms) !== JSON.stringify(serverConfig?.rooms)) {
+        configPayload.rooms = rooms;
+        changedSections.push("Rooms & Pricing");
+      }
+      if (JSON.stringify(gallery) !== JSON.stringify(serverConfig?.gallery)) {
+        configPayload.gallery = gallery;
+        changedSections.push("Gallery Slides");
+      }
+      if (JSON.stringify(testimonials) !== JSON.stringify(serverConfig?.testimonials)) {
+        configPayload.testimonials = testimonials;
+        changedSections.push("Guest Reviews");
+      }
+      if (heroImage !== serverConfig?.heroImage) {
+        configPayload.heroImage = heroImage;
+        changedSections.push("Hero Banner image");
+      }
+      if (logoImage !== serverConfig?.logoImage) {
+        configPayload.logoImage = logoImage;
+        changedSections.push("Hotel Logo image");
+      }
+      if (JSON.stringify(activities) !== JSON.stringify(serverConfig?.activities)) {
+        configPayload.activities = activities;
+        changedSections.push("Curated Activities");
+      }
+      if (JSON.stringify(ownerInfo) !== JSON.stringify(serverConfig?.ownerInfo)) {
+        configPayload.ownerInfo = ownerInfo;
+        changedSections.push("Owner Timeline & Info");
+      }
+
+      // If no local modifications are detected compared to the server state, notify the user and bypass network request
+      if (changedSections.length === 0) {
+        showNotification("✓ Your website configuration is already fully updated and synced with the server!");
+        setIsSyncing(false);
+        return;
+      }
 
       const res = await fetch('./send_email.php', {
         method: 'POST',
@@ -174,7 +242,12 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
 
       const data = await res.json();
       if (data.success) {
-        showNotification("Success! Website configuration has been saved & synced live on your hosting server!");
+        // Update local serverConfig copy to reflect the successful merge on the server
+        setServerConfig((prev: any) => ({
+          ...prev,
+          ...configPayload
+        }));
+        showNotification(`Success! Synced ${changedSections.join(', ')} live to your hosting server!`);
       } else {
         setSyncError(data.error || "Failed to sync config.json to hosting server.");
         alert("⚠️ Synchronization Error:\n" + (data.error || "Unknown server error. Check folder/file permissions on hosting server."));
@@ -792,18 +865,6 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
               <span>Meet Our Owner</span>
             </button>
 
-            <button
-              onClick={() => { setActiveTab('cpanel-info'); }}
-              className={`flex-shrink-0 flex items-center space-x-2 px-4 py-2.5 sm:px-6 sm:py-4 text-xs tracking-wider uppercase font-mono border-b md:border-b-0 md:border-r-4 transition-all w-auto md:w-full text-left font-bold ${
-                activeTab === 'cpanel-info'
-                  ? 'bg-stone-900 border-coral-500 text-coral-400'
-                  : 'border-transparent text-stone-400 hover:text-stone-100 hover:bg-stone-900/40'
-              }`}
-            >
-              <HelpCircle size={15} />
-              <span>Hosting Sync</span>
-            </button>
-
           </div>
 
           {/* Right Contents Window */}
@@ -1108,6 +1169,62 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
                         </div>
                       </div>
 
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-stone-400 text-xs font-mono uppercase mb-1">Capacity (Guests)</label>
+                          <input
+                            type="number"
+                            min="1"
+                            placeholder="e.g., 2"
+                            value={roomForm.capacity || ''}
+                            onChange={e => setRoomForm({ ...roomForm, capacity: parseInt(e.target.value) || 2 })}
+                            className="w-full bg-stone-900 border border-stone-750 p-2 text-sm text-stone-100 rounded-sm focus:outline-none focus:border-coral-500"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-stone-400 text-xs font-mono uppercase mb-1">Amenities (Comma-separated)</label>
+                          <input
+                            type="text"
+                            placeholder="e.g., Wi-Fi, Air Conditioning, Room Service, TV"
+                            value={Array.isArray(roomForm.amenities) ? roomForm.amenities.join(', ') : (roomForm.amenities || '')}
+                            onChange={e => setRoomForm({ ...roomForm, amenities: e.target.value.split(',').map(s => s.trim()).filter(Boolean) })}
+                            className="w-full bg-stone-900 border border-stone-750 p-2 text-sm text-stone-100 rounded-sm focus:outline-none focus:border-coral-500"
+                          />
+                          <div className="mt-2.5">
+                            <span className="block text-[10px] font-mono text-stone-500 uppercase mb-1.5">Quick Add Presets:</span>
+                            <div className="flex flex-wrap gap-1.5 max-h-[110px] overflow-y-auto pr-1">
+                              {PRESET_AMENITIES_OPTIONS.map((opt) => {
+                                const currentAms = Array.isArray(roomForm.amenities) ? [...roomForm.amenities] : [];
+                                const isSelected = currentAms.some(a => a.toLowerCase().trim() === opt.name.toLowerCase().trim());
+                                return (
+                                  <button
+                                    key={opt.name}
+                                    type="button"
+                                    onClick={() => {
+                                      let updated;
+                                      if (isSelected) {
+                                        updated = currentAms.filter(a => a.toLowerCase().trim() !== opt.name.toLowerCase().trim());
+                                      } else {
+                                        updated = [...currentAms, opt.name];
+                                      }
+                                      setRoomForm({ ...roomForm, amenities: updated });
+                                    }}
+                                    className={`inline-flex items-center text-[10px] font-sans py-1 px-2.5 rounded-full border transition-all duration-200 cursor-pointer ${
+                                      isSelected 
+                                        ? 'bg-coral-500/25 border-coral-500 text-coral-400 font-semibold shadow-xs' 
+                                        : 'bg-stone-950/80 border-stone-800 text-stone-400 hover:border-stone-600 hover:text-stone-200'
+                                    }`}
+                                  >
+                                    {getAmenityIcon(opt.iconName)}
+                                    <span>{opt.name}</span>
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
                       <div>
                         <label className="block text-stone-400 text-xs font-mono uppercase mb-1">Description Narrative</label>
                         <textarea
@@ -1212,6 +1329,62 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
                                   onChange={e => setRoomForm({ ...roomForm, size: e.target.value })}
                                   className="w-full bg-stone-900 border border-stone-750 p-2 text-sm text-stone-100 rounded-sm focus:outline-none focus:border-coral-500"
                                 />
+                              </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                              <div>
+                                <label className="block text-stone-400 text-xs font-mono uppercase mb-1">Capacity (Guests)</label>
+                                <input
+                                  type="number"
+                                  min="1"
+                                  placeholder="e.g., 2"
+                                  value={roomForm.capacity || ''}
+                                  onChange={e => setRoomForm({ ...roomForm, capacity: parseInt(e.target.value) || 2 })}
+                                  className="w-full bg-stone-900 border border-stone-750 p-2 text-sm text-stone-100 rounded-sm focus:outline-none focus:border-coral-500"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-stone-400 text-xs font-mono uppercase mb-1">Amenities (Comma-separated)</label>
+                                <input
+                                  type="text"
+                                  placeholder="e.g., Wi-Fi, Air Conditioning, Room Service, TV"
+                                  value={Array.isArray(roomForm.amenities) ? roomForm.amenities.join(', ') : (roomForm.amenities || '')}
+                                  onChange={e => setRoomForm({ ...roomForm, amenities: e.target.value.split(',').map(s => s.trim()).filter(Boolean) })}
+                                  className="w-full bg-stone-900 border border-stone-750 p-2 text-sm text-stone-100 rounded-sm focus:outline-none focus:border-coral-500"
+                                />
+                                <div className="mt-2.5">
+                                  <span className="block text-[10px] font-mono text-stone-500 uppercase mb-1.5">Quick Add Presets:</span>
+                                  <div className="flex flex-wrap gap-1.5 max-h-[110px] overflow-y-auto pr-1">
+                                    {PRESET_AMENITIES_OPTIONS.map((opt) => {
+                                      const currentAms = Array.isArray(roomForm.amenities) ? [...roomForm.amenities] : [];
+                                      const isSelected = currentAms.some(a => a.toLowerCase().trim() === opt.name.toLowerCase().trim());
+                                      return (
+                                        <button
+                                          key={opt.name}
+                                          type="button"
+                                          onClick={() => {
+                                            let updated;
+                                            if (isSelected) {
+                                              updated = currentAms.filter(a => a.toLowerCase().trim() !== opt.name.toLowerCase().trim());
+                                            } else {
+                                              updated = [...currentAms, opt.name];
+                                            }
+                                            setRoomForm({ ...roomForm, amenities: updated });
+                                          }}
+                                          className={`inline-flex items-center text-[10px] font-sans py-1 px-2.5 rounded-full border transition-all duration-200 cursor-pointer ${
+                                            isSelected 
+                                              ? 'bg-coral-500/25 border-coral-500 text-coral-400 font-semibold shadow-xs' 
+                                              : 'bg-stone-950/80 border-stone-800 text-stone-400 hover:border-stone-600 hover:text-stone-200'
+                                          }`}
+                                        >
+                                          {getAmenityIcon(opt.iconName)}
+                                          <span>{opt.name}</span>
+                                        </button>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
                               </div>
                             </div>
 
@@ -2058,54 +2231,7 @@ export default function CPanelAdmin({ isOpen, onClose, onSignOut }: CPanelAdminP
               </div>
             )}
 
-            {/* CPANEL PORTABILITY TAB */}
-            {activeTab === 'cpanel-info' && (
-              <div className="space-y-8 text-left">
-                <div className="space-y-1.5">
-                  <h2 className="font-serif text-xl sm:text-2xl font-bold text-sand-50">Bisup Hosting cPanel Synchronization</h2>
-                  <p className="text-xs sm:text-sm text-stone-400">Keep your dynamic data safe across development and production servers.</p>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  
-                  {/* PHP Auto-Sync Card (Full Width) */}
-                  <div className="sm:col-span-2 bg-emerald-950/20 border border-emerald-500/30 p-6 rounded-sm space-y-4">
-                    <div className="flex items-center space-x-2.5 text-emerald-400">
-                      <Cloud size={24} className={isSyncing ? "animate-spin" : "text-emerald-400"} />
-                      <h3 className="font-serif font-bold text-lg text-sand-50">PHP Server Auto-Sync (cPanel Hosting)</h3>
-                    </div>
-                    <p className="text-xs text-stone-350 leading-relaxed font-sans">
-                      This is the easiest way to keep your website updated! When hosted on a standard Apache PHP shared hosting platform like <strong>Bisup Hosting</strong> or any <strong>cPanel</strong>, you do not need to manually download or replace the JSON file. 
-                    </p>
-                    <p className="text-xs text-stone-400 leading-relaxed font-sans">
-                      Simply edit anything on the website (rooms, reviews, activities, banner images, owner timeline, etc.) and click the button below. Our secure PHP auto-sync system will instantly write the updated configuration directly to <code>public_html/hotel_orchid_dynamic_config.json</code> on your server disk. All future website visitors will instantly load your updated configuration!
-                    </p>
-                    
-                    <div className="flex flex-wrap items-center gap-4 pt-2">
-                      <button
-                        onClick={handlePushLiveSync}
-                        disabled={isSyncing}
-                        className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 disabled:bg-emerald-800 disabled:text-stone-400 text-stone-50 text-xs font-mono font-bold uppercase tracking-widest rounded-sm border border-emerald-500 hover:border-emerald-400 transition-all flex items-center gap-2 cursor-pointer shadow-lg"
-                      >
-                        <Cloud size={14} className={isSyncing ? "animate-spin" : ""} />
-                        <span>{isSyncing ? "Syncing Config on Server..." : "Push and Sync Config Live to Server"}</span>
-                      </button>
-                      
-                      {syncError && (
-                        <p className="text-xs text-red-400 font-mono">
-                          ⚠️ {syncError}
-                        </p>
-                      )}
-                      {!syncError && successMessage && (
-                        <p className="text-xs text-emerald-400 font-mono">
-                          ✓ Sync completed successfully!
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
+            {/* Hosting Sync section removed as it has been unified to the header button */}
 
           </div>
 

@@ -177,6 +177,30 @@ export const TESTIMONIALS: Testimonial[] = [
     rating: 5,
     content: "We felt incredibly pampered here. The airport transfer service was seamless, and the warm breakfast was cooked to perfection. Orchid is an absolute peace haven in Sauraha!",
     avatarLetter: "C"
+  },
+  {
+    id: "t4",
+    author: "Aarav Mehta",
+    location: "Mumbai, India",
+    rating: 5,
+    content: "A truly magical stay at Hotel Orchid Sauraha! The level of hospitality is outstanding, and the rooms are modern and comfortable. Getting to the jungle safari point was incredibly convenient. We highly recommend this gem!",
+    avatarLetter: "A"
+  },
+  {
+    id: "t5",
+    author: "Anjali Thapa",
+    location: "Pokhara, Nepal",
+    rating: 5,
+    content: "Simply fantastic! Elegant designs, pristine cleanliness, and highly professional local service. The serene garden area is perfect for winding down after a day of spotting rhinos in the wild.",
+    avatarLetter: "A"
+  },
+  {
+    id: "t6",
+    author: "Chen Wei",
+    location: "Beijing, China",
+    rating: 5,
+    content: "Very clean, quiet, and peaceful. The staff was extremely helpful in arranging our local safari tours. Secure room access and perfect service. Five stars!",
+    avatarLetter: "C"
   }
 ];
 

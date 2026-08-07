@@ -80,121 +80,8 @@ export default function Contact() {
         {/* 2-Column Responsive Board */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-stretch">
           
-          {/* LEFT: Info list and Embedded Google Map */}
-          <div className="lg:col-span-5 flex flex-col justify-between space-y-8">
-            
-            {/* Context list */}
-            <div className="bg-white border border-sand-300 p-8 rounded-sm space-y-6 shadow-sm">
-              <h3 className="font-serif text-2xl font-bold text-ocean-950">
-                Contact Information
-              </h3>
-              
-              <div className="space-y-4 font-sans text-sm">
-                
-                {/* Location */}
-                <a 
-                  href="https://www.google.com/maps/place/Hotel+Orchid/@27.5815349,84.4947477,17z"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-start space-x-4 group/address cursor-pointer hover:bg-sand-50/80 p-2 -m-2 rounded-sm transition-all"
-                >
-                  <div className="w-10 h-10 bg-sand-100 text-coral-500 rounded-sm flex items-center justify-center flex-shrink-0 border border-sand-300 group-hover/address:bg-coral-500 group-hover/address:text-white group-hover/address:border-coral-400 transition-colors">
-                    <MapPin size={18} />
-                  </div>
-                  <div>
-                    <span className="block font-mono text-[10px] text-sand-600 uppercase tracking-widest group-hover/address:text-coral-500 transition-colors font-medium">Our Address</span>
-                    <span className="font-semibold text-ocean-950 group-hover/address:text-coral-600 transition-colors underline decoration-dotted decoration-sand-400">{HOTEL_INFO.address}</span>
-                  </div>
-                </a>
-
-                {/* Telephone */}
-                <div className="flex items-start space-x-4">
-                  <div className="w-10 h-10 bg-sand-100 text-coral-500 rounded-sm flex items-center justify-center flex-shrink-0 border border-sand-300">
-                    <Phone size={18} />
-                  </div>
-                  <div>
-                    <span className="block font-mono text-[10px] text-sand-600 uppercase tracking-widest">Call Directly</span>
-                    <a href={`tel:${HOTEL_INFO.phone}`} className="font-semibold text-ocean-950 hover:text-coral-500 transition-colors">
-                      {HOTEL_INFO.phone}
-                    </a>
-                  </div>
-                </div>
-
-                {/* WhatsApp Support */}
-                <div className="flex items-start space-x-4">
-                  <div className="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-sm flex items-center justify-center flex-shrink-0 border border-emerald-200">
-                    <MessageCircle size={18} className="fill-emerald-600 text-white" />
-                  </div>
-                  <div>
-                    <span className="block font-mono text-[10px] text-emerald-700 uppercase tracking-widest">WhatsApp Support</span>
-                    <a href="https://wa.me/9779855080337" target="_blank" rel="noopener noreferrer" className="font-semibold text-ocean-950 hover:text-emerald-600 transition-colors flex items-center gap-1">
-                      +977-9855080337
-                      <span className="inline-block px-1.5 py-0.5 text-[9px] font-mono bg-emerald-100 text-emerald-800 rounded uppercase">Online</span>
-                    </a>
-                  </div>
-                </div>
-
-                {/* Email */}
-                <div className="flex items-start space-x-4">
-                  <div className="w-10 h-10 bg-sand-100 text-coral-500 rounded-sm flex items-center justify-center flex-shrink-0 border border-sand-300">
-                    <Mail size={18} />
-                  </div>
-                  <div>
-                    <span className="block font-mono text-[10px] text-sand-600 uppercase tracking-widest">Email Inquiry</span>
-                    <a href={`mailto:${HOTEL_INFO.email}`} className="font-semibold text-ocean-950 hover:text-coral-500 transition-colors">
-                      {HOTEL_INFO.email}
-                    </a>
-                  </div>
-                </div>
-
-              </div>
-
-              {/* Social Channels */}
-              <div className="pt-6 border-t border-sand-300 space-y-3">
-                <span className="block font-mono text-[10px] text-sand-650 uppercase tracking-widest">Social Channels</span>
-                <div className="flex flex-wrap gap-2">
-                  <a href={ownerInfo.facebookUrl || "https://facebook.com"} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-sand-50 hover:bg-coral-500 text-ocean-950 hover:text-sand-50 rounded-sm border border-sand-300 flex items-center justify-center transition-all" title="Facebook Page">
-                    <Facebook size={16} />
-                  </a>
-                  <a href={ownerInfo.instagramUrl || "https://instagram.com"} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-sand-50 hover:bg-coral-500 text-ocean-950 hover:text-sand-50 rounded-sm border border-sand-300 flex items-center justify-center transition-all" title="Instagram Profile">
-                    <Instagram size={16} />
-                  </a>
-                  <a href={ownerInfo.twitterUrl || "https://twitter.com"} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-sand-50 hover:bg-coral-500 text-ocean-950 hover:text-sand-50 rounded-sm border border-sand-300 flex items-center justify-center transition-all" title="Twitter / X Profile">
-                    <Twitter size={16} />
-                  </a>
-                  {ownerInfo.tripadvisorUrl && (
-                    <a href={ownerInfo.tripadvisorUrl} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-sand-50 hover:bg-coral-500 text-ocean-950 hover:text-sand-50 rounded-sm border border-sand-300 flex items-center justify-center transition-all" title="TripAdvisor Profile">
-                      <Compass size={16} />
-                    </a>
-                  )}
-                  {ownerInfo.youtubeUrl && (
-                    <a href={ownerInfo.youtubeUrl} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-sand-50 hover:bg-coral-500 text-ocean-950 hover:text-sand-50 rounded-sm border border-sand-300 flex items-center justify-center transition-all" title="YouTube Channel">
-                      <Youtube size={16} />
-                    </a>
-                  )}
-                </div>
-              </div>
-
-            </div>
-
-            {/* Google Map Box */}
-            <div className="border border-sand-300 rounded-sm overflow-hidden h-64 shadow-md bg-sand-200">
-              <iframe
-                title="Hotel Orchid Location Map"
-                src="https://maps.google.com/maps?q=Hotel%20Orchid%20Sauraha&t=&z=16&ie=UTF8&iwloc=&output=embed"
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                allowFullScreen={true}
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-              />
-            </div>
-
-          </div>
-
-          {/* RIGHT: Contact Form Card */}
-          <div className="lg:col-span-7">
+          {/* LEFT: Contact Form Card (Drop Us A Line) */}
+          <div className="lg:col-span-7 order-1">
             <div className="bg-white border border-sand-300 p-8 sm:p-12 h-full rounded-sm flex flex-col justify-center shadow-lg relative">
               <AnimatePresence mode="wait">
                 {!isSubmitted ? (
@@ -326,6 +213,119 @@ export default function Contact() {
                 )}
               </AnimatePresence>
             </div>
+          </div>
+
+          {/* RIGHT: Info list and Embedded Google Map */}
+          <div className="lg:col-span-5 flex flex-col justify-between space-y-8 order-2">
+            
+            {/* Context list */}
+            <div className="bg-white border border-sand-300 p-8 rounded-sm space-y-6 shadow-sm">
+              <h3 className="font-serif text-2xl font-bold text-ocean-950">
+                Contact Information
+              </h3>
+              
+              <div className="space-y-4 font-sans text-sm">
+                
+                {/* Location */}
+                <a 
+                  href="https://www.google.com/maps/place/Hotel+Orchid/@27.5815349,84.4947477,17z"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-start space-x-4 group/address cursor-pointer hover:bg-sand-50/80 p-2 -m-2 rounded-sm transition-all"
+                >
+                  <div className="w-10 h-10 bg-sand-100 text-coral-500 rounded-sm flex items-center justify-center flex-shrink-0 border border-sand-300 group-hover/address:bg-coral-500 group-hover/address:text-white group-hover/address:border-coral-400 transition-colors">
+                    <MapPin size={18} />
+                  </div>
+                  <div>
+                    <span className="block font-mono text-[10px] text-sand-600 uppercase tracking-widest group-hover/address:text-coral-500 transition-colors font-medium">Our Address</span>
+                    <span className="font-semibold text-ocean-950 group-hover/address:text-coral-600 transition-colors underline decoration-dotted decoration-sand-400">{HOTEL_INFO.address}</span>
+                  </div>
+                </a>
+
+                {/* Telephone */}
+                <div className="flex items-start space-x-4">
+                  <div className="w-10 h-10 bg-sand-100 text-coral-500 rounded-sm flex items-center justify-center flex-shrink-0 border border-sand-300">
+                    <Phone size={18} />
+                  </div>
+                  <div>
+                    <span className="block font-mono text-[10px] text-sand-600 uppercase tracking-widest">Call Directly</span>
+                    <a href={`tel:${HOTEL_INFO.phone}`} className="font-semibold text-ocean-950 hover:text-coral-500 transition-colors">
+                      {HOTEL_INFO.phone}
+                    </a>
+                  </div>
+                </div>
+
+                {/* WhatsApp Support */}
+                <div className="flex items-start space-x-4">
+                  <div className="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-sm flex items-center justify-center flex-shrink-0 border border-emerald-200">
+                    <MessageCircle size={18} className="fill-emerald-600 text-white" />
+                  </div>
+                  <div>
+                    <span className="block font-mono text-[10px] text-emerald-700 uppercase tracking-widest">WhatsApp Support</span>
+                    <a href="https://wa.me/9779855080337" target="_blank" rel="noopener noreferrer" className="font-semibold text-ocean-950 hover:text-emerald-600 transition-colors flex items-center gap-1">
+                      +977-9855080337
+                      <span className="inline-block px-1.5 py-0.5 text-[9px] font-mono bg-emerald-100 text-emerald-800 rounded uppercase">Online</span>
+                    </a>
+                  </div>
+                </div>
+
+                {/* Email */}
+                <div className="flex items-start space-x-4">
+                  <div className="w-10 h-10 bg-sand-100 text-coral-500 rounded-sm flex items-center justify-center flex-shrink-0 border border-sand-300">
+                    <Mail size={18} />
+                  </div>
+                  <div>
+                    <span className="block font-mono text-[10px] text-sand-600 uppercase tracking-widest">Email Inquiry</span>
+                    <a href={`mailto:${HOTEL_INFO.email}`} className="font-semibold text-ocean-950 hover:text-coral-500 transition-colors">
+                      {HOTEL_INFO.email}
+                    </a>
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Social Channels */}
+              <div className="pt-6 border-t border-sand-300 space-y-3">
+                <span className="block font-mono text-[10px] text-sand-650 uppercase tracking-widest">Social Channels</span>
+                <div className="flex flex-wrap gap-2">
+                  <a href={ownerInfo.facebookUrl || "https://facebook.com"} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-sand-50 hover:bg-coral-500 text-ocean-950 hover:text-sand-50 rounded-sm border border-sand-300 flex items-center justify-center transition-all" title="Facebook Page">
+                    <Facebook size={16} />
+                  </a>
+                  <a href={ownerInfo.instagramUrl || "https://instagram.com"} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-sand-50 hover:bg-coral-500 text-ocean-950 hover:text-sand-50 rounded-sm border border-sand-300 flex items-center justify-center transition-all" title="Instagram Profile">
+                    <Instagram size={16} />
+                  </a>
+                  <a href={ownerInfo.twitterUrl || "https://twitter.com"} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-sand-50 hover:bg-coral-500 text-ocean-950 hover:text-sand-50 rounded-sm border border-sand-300 flex items-center justify-center transition-all" title="Twitter / X Profile">
+                    <Twitter size={16} />
+                  </a>
+                  {ownerInfo.tripadvisorUrl && (
+                    <a href={ownerInfo.tripadvisorUrl} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-sand-50 hover:bg-coral-500 text-ocean-950 hover:text-sand-50 rounded-sm border border-sand-300 flex items-center justify-center transition-all" title="TripAdvisor Profile">
+                      <Compass size={16} />
+                    </a>
+                  )}
+                  {ownerInfo.youtubeUrl && (
+                    <a href={ownerInfo.youtubeUrl} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-sand-50 hover:bg-coral-500 text-ocean-950 hover:text-sand-50 rounded-sm border border-sand-300 flex items-center justify-center transition-all" title="YouTube Channel">
+                      <Youtube size={16} />
+                    </a>
+                  )}
+                </div>
+              </div>
+
+            </div>
+
+            {/* Google Map Box */}
+            <div className="border border-sand-300 rounded-sm overflow-hidden h-64 shadow-md bg-sand-200">
+              <iframe
+                title="Hotel Orchid Location Map"
+                src="https://maps.google.com/maps?q=Hotel%20Orchid%20Sauraha&t=&z=16&ie=UTF8&iwloc=&output=embed"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen={true}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            </div>
+
           </div>
 
         </div>

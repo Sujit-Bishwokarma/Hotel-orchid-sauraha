@@ -51,14 +51,6 @@ export default function Hero({ onOpenBooking }: HeroProps) {
           transition={{ duration: 0.8 }}
           className="space-y-6"
         >
-          {/* Tagline / Subtitle */}
-          <div className="inline-flex items-center space-x-2 bg-coral-500/10 border border-coral-500/20 px-4 py-1.5 rounded-full backdrop-blur-sm shadow-sm">
-            <Compass className="w-4 h-4 text-coral-400 rotate-12" />
-            <span className="text-sand-100 font-mono text-[11px] sm:text-xs uppercase tracking-[0.25em] font-medium">
-              {HOTEL_INFO.tagline}
-            </span>
-          </div>
-
           {/* Main Display Headline */}
           <h1 id="hero-title" className="font-serif text-4xl sm:text-6xl md:text-7xl font-bold text-sand-50 tracking-tight leading-none drop-shadow-md">
             Hotel Orchid <br />
@@ -82,11 +74,11 @@ export default function Hero({ onOpenBooking }: HeroProps) {
               whileTap={{ scale: 0.98 }}
               onClick={onOpenBooking}
               id="hero-book-now-button"
-              className="w-full sm:w-auto px-10 py-5 sm:px-14 bg-gradient-to-r from-coral-500 via-coral-400 to-coral-600 hover:brightness-110 active:scale-95 text-sand-50 rounded-sm font-sans font-bold text-base sm:text-lg tracking-widest uppercase border border-coral-400/30 transition-all shadow-[0_12px_24px_rgba(235,96,68,0.5)] cursor-pointer hover:shadow-[0_15px_30px_rgba(235,96,68,0.7)] group coral-glow-btn"
+              className="w-full px-10 py-3 sm:py-3.5 sm:px-14 bg-gradient-to-r from-coral-500 via-coral-400 to-coral-600 hover:brightness-110 active:scale-95 text-sand-50 rounded-sm font-sans font-bold text-base sm:text-lg tracking-widest uppercase border border-coral-400/30 transition-all shadow-[0_12px_24px_rgba(235,96,68,0.5)] cursor-pointer hover:shadow-[0_15px_30px_rgba(235,96,68,0.7)] group coral-glow-btn"
             >
               <span className="flex items-center justify-center space-x-3">
                 <Calendar className="w-5 h-5 group-hover:rotate-12 transition-transform" />
-                <span>BOOK INSTANT CHECK-IN</span>
+                <span>BOOK YOUR PERFECT STAY</span>
               </span>
             </motion.button>
           </div>

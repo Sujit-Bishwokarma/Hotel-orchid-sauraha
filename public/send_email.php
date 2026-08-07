@@ -59,9 +59,25 @@ $action = isset($data['action']) ? trim($data['action']) : '';
 // 3. Admin clear actions (kept for CPanel UI consistency)
 if ($action === 'save_config') {
     $configData = isset($data['config']) ? $data['config'] : null;
-    if ($configData) {
+    if ($configData && is_array($configData)) {
         $configFile = __DIR__ . '/hotel_orchid_dynamic_config.json';
-        $jsonString = json_encode($configData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+        
+        // Load the existing configuration if it exists
+        $existingConfig = [];
+        if (file_exists($configFile)) {
+            $existingRaw = file_get_contents($configFile);
+            if ($existingRaw) {
+                $decoded = json_decode($existingRaw, true);
+                if (is_array($decoded)) {
+                    $existingConfig = $decoded;
+                }
+            }
+        }
+        
+        // Use array_replace to merge incoming partial keys/sections over existing keys/sections
+        $mergedConfig = array_replace($existingConfig, $configData);
+        
+        $jsonString = json_encode($mergedConfig, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
         if ($jsonString) {
             $bytes = file_put_contents($configFile, $jsonString);
             if ($bytes !== false) {
@@ -73,7 +89,7 @@ if ($action === 'save_config') {
             echo json_encode(["success" => false, "error" => "Failed to encode config to JSON."]);
         }
     } else {
-        echo json_encode(["success" => false, "error" => "No config data provided in the request payload."]);
+        echo json_encode(["success" => false, "error" => "No config data provided or invalid config format in the request payload."]);
     }
     exit;
 }

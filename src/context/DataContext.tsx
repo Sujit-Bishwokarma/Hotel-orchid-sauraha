@@ -38,6 +38,8 @@ interface DataContextType {
   logoImage: string;
   activities: Activity[];
   ownerInfo: OwnerInfo;
+  serverConfig: any;
+  setServerConfig: React.Dispatch<React.SetStateAction<any>>;
   updateRoom: (roomId: string, updatedFields: Partial<Room>) => void;
   addRoom: (room: Omit<Room, 'id'>) => void;
   deleteRoom: (roomId: string) => void;
@@ -198,6 +200,8 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const isInitialLogo = useRef(true);
   const isInitialActivities = useRef(true);
   const isInitialOwner = useRef(true);
+
+  const [serverConfig, setServerConfig] = useState<any>(bConfig || {});
 
   const [rooms, setRooms] = useState<Room[]>(() => {
     const saved = localStorage.getItem('hotel_orchid_rooms');
@@ -378,6 +382,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       .then(fetchedConfig => {
         if (fetchedConfig && typeof fetchedConfig === 'object') {
           console.log("[DataContext] Fetched public root config:", fetchedConfig);
+          setServerConfig(fetchedConfig);
           
           const fetchedSignature = getHash(JSON.stringify(fetchedConfig));
           const activeSignature = localStorage.getItem('hotel_orchid_loaded_config_signature');
@@ -520,6 +525,8 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       logoImage,
       activities,
       ownerInfo,
+      serverConfig,
+      setServerConfig,
       updateRoom,
       addRoom,
       deleteRoom,
