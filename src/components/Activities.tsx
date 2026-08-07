@@ -55,10 +55,10 @@ export default function Activities() {
         <div className="max-w-5xl mx-auto relative group px-2">
           {/* Main Container */}
           <div className="bg-white border border-sand-200 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300">
-            <div className="flex flex-col md:flex-row md:min-h-[460px]">
+            <div className="flex flex-col md:flex-row md:min-h-[380px]">
               
               {/* Image Column */}
-              <div className="w-full md:w-1/2 aspect-[4/3] md:aspect-auto relative bg-ocean-950 overflow-hidden">
+              <div className="w-full md:w-1/2 aspect-[4/3] md:min-h-[380px] relative bg-ocean-950 overflow-hidden">
                 <AnimatePresence mode="wait">
                   <motion.img
                     key={currentAct.id}
@@ -82,15 +82,15 @@ export default function Activities() {
               </div>
 
               {/* Content Column */}
-              <div className="w-full md:w-1/2 p-8 sm:p-12 flex flex-col justify-between text-left bg-sand-50/20 relative">
-                <div className="space-y-6 my-auto">
+              <div className="w-full md:w-1/2 p-6 sm:p-8 md:p-10 flex flex-col justify-between text-left bg-sand-50/20 relative">
+                <div className="space-y-4">
                   <div className="flex items-center">
                     <span className="font-mono text-[10px] uppercase tracking-widest text-coral-600 font-bold bg-coral-50 py-1.5 px-3 rounded-sm border border-coral-200/40 shadow-xs">
                       Curated Experience
                     </span>
                   </div>
 
-                  <div className="min-h-[160px] flex flex-col justify-center">
+                  <div className="flex flex-col justify-start">
                     <AnimatePresence mode="wait">
                       <motion.div
                         key={currentAct.id}
@@ -98,13 +98,13 @@ export default function Activities() {
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: -20 }}
                         transition={{ duration: 0.3 }}
-                        className="space-y-4"
+                        className="space-y-3.5"
                       >
                         <h3 className="font-serif text-2xl sm:text-3xl font-bold text-ocean-950 tracking-tight leading-tight">
                           {currentAct.name}
                         </h3>
 
-                        <p className="font-sans text-sm sm:text-base text-sand-850 leading-relaxed font-normal">
+                        <p className="font-sans text-sm sm:text-base text-sand-800 leading-relaxed font-normal">
                           {currentAct.description}
                         </p>
                       </motion.div>
@@ -112,7 +112,7 @@ export default function Activities() {
                   </div>
                 </div>
 
-                <div className="mt-8 pt-6 border-t border-sand-200/60 flex items-center justify-between">
+                <div className="mt-6 pt-5 border-t border-sand-200/60 flex items-center justify-between">
                   <a
                     href={whatsappUrl}
                     target="_blank"

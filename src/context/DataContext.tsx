@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { Room, Testimonial, Activity, OwnerInfo } from '../types';
 import { HOTEL_INFO, ROOMS_DATA, GALLERY_SLIDES, TESTIMONIALS, ACTIVITIES_DATA, DEFAULT_OWNER_INFO } from '../data';
-import dynamicConfig from '../hotel_orchid_dynamic_config.json';
+// For compile-time safety and to avoid bundling the massive 5.7MB config file directly in the JS bundle (which causes slow loads and build failures), we use a placeholder config on initial render. The actual detailed state is fetched and merged dynamically in useEffect.
+const dynamicConfig = {};
 
 const bConfig = (dynamicConfig as any) || {};
 const INITIAL_ROOMS = (bConfig && bConfig.rooms) ? bConfig.rooms : ROOMS_DATA;
