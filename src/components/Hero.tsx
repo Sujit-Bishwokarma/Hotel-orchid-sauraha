@@ -13,7 +13,7 @@ interface HeroProps {
 }
 
 export default function Hero({ onOpenBooking }: HeroProps) {
-  const { heroImage } = useData();
+  const { heroImage, isConfigSyncing } = useData();
   const scrollToRooms = () => {
     const el = document.getElementById('rooms');
     if (el) {
@@ -34,13 +34,26 @@ export default function Hero({ onOpenBooking }: HeroProps) {
   return (
     <section id="home" className="scroll-mt-24 relative h-screen flex items-center justify-center overflow-hidden">
       {/* Background Image */}
-      <div className="absolute inset-0">
-        <img
-          src={heroImage}
-          alt="Hotel Orchid Sauraha Sunset Exterior View"
-          referrerPolicy="no-referrer"
-          className="w-full h-full object-cover"
-        />
+      <div className="absolute inset-0 bg-ocean-950">
+        {!isConfigSyncing ? (
+          <motion.img
+            key={heroImage}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8 }}
+            src={heroImage}
+            alt="Hotel Orchid Sauraha Sunset Exterior View"
+            referrerPolicy="no-referrer"
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full bg-ocean-950 flex flex-col items-center justify-center space-y-4">
+            <div className="w-12 h-12 rounded-full border-2 border-coral-500/20 border-t-coral-500 animate-spin" />
+            <span className="text-sand-400 font-sans text-[10px] tracking-widest uppercase opacity-50">
+              Loading Sunset view...
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Floating text content */}

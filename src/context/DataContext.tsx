@@ -41,6 +41,7 @@ interface DataContextType {
   ownerInfo: OwnerInfo;
   serverConfig: any;
   setServerConfig: React.Dispatch<React.SetStateAction<any>>;
+  isConfigSyncing: boolean;
   updateRoom: (roomId: string, updatedFields: Partial<Room>) => void;
   addRoom: (room: Omit<Room, 'id'>) => void;
   deleteRoom: (roomId: string) => void;
@@ -202,6 +203,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const isInitialActivities = useRef(true);
   const isInitialOwner = useRef(true);
 
+  const [isConfigSyncing, setIsConfigSyncing] = useState<boolean>(true);
   const [serverConfig, setServerConfig] = useState<any>(bConfig || {});
 
   const [rooms, setRooms] = useState<Room[]>(() => {
@@ -367,6 +369,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Save the signature and config version to confirm we have synced the configuration
   useEffect(() => {
+    setIsConfigSyncing(true);
     // 1. Fetch the tiny 30-byte config version file first
     fetch(`./hotel_orchid_config_version.json?v=${Date.now()}`, {
       cache: 'no-store',
@@ -388,6 +391,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // If the version is unchanged and we have local storage data, we can skip fetching the 2.5MB JSON entirely!
         if (fetchedVersion && activeVersion === fetchedVersion && hasCachedRooms) {
           console.log("[DataContext] Configuration is up-to-date (Version:", fetchedVersion, "). Skipping 2.5MB dynamic fetch.");
+          setIsConfigSyncing(false);
           return;
         }
 
@@ -424,6 +428,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 localStorage.setItem('hotel_orchid_config_version', fetchedVersion);
               }
             }
+            setIsConfigSyncing(false);
           });
       })
       .catch(err => {
@@ -450,10 +455,12 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
               
               localStorage.setItem('hotel_orchid_loaded_config_signature', getHash(JSON.stringify(fetchedConfig)));
             }
+            setIsConfigSyncing(false);
           })
           .catch(fallbackErr => {
             console.log("[DataContext] Using bundled configuration:", fallbackErr.message);
             localStorage.setItem('hotel_orchid_loaded_config_signature', configSignature);
+            setIsConfigSyncing(false);
           });
       });
   }, []);
@@ -577,6 +584,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       ownerInfo,
       serverConfig,
       setServerConfig,
+      isConfigSyncing,
       updateRoom,
       addRoom,
       deleteRoom,
